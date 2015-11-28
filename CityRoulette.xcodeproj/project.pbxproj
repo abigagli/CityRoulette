@@ -13,6 +13,7 @@
 		8D64D3191C07C25B00FBC661 /* CityRoulette.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 8D64D3171C07C25B00FBC661 /* CityRoulette.xcdatamodeld */; };
 		8D64D31B1C07C25B00FBC661 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 8D64D31A1C07C25B00FBC661 /* Assets.xcassets */; };
 		8D64D31E1C07C25B00FBC661 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 8D64D31C1C07C25B00FBC661 /* LaunchScreen.storyboard */; };
+		8DFD88731C0A0FF5000F497B /* TODO in Resources */ = {isa = PBXBuildFile; fileRef = 8DFD88721C0A0FF5000F497B /* TODO */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -24,6 +25,7 @@
 		8D64D31A1C07C25B00FBC661 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		8D64D31D1C07C25B00FBC661 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		8D64D31F1C07C25B00FBC661 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		8DFD88721C0A0FF5000F497B /* TODO */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = TODO; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -40,6 +42,7 @@
 		8D64D3041C07C25B00FBC661 = {
 			isa = PBXGroup;
 			children = (
+				8DFD88721C0A0FF5000F497B /* TODO */,
 				8D64D30F1C07C25B00FBC661 /* CityRoulette */,
 				8D64D30E1C07C25B00FBC661 /* Products */,
 			);
@@ -127,6 +130,7 @@
 			files = (
 				8D64D31E1C07C25B00FBC661 /* LaunchScreen.storyboard in Resources */,
 				8D64D31B1C07C25B00FBC661 /* Assets.xcassets in Resources */,
+				8DFD88731C0A0FF5000F497B /* TODO in Resources */,
 				8D64D3161C07C25B00FBC661 /* Main.storyboard in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -288,6 +292,7 @@
 				8D64D3241C07C25B00FBC661 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 
