@@ -15,17 +15,22 @@ class ViewController: UIViewController {
     
     //MARK:- Actions
     
+    
+    //MARK:- State
+    var mustDecolorize = true
+    
     private func deColorize() {
-        let desatImage = UIImageView(image: UIImage(named: "Florence-desat"))
-        desatImage.contentMode = self.backgroundImage.contentMode
-        desatImage.frame = self.backgroundImage.frame
+        let colorImage = UIImageView(image: UIImage(named: "Florence"))
+        colorImage.contentMode = self.backgroundImage.contentMode
+        colorImage.frame = self.backgroundImage.frame
         
-        view.insertSubview(desatImage, belowSubview: self.backgroundImage)
+        view.insertSubview(colorImage, aboveSubview: self.backgroundImage)
         
-        UIView.animateWithDuration(5, delay: 0.5, options: .CurveEaseOut, animations: {
-            self.backgroundImage.alpha = 0.0
+        UIView.animateWithDuration(5, delay: 0, options: .CurveEaseOut, animations: {
+            colorImage.alpha = 0.0
             }, completion: {_ in
-                self.backgroundImage.removeFromSuperview()
+                colorImage.removeFromSuperview()
+                self.mustDecolorize = false
         })
     }
     override func viewDidLoad() {
@@ -38,9 +43,16 @@ class ViewController: UIViewController {
         // Dispose of any resources that can be recreated.
     }
 
-    override func viewDidAppear(animated: Bool) {
-        super.viewDidAppear(animated)
-        deColorize()
+    override func viewWillAppear(animated: Bool) {
+        super.viewWillAppear(animated)
+        //deColorize()
+    }
+    
+    override func viewDidLayoutSubviews() {
+        super.viewDidLayoutSubviews()
+        if mustDecolorize {
+            deColorize()
+        }
     }
 }
 

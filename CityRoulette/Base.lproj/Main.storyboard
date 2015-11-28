@@ -17,8 +17,8 @@
                         <rect key="frame" x="0.0" y="0.0" width="600" height="600"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
-                            <imageView userInteractionEnabled="NO" contentMode="scaleAspectFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="Florence" translatesAutoresizingMaskIntoConstraints="NO" id="47P-lf-6FF">
-                                <rect key="frame" x="0.0" y="0.0" width="600" height="600"/>
+                            <imageView userInteractionEnabled="NO" contentMode="scaleAspectFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="Florence-desat" translatesAutoresizingMaskIntoConstraints="NO" id="47P-lf-6FF">
+                                <rect key="frame" x="0.0" y="0.0" width="600" height="630"/>
                                 <animations/>
                                 <edgeInsets key="layoutMargins" top="0.0" left="0.0" bottom="0.0" right="0.0"/>
                             </imageView>
@@ -26,7 +26,7 @@
                         <animations/>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="calibratedWhite"/>
                         <constraints>
-                            <constraint firstAttribute="bottom" secondItem="47P-lf-6FF" secondAttribute="bottom" id="ZEl-hE-via"/>
+                            <constraint firstAttribute="bottom" secondItem="47P-lf-6FF" secondAttribute="bottom" constant="-30" id="ZEl-hE-via"/>
                             <constraint firstItem="47P-lf-6FF" firstAttribute="leading" secondItem="8bC-Xf-vdC" secondAttribute="leading" id="hgL-Bs-xxY"/>
                             <constraint firstItem="47P-lf-6FF" firstAttribute="top" secondItem="8bC-Xf-vdC" secondAttribute="top" id="yiu-WD-mNT"/>
                             <constraint firstAttribute="trailing" secondItem="47P-lf-6FF" secondAttribute="trailing" id="zcR-nF-62u"/>
@@ -41,6 +41,6 @@
         </scene>
     </scenes>
     <resources>
-        <image name="Florence" width="375" height="667"/>
+        <image name="Florence-desat" width="375" height="667"/>
     </resources>
 </document>
