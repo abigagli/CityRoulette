@@ -14,3 +14,37 @@ func delay(seconds seconds: Double, completion:()->()) {
         completion()
     }
 }
+
+
+extension UIViewController {
+    func alertUserWithTitle(title: String, message: String, retryHandler: (()->Void)?) {
+        
+        let alert = UIAlertController(title: title,
+            message: message,
+            preferredStyle: .Alert)
+        
+        let alertOkAction = UIAlertAction(title: "OK",
+            style: .Default,
+            handler: nil)
+        
+        if let userRetry = retryHandler {
+            
+            let alertRetryAction = UIAlertAction(title: "Retry",
+                style: UIAlertActionStyle.Destructive,
+                handler: {
+                    _ in
+                    userRetry()
+            })
+            alert.addAction(alertRetryAction)
+        }
+        
+        alert.addAction(alertOkAction)
+        
+        //Ensure presentation is always done by a visible viewcontroller, since with
+        //particularly slow network connections, the user might have pushed/popped
+        //before the alert is presented
+        UIApplication.sharedApplication().keyWindow?.rootViewController?.presentViewController(alert, animated: true, completion: nil)
+    }
+}
+
+

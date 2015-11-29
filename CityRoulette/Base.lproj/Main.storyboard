@@ -33,6 +33,9 @@
                                 <state key="normal" title="Around me">
                                     <color key="titleColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                 </state>
+                                <connections>
+                                    <action selector="aroundMeTapped:" destination="BYZ-38-t0r" eventType="touchUpInside" id="itF-iy-3tU"/>
+                                </connections>
                             </button>
                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="ZH7-6j-8Cc">
                                 <rect key="frame" x="234" y="234" width="132" height="132"/>
@@ -88,11 +91,57 @@
                         <outlet property="choose" destination="Paf-vl-EmA" id="GES-mH-53O"/>
                         <outlet property="chooseBottomSpace" destination="pDf-J3-OWO" id="0cN-ig-stu"/>
                         <outlet property="surpriseMe" destination="ZH7-6j-8Cc" id="i7L-Ar-IFp"/>
+                        <segue destination="LbY-4m-IKW" kind="presentation" identifier="showRandomCity" id="Hxp-kn-oSc"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="dkx-z0-nzr" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="223" y="535"/>
+            <point key="canvasLocation" x="-1122" y="511"/>
+        </scene>
+        <!--Title-->
+        <scene sceneID="MLp-uj-8AN">
+            <objects>
+                <viewController id="1PL-0Z-j2S" customClass="ShowCitiesViewController" customModule="CityRoulette" customModuleProvider="target" sceneMemberID="viewController">
+                    <layoutGuides>
+                        <viewControllerLayoutGuide type="top" id="AYp-kd-Kh5"/>
+                        <viewControllerLayoutGuide type="bottom" id="1B6-FH-gCn"/>
+                    </layoutGuides>
+                    <view key="view" contentMode="scaleToFill" id="jfM-vl-fit">
+                        <rect key="frame" x="0.0" y="0.0" width="600" height="600"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <animations/>
+                        <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                    </view>
+                    <navigationItem key="navigationItem" title="Title" id="ZoW-gP-0va">
+                        <barButtonItem key="leftBarButtonItem" systemItem="done" id="bUC-9x-Gb2">
+                            <connections>
+                                <action selector="doneTapped:" destination="1PL-0Z-j2S" id="eiL-hY-sgy"/>
+                            </connections>
+                        </barButtonItem>
+                    </navigationItem>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="E2c-v0-ZcJ" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="676" y="506"/>
+        </scene>
+        <!--Navigation Controller-->
+        <scene sceneID="5qb-e0-tES">
+            <objects>
+                <navigationController automaticallyAdjustsScrollViewInsets="NO" id="LbY-4m-IKW" sceneMemberID="viewController">
+                    <toolbarItems/>
+                    <navigationBar key="navigationBar" contentMode="scaleToFill" id="vP8-cT-IVR">
+                        <rect key="frame" x="0.0" y="0.0" width="320" height="44"/>
+                        <autoresizingMask key="autoresizingMask"/>
+                        <animations/>
+                    </navigationBar>
+                    <nil name="viewControllers"/>
+                    <connections>
+                        <segue destination="1PL-0Z-j2S" kind="relationship" relationship="rootViewController" id="R2L-pi-91T"/>
+                    </connections>
+                </navigationController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="OF6-ke-We9" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="-136" y="506"/>
         </scene>
     </scenes>
     <resources>

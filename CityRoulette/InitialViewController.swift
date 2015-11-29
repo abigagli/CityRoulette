@@ -7,6 +7,7 @@
 //
 
 import UIKit
+import CoreLocation
 
 class InitialViewController: UIViewController {
     //MARK:- Outlets
@@ -30,9 +31,31 @@ class InitialViewController: UIViewController {
         self.springAnimate(sender, repeating: true)
     }
     
+    @IBAction func aroundMeTapped(sender: UIButton) {
+        self.locationManager.delegate = self
+        self.locationManager.desiredAccuracy = kCLLocationAccuracyThreeKilometers
+        self.locationManager.distanceFilter = 3000
+        
+        switch CLLocationManager.authorizationStatus()
+        {
+        case .NotDetermined:
+            self.locationManager.requestWhenInUseAuthorization()
+        case .AuthorizedAlways:
+            fallthrough
+        case .AuthorizedWhenInUse:
+            self.locationManager.startUpdatingLocation()
+        default:
+            //Don't want to receive a notification in case the user change settings 
+            //while we're in another part of the application...
+            self.locationManager.delegate = nil
+            self.alertUserWithTitle ("Location unavailable", message: "Please ensure location services are enabled for this application and retry", retryHandler: nil)
+        }
+    }
+    
     //MARK:- State
     private var verticalConstraintConstant: CGFloat = 0
     private var colorImage: UIImageView?
+    private lazy var locationManager = CLLocationManager()
     
     //MARK: - UI
     private func hideButtons()
@@ -139,4 +162,30 @@ class InitialViewController: UIViewController {
         }
     }
 }
+
+//MARK:- Protocol conformance
+//MARK: CLLocationManagerDelegate
+
+extension InitialViewController: CLLocationManagerDelegate {
+    func locationManager(manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
+        manager.delegate = nil
+        manager.stopUpdatingLocation()
+        performSegueWithIdentifier("showRandomCity", sender: self)
+    }
+    
+    func locationManager(manager: CLLocationManager,
+        didChangeAuthorizationStatus status: CLAuthorizationStatus)
+    {
+        if status == .AuthorizedAlways || status == .AuthorizedWhenInUse {
+            manager.startUpdatingLocation()
+        }
+        else if status != .NotDetermined {
+            //Don't want to receive a notification in case the user change settings 
+            //while we're in another part of the application...
+            manager.delegate = nil
+        }
+    }
+
+}
+
 
