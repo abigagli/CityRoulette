@@ -170,7 +170,19 @@ extension InitialViewController: CLLocationManagerDelegate {
     func locationManager(manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
         manager.delegate = nil
         manager.stopUpdatingLocation()
-        performSegueWithIdentifier("showRandomCity", sender: self)
+        let lastLocation = locations.last!
+        GeoNamesClient.sharedInstance.getCitiesAroundLocation(lastLocation) /* And then, on another thread...*/ {
+            success, error in
+            
+            dispatch_async(dispatch_get_main_queue()) { //Touch the UI on the main thread only
+                if success {
+                    self.performSegueWithIdentifier("showRandomCity", sender: self)
+                }
+                else {
+                    self.alertUserWithTitle ("Failed Retrieving Nearby Cities", message: error!.localizedDescription, retryHandler: nil)
+                }
+            }
+        }
     }
     
     func locationManager(manager: CLLocationManager,
