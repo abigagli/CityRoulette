@@ -26,10 +26,16 @@ class InitialViewController: UIViewController {
         self.showButtons()
     }
     
+    @IBAction func surpriseMeTapped(sender: UIButton) {
+        self.springAnimate(sender, repeating: true)
+    }
+    
     //MARK:- State
     private var mustDecolorize = true
     private var verticalConstraintConstant: CGFloat = 0
     
+    
+    //MARK: - UI
     private func hideButtons()
     {
         self.aroundMeTopSpace.constant -= self.verticalConstraintConstant
@@ -37,6 +43,33 @@ class InitialViewController: UIViewController {
         self.chooseBottomSpace.constant -= self.verticalConstraintConstant
         self.view.layoutIfNeeded()
     }
+    
+    private func springAnimate (button: UIButton, repeating: Bool = false)
+    {
+        UIView.animateWithDuration(0.25, delay: 0, options: [.CurveEaseOut], animations: {
+                button.transform = CGAffineTransformConcat(CGAffineTransformMakeScale(0.50, 0.50), CGAffineTransformMakeRotation(CGFloat(M_PI_2)))
+                //button.layer.cornerRadius = 0
+                //button.layer.borderWidth = 2
+
+            }, completion: {_ in
+                let springBackOptions: UIViewAnimationOptions = repeating ? [.Repeat] : []
+                UIView.animateWithDuration(1.0, delay: 0.1, usingSpringWithDamping: 0.20, initialSpringVelocity: 0, options: springBackOptions, animations: {
+                    
+                    self.surpriseMe.transform = CGAffineTransformConcat(CGAffineTransformMakeScale(1, 1), CGAffineTransformMakeRotation(0))
+                    //button.layer.cornerRadius = 30
+                    //button.layer.borderWidth = 0
+                    
+                    }, completion: {_ in
+                        delay (seconds: 1, completion: {
+                            //self.surpriseMe.layer.speed = 0
+                            //self.surpriseMe.layer.timeOffset = CACurrentMediaTime()
+                            //self.surpriseMe.layer.removeAllAnimations()
+                        })
+                    })
+            })
+        
+    }
+    
     private func showButtons()
     {
         self.aroundMeTopSpace.constant += self.verticalConstraintConstant
@@ -48,27 +81,7 @@ class InitialViewController: UIViewController {
         
         self.surpriseMe.alpha = 1
         
-        
-        UIView.animateWithDuration(0.25, delay: 0, options: [.CurveEaseOut], animations: {
-                self.surpriseMe.transform = CGAffineTransformConcat(CGAffineTransformMakeScale(0.50, 0.50), CGAffineTransformMakeRotation(CGFloat(M_PI_2)))
-                //self.surpriseMe.layer.cornerRadius = 0
-                //self.surpriseMe.layer.borderWidth = 2
-
-            }, completion: {_ in
-                UIView.animateWithDuration(1.0, delay: 0.1, usingSpringWithDamping: 0.20, initialSpringVelocity: 0, options:[] /*options: [.Repeat]*/, animations: {
-                    
-                    self.surpriseMe.transform = CGAffineTransformConcat(CGAffineTransformMakeScale(1, 1), CGAffineTransformMakeRotation(0))
-                    //self.surpriseMe.layer.cornerRadius = 30
-                    //self.surpriseMe.layer.borderWidth = 0
-                    
-                    }, completion: {_ in
-                        delay (seconds: 1, completion: {
-                            //self.surpriseMe.layer.speed = 0
-                            //self.surpriseMe.layer.timeOffset = CACurrentMediaTime()
-                            //self.surpriseMe.layer.removeAllAnimations()
-                        })
-                    })
-            })
+        self.springAnimate(self.surpriseMe)
     }
     
     private func deColorize() {
@@ -86,6 +99,9 @@ class InitialViewController: UIViewController {
                 self.showButtons()
         })
     }
+    
+    
+    //MARK:- Lifetime
     override func viewDidLoad() {
         super.viewDidLoad()
         // Do any additional setup after loading the view, typically from a nib.

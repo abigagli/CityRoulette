@@ -23,8 +23,8 @@
                                 <animations/>
                                 <edgeInsets key="layoutMargins" top="0.0" left="0.0" bottom="0.0" right="0.0"/>
                             </imageView>
-                            <button opaque="NO" contentMode="scaleToFill" misplaced="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="0St-Y8-OTj">
-                                <rect key="frame" x="244" y="78" width="112" height="22"/>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="0St-Y8-OTj">
+                                <rect key="frame" x="234" y="78" width="132" height="22"/>
                                 <animations/>
                                 <constraints>
                                     <constraint firstAttribute="height" constant="22" id="pAC-gO-U3S"/>
@@ -34,8 +34,8 @@
                                     <color key="titleColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                 </state>
                             </button>
-                            <button opaque="NO" contentMode="scaleToFill" misplaced="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="ZH7-6j-8Cc">
-                                <rect key="frame" x="244" y="244" width="112" height="112"/>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="ZH7-6j-8Cc">
+                                <rect key="frame" x="234" y="234" width="132" height="132"/>
                                 <animations/>
                                 <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
                                 <constraints>
@@ -45,9 +45,12 @@
                                 <state key="normal" title="Surprise me">
                                     <color key="titleColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                 </state>
+                                <connections>
+                                    <action selector="surpriseMeTapped:" destination="BYZ-38-t0r" eventType="touchUpInside" id="IhW-CB-YBz"/>
+                                </connections>
                             </button>
-                            <button opaque="NO" contentMode="scaleToFill" misplaced="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Paf-vl-EmA">
-                                <rect key="frame" x="244" y="500" width="112" height="22"/>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Paf-vl-EmA">
+                                <rect key="frame" x="234" y="500" width="132" height="22"/>
                                 <animations/>
                                 <constraints>
                                     <constraint firstAttribute="height" constant="22" id="Mnp-rn-hbH"/>
