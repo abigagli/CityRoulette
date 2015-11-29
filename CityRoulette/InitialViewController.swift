@@ -31,9 +31,8 @@ class InitialViewController: UIViewController {
     }
     
     //MARK:- State
-    private var mustDecolorize = true
     private var verticalConstraintConstant: CGFloat = 0
-    
+    private var colorImage: UIImageView?
     
     //MARK: - UI
     private func hideButtons()
@@ -84,20 +83,12 @@ class InitialViewController: UIViewController {
         self.springAnimate(self.surpriseMe)
     }
     
-    private func deColorize() {
-        let colorImage = UIImageView(image: UIImage(named: "Florence"))
-        colorImage.contentMode = self.backgroundImage.contentMode
-        colorImage.frame = self.backgroundImage.frame
+    private func fadeColorImage(andThen andThen: ((Bool) -> Void)?) {
         
-        view.insertSubview(colorImage, aboveSubview: self.backgroundImage)
-        
-        UIView.animateWithDuration(4, delay: 0, options: .CurveEaseOut, animations: {
-            colorImage.alpha = 0.0
-            }, completion: {_ in
-                colorImage.removeFromSuperview()
-                self.mustDecolorize = false
-                self.showButtons()
-        })
+        UIView.animateWithDuration(4, delay: 0.5, options: .CurveEaseOut, animations: {
+            self.colorImage!.alpha = 0.0
+            }
+            , completion: andThen)
     }
     
     
@@ -106,6 +97,8 @@ class InitialViewController: UIViewController {
         super.viewDidLoad()
         // Do any additional setup after loading the view, typically from a nib.
         self.verticalConstraintConstant = self.aroundMeTopSpace.constant
+        
+        self.colorImage = UIImageView(image: UIImage(named: "Florence"))
     }
 
     override func didReceiveMemoryWarning() {
@@ -121,11 +114,28 @@ class InitialViewController: UIViewController {
     
     override func viewDidAppear(animated: Bool) {
         super.viewDidAppear(animated)
-        if mustDecolorize {
-            self.deColorize()
+        
+        if let _ = self.colorImage{
+            self.fadeColorImage(andThen: {_ in
+                self.colorImage!.removeFromSuperview()
+                self.colorImage = nil
+                self.showButtons()
+            })
         }
         else {
             self.showButtons()
+        }
+    }
+    
+    override func viewDidLayoutSubviews() {
+        super.viewDidLayoutSubviews()
+        
+        if let colorImage = self.colorImage where colorImage.superview == nil {
+            
+            colorImage.contentMode = self.backgroundImage.contentMode
+            colorImage.frame = self.backgroundImage.frame
+            
+            self.view.insertSubview(colorImage, aboveSubview: self.backgroundImage)
         }
     }
 }
