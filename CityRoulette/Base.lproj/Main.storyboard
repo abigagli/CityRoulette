@@ -3,12 +3,13 @@
     <dependencies>
         <deployment identifier="iOS"/>
         <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="9051"/>
+        <capability name="Aspect ratio constraints" minToolsVersion="5.1"/>
     </dependencies>
     <scenes>
-        <!--View Controller-->
+        <!--Initial View Controller-->
         <scene sceneID="tne-QT-ifu">
             <objects>
-                <viewController id="BYZ-38-t0r" customClass="ViewController" customModule="CityRoulette" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController id="BYZ-38-t0r" customClass="InitialViewController" customModule="CityRoulette" customModuleProvider="target" sceneMemberID="viewController">
                     <layoutGuides>
                         <viewControllerLayoutGuide type="top" id="y3c-jy-aDJ"/>
                         <viewControllerLayoutGuide type="bottom" id="wfy-db-euE"/>
@@ -22,22 +23,73 @@
                                 <animations/>
                                 <edgeInsets key="layoutMargins" top="0.0" left="0.0" bottom="0.0" right="0.0"/>
                             </imageView>
+                            <button opaque="NO" contentMode="scaleToFill" misplaced="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="0St-Y8-OTj">
+                                <rect key="frame" x="244" y="78" width="112" height="22"/>
+                                <animations/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="22" id="pAC-gO-U3S"/>
+                                </constraints>
+                                <fontDescription key="fontDescription" type="system" pointSize="22"/>
+                                <state key="normal" title="Around me">
+                                    <color key="titleColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                </state>
+                            </button>
+                            <button opaque="NO" contentMode="scaleToFill" misplaced="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="ZH7-6j-8Cc">
+                                <rect key="frame" x="244" y="244" width="112" height="112"/>
+                                <animations/>
+                                <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
+                                <constraints>
+                                    <constraint firstAttribute="width" secondItem="ZH7-6j-8Cc" secondAttribute="height" multiplier="1:1" id="bog-5s-4RP"/>
+                                </constraints>
+                                <fontDescription key="fontDescription" type="system" weight="medium" pointSize="24"/>
+                                <state key="normal" title="Surprise me">
+                                    <color key="titleColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                </state>
+                            </button>
+                            <button opaque="NO" contentMode="scaleToFill" misplaced="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Paf-vl-EmA">
+                                <rect key="frame" x="244" y="500" width="112" height="22"/>
+                                <animations/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="22" id="Mnp-rn-hbH"/>
+                                </constraints>
+                                <fontDescription key="fontDescription" type="system" pointSize="22"/>
+                                <state key="normal" title="Choose">
+                                    <color key="titleColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                </state>
+                                <connections>
+                                    <action selector="chooseTapped:" destination="BYZ-38-t0r" eventType="touchUpInside" id="DE9-KU-Ekk"/>
+                                </connections>
+                            </button>
                         </subviews>
                         <animations/>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="calibratedWhite"/>
                         <constraints>
+                            <constraint firstItem="0St-Y8-OTj" firstAttribute="width" secondItem="ZH7-6j-8Cc" secondAttribute="width" id="3eY-KV-n6H"/>
+                            <constraint firstItem="0St-Y8-OTj" firstAttribute="centerX" secondItem="8bC-Xf-vdC" secondAttribute="centerX" id="91M-oe-SM6"/>
+                            <constraint firstItem="ZH7-6j-8Cc" firstAttribute="centerY" secondItem="8bC-Xf-vdC" secondAttribute="centerY" id="Kbe-FD-ddH"/>
+                            <constraint firstItem="Paf-vl-EmA" firstAttribute="centerX" secondItem="8bC-Xf-vdC" secondAttribute="centerX" id="NcV-Lm-8FX"/>
                             <constraint firstAttribute="bottom" secondItem="47P-lf-6FF" secondAttribute="bottom" constant="-30" id="ZEl-hE-via"/>
+                            <constraint firstItem="Paf-vl-EmA" firstAttribute="width" secondItem="0St-Y8-OTj" secondAttribute="width" id="ape-bj-Ahw"/>
+                            <constraint firstItem="0St-Y8-OTj" firstAttribute="bottom" secondItem="8bC-Xf-vdC" secondAttribute="top" constant="100" id="c32-P4-Rhc"/>
                             <constraint firstItem="47P-lf-6FF" firstAttribute="leading" secondItem="8bC-Xf-vdC" secondAttribute="leading" id="hgL-Bs-xxY"/>
+                            <constraint firstItem="ZH7-6j-8Cc" firstAttribute="leading" secondItem="0St-Y8-OTj" secondAttribute="leading" id="kcU-3B-99Z"/>
+                            <constraint firstAttribute="bottom" secondItem="Paf-vl-EmA" secondAttribute="top" constant="100" id="pDf-J3-OWO"/>
                             <constraint firstItem="47P-lf-6FF" firstAttribute="top" secondItem="8bC-Xf-vdC" secondAttribute="top" id="yiu-WD-mNT"/>
                             <constraint firstAttribute="trailing" secondItem="47P-lf-6FF" secondAttribute="trailing" id="zcR-nF-62u"/>
                         </constraints>
                     </view>
                     <connections>
+                        <outlet property="aroundMe" destination="0St-Y8-OTj" id="epQ-aR-Twa"/>
+                        <outlet property="aroundMeTopSpace" destination="c32-P4-Rhc" id="Kbk-gN-zvd"/>
                         <outlet property="backgroundImage" destination="47P-lf-6FF" id="c8J-ya-HT4"/>
+                        <outlet property="choose" destination="Paf-vl-EmA" id="GES-mH-53O"/>
+                        <outlet property="chooseBottomSpace" destination="pDf-J3-OWO" id="0cN-ig-stu"/>
+                        <outlet property="surpriseMe" destination="ZH7-6j-8Cc" id="i7L-Ar-IFp"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="dkx-z0-nzr" sceneMemberID="firstResponder"/>
             </objects>
+            <point key="canvasLocation" x="223" y="535"/>
         </scene>
     </scenes>
     <resources>
