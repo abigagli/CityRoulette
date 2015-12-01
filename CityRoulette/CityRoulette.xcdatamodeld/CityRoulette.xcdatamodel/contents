@@ -1,4 +1,17 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<model name="Test1.xcdatamodel" userDefinedModelVersionIdentifier="" type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="1" systemVersion="11A491" minimumToolsVersion="Automatic" macOSVersion="Automatic" iOSVersion="Automatic">
-    <elements/>
+<model userDefinedModelVersionIdentifier="" type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="9057" systemVersion="15B42" minimumToolsVersion="Automatic">
+    <entity name="City" representedClassName=".City" syncable="YES">
+        <attribute name="countryCode" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="geonameID" attributeType="Integer 64" defaultValueString="0" syncable="YES"/>
+        <attribute name="latitude" attributeType="Double" defaultValueString="0.0" syncable="YES"/>
+        <attribute name="longitude" attributeType="Double" defaultValueString="0.0" syncable="YES"/>
+        <attribute name="name" attributeType="String" syncable="YES"/>
+        <attribute name="population" optional="YES" attributeType="Integer 32" defaultValueString="0" syncable="YES"/>
+        <attribute name="wikipedia" optional="YES" attributeType="String" syncable="YES"/>
+        <relationship name="neighbours" optional="YES" toMany="YES" deletionRule="Cascade" destinationEntity="City" inverseName="root" inverseEntity="City" syncable="YES"/>
+        <relationship name="root" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="City" inverseName="neighbours" inverseEntity="City" syncable="YES"/>
+    </entity>
+    <elements>
+        <element name="City" positionX="-63" positionY="-18" width="128" height="180"/>
+    </elements>
 </model>

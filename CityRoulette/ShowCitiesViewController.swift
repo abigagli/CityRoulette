@@ -65,9 +65,9 @@ class ShowCitiesViewController: UIViewController {
     }
     
     //MARK: Core Data
-    private lazy var sharedContext: NSManagedObjectContext = {
+    private var sharedContext: NSManagedObjectContext {
         return (UIApplication.sharedApplication().delegate as! AppDelegate).managedObjectContext
-    }()
+    }
     
     private lazy var fetchedResultsController: NSFetchedResultsController = {
         

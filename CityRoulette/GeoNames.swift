@@ -6,7 +6,9 @@
 //  Copyright © 2015 Andrea Bigagli. All rights reserved.
 //
 
+import UIKit
 import CoreLocation
+import CoreData
 
 class GeoNamesClient {
     
@@ -124,9 +126,33 @@ extension GeoNamesClient {
                 }
                 else {
                     print ("result: \(result)")
+                    guard let cities = resultDictionary["geonames"] as? [[String: AnyObject]] where cities.count >= 1 else {
+                        completionHandler (success: false, error: NSError(domain: "GeoNames Result", code: 1, userInfo: [NSLocalizedDescriptionKey: "City information not found"]))
+                        return
+                    }
+                    
+                    dispatch_async(dispatch_get_main_queue()) { //managedObjectContext must be used on the owner (main in this case) thread only
+                        var root: City?
+                        for (index, cityJson) in cities.enumerate() {
+                            if index == 0 {
+                                root = City (json: cityJson, context: self.sharedContext)
+                            }
+                            else {
+                                root!.neighbours.append(City(json: cityJson, context: self.sharedContext))
+                            }
+                        }
+                    
+                    }
+                    
                     completionHandler(success: true, error: nil)
                 }
             }
         }
     }
+    
+    //MARK: Core Data
+    private var sharedContext: NSManagedObjectContext  {
+        return (UIApplication.sharedApplication().delegate as! AppDelegate).managedObjectContext
+    }
+
 }

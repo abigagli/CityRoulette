@@ -19,6 +19,8 @@
 		8DE3B72A1C0B7DE200CE642A /* Constants.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8DE3B7291C0B7DE200CE642A /* Constants.swift */; };
 		8DFD88731C0A0FF5000F497B /* TODO in Resources */ = {isa = PBXBuildFile; fileRef = 8DFD88721C0A0FF5000F497B /* TODO */; };
 		8DFD88751C0A250B000F497B /* Utils.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8DFD88741C0A250B000F497B /* Utils.swift */; };
+		8DFDF1A91C0E4C3C00BF6D32 /* City+CoreDataProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8DFDF1A71C0E4C3C00BF6D32 /* City+CoreDataProperties.swift */; };
+		8DFDF1AA1C0E4C3C00BF6D32 /* City.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8DFDF1A81C0E4C3C00BF6D32 /* City.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -36,6 +38,8 @@
 		8DE3B7291C0B7DE200CE642A /* Constants.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Constants.swift; sourceTree = "<group>"; };
 		8DFD88721C0A0FF5000F497B /* TODO */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = TODO; sourceTree = "<group>"; };
 		8DFD88741C0A250B000F497B /* Utils.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Utils.swift; sourceTree = "<group>"; };
+		8DFDF1A71C0E4C3C00BF6D32 /* City+CoreDataProperties.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "City+CoreDataProperties.swift"; sourceTree = "<group>"; };
+		8DFDF1A81C0E4C3C00BF6D32 /* City.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = City.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -95,6 +99,8 @@
 		8DE3B7241C0B65B600CE642A /* Model */ = {
 			isa = PBXGroup;
 			children = (
+				8DFDF1A71C0E4C3C00BF6D32 /* City+CoreDataProperties.swift */,
+				8DFDF1A81C0E4C3C00BF6D32 /* City.swift */,
 			);
 			name = Model;
 			sourceTree = "<group>";
@@ -197,8 +203,10 @@
 			files = (
 				8D64D3191C07C25B00FBC661 /* CityRoulette.xcdatamodeld in Sources */,
 				8D64D3131C07C25B00FBC661 /* InitialViewController.swift in Sources */,
+				8DFDF1AA1C0E4C3C00BF6D32 /* City.swift in Sources */,
 				8D64D3111C07C25B00FBC661 /* AppDelegate.swift in Sources */,
 				8DFD88751C0A250B000F497B /* Utils.swift in Sources */,
+				8DFDF1A91C0E4C3C00BF6D32 /* City+CoreDataProperties.swift in Sources */,
 				8DE3B72A1C0B7DE200CE642A /* Constants.swift in Sources */,
 				8DE3B7281C0B7DA300CE642A /* GeoNames.swift in Sources */,
 				8DE3B7221C0B5BD800CE642A /* ShowCitiesViewController.swift in Sources */,
