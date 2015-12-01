@@ -12,9 +12,18 @@ import CoreData
 
 class ShowCitiesViewController: UIViewController {
 
+    enum SourceType {
+        case coordinates (CLLocationCoordinate2D)
+        case city (String)
+        
+    }
+    
+    var referenceCity: SourceType!
+    
     //MARK:- Outlets
     @IBOutlet weak var mapView: MKMapView!
     @IBOutlet weak var tableView: UITableView!
+    @IBOutlet weak var activityIndicator: UIActivityIndicatorView!
     
     //MARK:- Actions
     @IBAction func doneTapped(sender: UIBarButtonItem) {
@@ -33,9 +42,21 @@ class ShowCitiesViewController: UIViewController {
         self.tableView.dataSource = self
         self.tableView.delegate = self
         
-        self.fetchedResultsController.delegate = self
+        //self.fetchedResultsController.delegate = self
 
         // Do any additional setup after loading the view.
+    }
+
+    override func viewWillAppear(animated: Bool) {
+        super.viewWillAppear(animated)
+        
+        updateUI()
+    }
+    override func viewDidAppear(animated: Bool) {
+        super.viewDidAppear(animated)
+        
+        populateData()
+        updateUI()
     }
 
     override func didReceiveMemoryWarning() {
@@ -72,6 +93,34 @@ class ShowCitiesViewController: UIViewController {
     }
     */
 
+    //MARK:- Business Logic
+    
+    private func updateUI() {
+        
+    }
+    
+    private func populateData() {
+        
+        self.activityIndicator.startAnimating()
+        switch self.referenceCity! {
+        case let .coordinates (location):
+        GeoNamesClient.sharedInstance.getCitiesAroundLocation(location) /* And then, on another thread...*/ {
+            success, error in
+            
+            dispatch_async(dispatch_get_main_queue()) { //Touch the UI on the main thread only
+                self.activityIndicator.stopAnimating()
+                if success {
+                    print ("Got some cities")
+                }
+                else {
+                    self.alertUserWithTitle ("Failed Retrieving Nearby Cities", message: error!.localizedDescription, retryHandler: nil)
+                }
+            }
+        }
+        default:
+            ()
+        }
+    }
 }
 //MARK:- Protocol Conformance
 

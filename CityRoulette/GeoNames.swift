@@ -88,19 +88,19 @@ class GeoNamesClient {
 
 //MARK:- Convenience
 extension GeoNamesClient {
-    func getCitiesAroundLocation (location: CLLocation, completionHandler: (success: Bool, error: NSError?) -> Void) {
+    func getCitiesAroundLocation (location: CLLocationCoordinate2D, completionHandler: (success: Bool, error: NSError?) -> Void) {
         
         let accuracy = 0.2
         //Parameters for API invocation
         let parameters: [String : AnyObject] = [
             
-            URLKeys.North       : "\(location.coordinate.latitude + accuracy)",
-            URLKeys.South       : "\(location.coordinate.latitude - accuracy)",
-            URLKeys.East        : "\(location.coordinate.longitude + accuracy)",
-            URLKeys.West        : "\(location.coordinate.longitude - accuracy)",
+            URLKeys.North       : "\(location.latitude + accuracy)",
+            URLKeys.South       : "\(location.latitude - accuracy)",
+            URLKeys.East        : "\(location.longitude + accuracy)",
+            URLKeys.West        : "\(location.longitude - accuracy)",
             /*
-            URLKeys.Lat         : location.coordinate.latitude,
-            URLKeys.Lon         : location.coordinate.longitude,
+            URLKeys.Lat         : location.latitude,
+            URLKeys.Lon         : location.longitude,
             URLKeys.Radius      : "10",
             */
             URLKeys.Language    : Constants.Language,
@@ -124,6 +124,7 @@ extension GeoNamesClient {
                 }
                 else {
                     print ("result: \(result)")
+                    completionHandler(success: true, error: nil)
                 }
             }
         }

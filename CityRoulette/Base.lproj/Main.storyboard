@@ -119,11 +119,47 @@
                                 <rect key="frame" x="0.0" y="240" width="600" height="360"/>
                                 <animations/>
                                 <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                <prototypes>
+                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" selectionStyle="blue" hidesAccessoryWhenEditing="NO" indentationLevel="1" indentationWidth="0.0" reuseIdentifier="cityInfoCell" textLabel="frY-lK-9g8" detailTextLabel="N1b-Lm-ohj" style="IBUITableViewCellStyleValue2" id="KW7-5T-GDp">
+                                        <rect key="frame" x="0.0" y="28" width="600" height="44"/>
+                                        <autoresizingMask key="autoresizingMask"/>
+                                        <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="KW7-5T-GDp" id="GFK-TL-BkP">
+                                            <rect key="frame" x="0.0" y="0.0" width="600" height="43"/>
+                                            <autoresizingMask key="autoresizingMask"/>
+                                            <subviews>
+                                                <label opaque="NO" multipleTouchEnabled="YES" contentMode="left" text="Title" textAlignment="right" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="frY-lK-9g8">
+                                                    <rect key="frame" x="15" y="14" width="91" height="15"/>
+                                                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                                    <animations/>
+                                                    <fontDescription key="fontDescription" type="system" pointSize="12"/>
+                                                    <color key="textColor" red="0.0" green="0.47843137254901963" blue="1" alpha="1" colorSpace="calibratedRGB"/>
+                                                    <nil key="highlightedColor"/>
+                                                </label>
+                                                <label opaque="NO" multipleTouchEnabled="YES" contentMode="left" text="Detail" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="N1b-Lm-ohj">
+                                                    <rect key="frame" x="112" y="14" width="33" height="15"/>
+                                                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                                    <animations/>
+                                                    <fontDescription key="fontDescription" type="system" pointSize="12"/>
+                                                    <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
+                                                    <nil key="highlightedColor"/>
+                                                </label>
+                                            </subviews>
+                                            <animations/>
+                                        </tableViewCellContentView>
+                                        <animations/>
+                                    </tableViewCell>
+                                </prototypes>
                             </tableView>
+                            <activityIndicatorView hidden="YES" opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" hidesWhenStopped="YES" style="gray" translatesAutoresizingMaskIntoConstraints="NO" id="bCx-i4-j24">
+                                <rect key="frame" x="290" y="290" width="20" height="20"/>
+                                <animations/>
+                                <color key="color" red="1" green="0.1069200313" blue="0.18957415120000001" alpha="1" colorSpace="calibratedRGB"/>
+                            </activityIndicatorView>
                         </subviews>
                         <animations/>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                         <constraints>
+                            <constraint firstItem="bCx-i4-j24" firstAttribute="centerY" secondItem="jfM-vl-fit" secondAttribute="centerY" id="2Rn-ic-FGV"/>
                             <constraint firstItem="QOX-o8-zmP" firstAttribute="top" secondItem="yB8-QS-d2S" secondAttribute="bottom" id="E3Q-KC-5i2"/>
                             <constraint firstAttribute="trailing" secondItem="yB8-QS-d2S" secondAttribute="trailing" id="EAE-dJ-zAZ"/>
                             <constraint firstAttribute="trailing" secondItem="QOX-o8-zmP" secondAttribute="trailing" id="HLg-MX-OrR"/>
@@ -131,6 +167,7 @@
                             <constraint firstItem="yB8-QS-d2S" firstAttribute="bottom" secondItem="jfM-vl-fit" secondAttribute="bottom" multiplier="4:10" id="e3C-lv-k5U"/>
                             <constraint firstItem="yB8-QS-d2S" firstAttribute="leading" secondItem="jfM-vl-fit" secondAttribute="leading" id="eWO-D3-ugY"/>
                             <constraint firstItem="1B6-FH-gCn" firstAttribute="top" secondItem="QOX-o8-zmP" secondAttribute="bottom" id="jFZ-oz-htv"/>
+                            <constraint firstItem="bCx-i4-j24" firstAttribute="centerX" secondItem="jfM-vl-fit" secondAttribute="centerX" id="la4-aC-Xcg"/>
                             <constraint firstItem="yB8-QS-d2S" firstAttribute="top" secondItem="AYp-kd-Kh5" secondAttribute="bottom" id="wGS-MG-fIp"/>
                         </constraints>
                     </view>
@@ -142,6 +179,7 @@
                         </barButtonItem>
                     </navigationItem>
                     <connections>
+                        <outlet property="activityIndicator" destination="bCx-i4-j24" id="1U0-nO-PXz"/>
                         <outlet property="mapView" destination="yB8-QS-d2S" id="dvw-h6-DjA"/>
                         <outlet property="tableView" destination="QOX-o8-zmP" id="j1j-Km-AIn"/>
                     </connections>

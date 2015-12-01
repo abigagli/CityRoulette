@@ -114,6 +114,14 @@ class InitialViewController: UIViewController {
             , completion: andThen)
     }
     
+    override func prepareForSegue(segue: UIStoryboardSegue, sender dataForNextVC: AnyObject?) {
+        let nextNavcon = segue.destinationViewController as! UINavigationController
+        let citiesInfoVC = nextNavcon.topViewController as! ShowCitiesViewController
+        
+        if let location = dataForNextVC as? CLLocation {
+            citiesInfoVC.referenceCity = .coordinates(location.coordinate)
+        }
+    }
     
     //MARK:- Lifetime
     override func viewDidLoad() {
@@ -171,18 +179,7 @@ extension InitialViewController: CLLocationManagerDelegate {
         manager.delegate = nil
         manager.stopUpdatingLocation()
         let lastLocation = locations.last!
-        GeoNamesClient.sharedInstance.getCitiesAroundLocation(lastLocation) /* And then, on another thread...*/ {
-            success, error in
-            
-            dispatch_async(dispatch_get_main_queue()) { //Touch the UI on the main thread only
-                if success {
-                    self.performSegueWithIdentifier("showRandomCity", sender: self)
-                }
-                else {
-                    self.alertUserWithTitle ("Failed Retrieving Nearby Cities", message: error!.localizedDescription, retryHandler: nil)
-                }
-            }
-        }
+        self.performSegueWithIdentifier("showRandomCity", sender: lastLocation)
     }
     
     func locationManager(manager: CLLocationManager,
