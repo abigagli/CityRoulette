@@ -12,23 +12,23 @@ import MapKit
 
 class City: NSManagedObject {
     
-    init(json: [String: AnyObject], context: NSManagedObjectContext, parent: City? = nil){
+    init (json: [String: AnyObject], context: NSManagedObjectContext, parent: City? = nil) {
+        
         let entity = NSEntityDescription.entityForName("City", inManagedObjectContext: context)
         
         super.init(entity: entity!, insertIntoManagedObjectContext: context)
         
+        //@NSManaged properties acts as inherited properties and must be initialized in phase2
         self.parent = parent
         
-        //TODO: fill from json
-        print ("Creating city from \(json)")
+        self.name = json["toponymName"] as! String
+        self.countryCode = json["countrycode"] as? String
+        self.population = (json["population"] as? Int32) ?? 0
+        self.wikipedia = json["wikipedia"] as? String
+        self.latitude = json["lat"] as! Double
+        self.longitude = json["lng"] as! Double
+        self.geonameID = Int64(json["geonameId"] as! Int)
     }
-    
-    /*
-    @NSManaged func addNeighboursObject (neighbour: City)
-    @NSManaged func removeNeighboursObject (neighbour: City)
-    @NSManaged func addNeighbours (neighbours: NSSet)
-    @NSManaged func removeNeighbours (neighbours: NSSet)
-    */
 }
 
 extension City: MKAnnotation {

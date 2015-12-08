@@ -1,1 +1,3 @@
-Implement busystatus functionality (from OnTheMap) possibly as a protocol extension
+- Implement busystatus functionality (from OnTheMap) possibly as a protocol extension
+- Multi-section tableview
+- Pull to refresh

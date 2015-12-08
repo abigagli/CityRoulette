@@ -125,8 +125,7 @@ extension GeoNamesClient {
                     completionHandler(success: false, error: NSError (domain: "GeoNames API", code: value, userInfo: userInfo))
                 }
                 else {
-                    print ("result: \(result)")
-                    guard let cities = resultDictionary["geonames"] as? [[String: AnyObject]] where cities.count >= 1 else {
+                    guard let cities = resultDictionary[JSONResponseKeys.Geonames] as? [[String: AnyObject]] where cities.count >= 1 else {
                         completionHandler (success: false, error: NSError(domain: "GeoNames Result", code: 1, userInfo: [NSLocalizedDescriptionKey: "City information not found"]))
                         return
                     }

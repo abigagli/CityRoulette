@@ -43,7 +43,7 @@ extension UIViewController {
         //Ensure presentation is always done by a visible viewcontroller, since with
         //particularly slow network connections, the user might have pushed/popped
         //before the alert is presented
-        UIApplication.sharedApplication().keyWindow?.rootViewController?.presentViewController(alert, animated: true, completion: nil)
+        self.presentViewController(alert, animated: true, completion: nil)
     }
 }
 
