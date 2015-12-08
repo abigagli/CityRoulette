@@ -56,13 +56,16 @@ class InitialViewController: UIViewController {
     private var verticalConstraintConstant: CGFloat = 0
     private var colorImage: UIImageView?
     private lazy var locationManager = CLLocationManager()
+    private var busyStatusManager: BusyStatusManager!
+
     
     //MARK: - UI
     private func hideButtons()
     {
-        self.aroundMeTopSpace.constant -= self.verticalConstraintConstant
+        self.aroundMeTopSpace.constant = 0
         self.surpriseMe.alpha = 0
-        self.chooseBottomSpace.constant -= self.verticalConstraintConstant
+        self.chooseBottomSpace.constant = 0
+        
         self.view.layoutIfNeeded()
     }
     
@@ -94,14 +97,13 @@ class InitialViewController: UIViewController {
     
     private func showButtons()
     {
-        self.aroundMeTopSpace.constant += self.verticalConstraintConstant
-        self.chooseBottomSpace.constant += self.verticalConstraintConstant
+        self.aroundMeTopSpace.constant = self.verticalConstraintConstant
+        self.chooseBottomSpace.constant = self.verticalConstraintConstant
+        self.surpriseMe.alpha = 1
 
         UIView.animateWithDuration(1.0) {
             self.view.layoutIfNeeded()
         }
-        
-        self.surpriseMe.alpha = 1
         
         self.springAnimate(self.surpriseMe)
     }
@@ -115,10 +117,14 @@ class InitialViewController: UIViewController {
     }
     
     override func prepareForSegue(segue: UIStoryboardSegue, sender dataForNextVC: AnyObject?) {
-        let nextNavcon = segue.destinationViewController as! UINavigationController
-        let citiesInfoVC = nextNavcon.topViewController as! ShowCitiesViewController
+        var destination: UIViewController? = segue.destinationViewController
         
-        if let location = dataForNextVC as? CLLocation {
+        if let navCon = destination as? UINavigationController {
+            destination = navCon.visibleViewController
+        }
+        
+        if let citiesInfoVC = destination as? ShowCitiesViewController,
+            location = dataForNextVC as? CLLocation {
             citiesInfoVC.referenceCity = .coordinates(location.coordinate)
         }
     }
@@ -126,10 +132,11 @@ class InitialViewController: UIViewController {
     //MARK:- Lifetime
     override func viewDidLoad() {
         super.viewDidLoad()
-        // Do any additional setup after loading the view, typically from a nib.
         self.verticalConstraintConstant = self.aroundMeTopSpace.constant
         
         self.colorImage = UIImageView(image: UIImage(named: "Florence"))
+        
+        self.busyStatusManager = BusyStatusManager(forView: self.view)
     }
 
     override func didReceiveMemoryWarning() {
@@ -179,7 +186,24 @@ extension InitialViewController: CLLocationManagerDelegate {
         manager.delegate = nil
         manager.stopUpdatingLocation()
         let lastLocation = locations.last!
-        self.performSegueWithIdentifier("showRandomCity", sender: lastLocation)
+        
+        self.hideButtons()
+        self.busyStatusManager.setBusyStatus(true)
+        GeoNamesClient.sharedInstance.getCitiesAroundLocation(lastLocation.coordinate, withRadius: 10000.0) /* And then, on another thread...*/ {
+            success, error in
+            
+            dispatch_async(dispatch_get_main_queue()) { //Touch the UI on the main thread only
+                self.busyStatusManager.setBusyStatus(false)
+                if success {
+                    self.performSegueWithIdentifier("showCitiesInfo", sender: lastLocation)
+                }
+                else {
+                    self.alertUserWithTitle ("Failed Retrieving Nearby Cities", message: error!.localizedDescription, retryHandler: nil, okHandler: { _ in
+                        self.showButtons()
+                    })
+                }
+            }
+        }
     }
     
     func locationManager(manager: CLLocationManager,

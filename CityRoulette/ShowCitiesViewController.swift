@@ -74,7 +74,11 @@ class ShowCitiesViewController: UIViewController {
     override func viewDidAppear(animated: Bool) {
         super.viewDidAppear(animated)
         
-        populateData()
+        /*
+        let region = MKCoordinateRegionMakeWithDistance(self.referenceCity.coordinates, 10000.0, 10000.0)
+        
+        self.mapView.setRegion(region, animated: false)
+        */
         updateUI()
     }
 
@@ -109,28 +113,6 @@ class ShowCitiesViewController: UIViewController {
         
     }
     
-    private func populateData() {
-        
-        self.activityIndicator.startAnimating()
-        switch self.referenceCity! {
-        case let .coordinates (location):
-        GeoNamesClient.sharedInstance.getCitiesAroundLocation(location) /* And then, on another thread...*/ {
-            success, error in
-            
-            dispatch_async(dispatch_get_main_queue()) { //Touch the UI on the main thread only
-                self.activityIndicator.stopAnimating()
-                if success {
-                    print ("Got some cities")
-                }
-                else {
-                    self.alertUserWithTitle ("Failed Retrieving Nearby Cities", message: error!.localizedDescription, retryHandler: nil)
-                }
-            }
-        }
-        default:
-            ()
-        }
-    }
 }
 //MARK:- Protocol Conformance
 
@@ -172,7 +154,7 @@ extension ShowCitiesViewController: UITableViewDataSource, UITableViewDelegate {
         let cell = tableView.dequeueReusableCellWithIdentifier("cityInfoCell", forIndexPath: indexPath)
 
         let city = fetchedResultsController.objectAtIndexPath(indexPath) as! City
-        cell.textLabel?.text = city.name
+        cell.textLabel?.text = city.name + (city.parent != nil ? "" : " ROOT")
 
         cell.detailTextLabel?.text = city.wikipedia
         

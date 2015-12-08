@@ -8,6 +8,7 @@
 
 import UIKit
 import CoreLocation
+import MapKit
 import CoreData
 
 class GeoNamesClient {
@@ -90,16 +91,20 @@ class GeoNamesClient {
 
 //MARK:- Convenience
 extension GeoNamesClient {
-    func getCitiesAroundLocation (location: CLLocationCoordinate2D, completionHandler: (success: Bool, error: NSError?) -> Void) {
+    func getCitiesAroundLocation (location: CLLocationCoordinate2D, withRadius radiusInMeters: Double, completionHandler: (success: Bool, error: NSError?) -> Void) {
         
-        let accuracy = 0.2
+        let region = MKCoordinateRegionMakeWithDistance(location, radiusInMeters, radiusInMeters)
+        
+        let boxH = region.span.longitudeDelta / 2.0
+        let boxV = region.span.latitudeDelta / 2.0
+        
         //Parameters for API invocation
         let parameters: [String : AnyObject] = [
             
-            URLKeys.North       : "\(location.latitude + accuracy)",
-            URLKeys.South       : "\(location.latitude - accuracy)",
-            URLKeys.East        : "\(location.longitude + accuracy)",
-            URLKeys.West        : "\(location.longitude - accuracy)",
+            URLKeys.North       : "\(location.latitude + boxV)",
+            URLKeys.South       : "\(location.latitude - boxV)",
+            URLKeys.East        : "\(location.longitude + boxH)",
+            URLKeys.West        : "\(location.longitude - boxV)",
             /*
             URLKeys.Lat         : location.latitude,
             URLKeys.Lon         : location.longitude,
@@ -130,6 +135,9 @@ extension GeoNamesClient {
                         return
                     }
                     
+                    //TODO: REMOVEME
+                    print ("Cities: \(resultDictionary)")
+                    
                     dispatch_async(dispatch_get_main_queue()) { //managedObjectContext must be used on the owner (main in this case) thread only
                         var root: City?
                         for (index, cityJson) in cities.enumerate() {
@@ -153,5 +161,21 @@ extension GeoNamesClient {
     private var sharedContext: NSManagedObjectContext  {
         return (UIApplication.sharedApplication().delegate as! AppDelegate).managedObjectContext
     }
-
+    
+    private var persistentStoreCoordinator: NSPersistentStoreCoordinator  {
+        return (UIApplication.sharedApplication().delegate as! AppDelegate).persistentStoreCoordinator
+    }
+    
+    private func deleteCities() {
+        let coord = self.persistentStoreCoordinator
+        
+        let fetchRequest = NSFetchRequest(entityName: "City")
+        let deleteRequest = NSBatchDeleteRequest(fetchRequest: fetchRequest)
+        
+        do {
+            try coord.executeRequest(deleteRequest, withContext: self.sharedContext)
+        } catch let error as NSError {
+            debugPrint(error)
+        }
+}
 }
