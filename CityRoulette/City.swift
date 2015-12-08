@@ -12,18 +12,17 @@ import MapKit
 
 class City: NSManagedObject {
     
-    init (json: [String: AnyObject], context: NSManagedObjectContext, parent: City? = nil) {
+    convenience init (json: [String: AnyObject], context: NSManagedObjectContext) {
         
         let entity = NSEntityDescription.entityForName("City", inManagedObjectContext: context)
         
-        super.init(entity: entity!, insertIntoManagedObjectContext: context)
+        self.init(entity: entity!, insertIntoManagedObjectContext: context)
         
         //@NSManaged properties acts as inherited properties and must be initialized in phase2
-        self.parent = parent
         
         self.name = json["toponymName"] as! String
         self.countryCode = json["countrycode"] as? String
-        self.population = (json["population"] as? Int32) ?? 0
+        self.population = Int32((json["population"] as? Int) ?? 0)
         self.wikipedia = json["wikipedia"] as? String
         self.latitude = json["lat"] as! Double
         self.longitude = json["lng"] as! Double

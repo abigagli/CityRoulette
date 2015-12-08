@@ -139,14 +139,15 @@ extension GeoNamesClient {
                     print ("Cities: \(resultDictionary)")
                     
                     dispatch_async(dispatch_get_main_queue()) { //managedObjectContext must be used on the owner (main in this case) thread only
-                        var root: City?
-                        for (index, cityJson) in cities.enumerate() {
-                            if index == 0 {
-                                root = City (json: cityJson, context: self.sharedContext)
+                        
+                        for cityJson in cities {
+                            let currentID = Int64(cityJson[JSONResponseKeys.GeonameID] as! Int)
+                            
+                            if self.alreadyKnown (currentID) {
+                                continue
                             }
-                            else {
-                                let _ = City(json: cityJson, context: self.sharedContext, parent: root)
-                            }
+                            
+                            let _ = City(json: cityJson, context: self.sharedContext)
                         }
                     
                     }
@@ -177,5 +178,16 @@ extension GeoNamesClient {
         } catch let error as NSError {
             debugPrint(error)
         }
-}
+    }
+    
+    private func alreadyKnown (geonameID: Int64) -> Bool {
+        let fetchRequest = NSFetchRequest (entityName: "City")
+        fetchRequest.predicate = NSPredicate (format: "geonameID == %lld", geonameID)
+        
+        var error: NSError?
+        let n = self.sharedContext.countForFetchRequest(fetchRequest, error: &error)
+        
+        return error == nil && n > 0
+    }
+    
 }

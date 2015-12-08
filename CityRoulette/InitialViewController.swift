@@ -10,6 +10,10 @@ import UIKit
 import CoreLocation
 
 class InitialViewController: UIViewController {
+    //MARK:- Constants
+    //TODO: MAKE THIS CONFIGURABLE
+    let k_radius = 10000.0
+    
     //MARK:- Outlets
     
     @IBOutlet weak var backgroundImage: UIImageView!
@@ -123,9 +127,8 @@ class InitialViewController: UIViewController {
             destination = navCon.visibleViewController
         }
         
-        if let citiesInfoVC = destination as? ShowCitiesViewController,
-            location = dataForNextVC as? CLLocation {
-            citiesInfoVC.referenceCity = .coordinates(location.coordinate)
+        if let citiesInfoVC = destination as? ShowCitiesViewController {
+            citiesInfoVC.radius = self.k_radius
         }
     }
     
@@ -189,7 +192,7 @@ extension InitialViewController: CLLocationManagerDelegate {
         
         self.hideButtons()
         self.busyStatusManager.setBusyStatus(true)
-        GeoNamesClient.sharedInstance.getCitiesAroundLocation(lastLocation.coordinate, withRadius: 10000.0) /* And then, on another thread...*/ {
+        GeoNamesClient.sharedInstance.getCitiesAroundLocation(lastLocation.coordinate, withRadius: self.k_radius) /* And then, on another thread...*/ {
             success, error in
             
             dispatch_async(dispatch_get_main_queue()) { //Touch the UI on the main thread only

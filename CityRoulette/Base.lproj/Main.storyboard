@@ -99,7 +99,7 @@
             </objects>
             <point key="canvasLocation" x="-1122" y="511"/>
         </scene>
-        <!--Title-->
+        <!--Cities-->
         <scene sceneID="MLp-uj-8AN">
             <objects>
                 <viewController id="1PL-0Z-j2S" customClass="ShowCitiesViewController" customModule="CityRoulette" customModuleProvider="target" sceneMemberID="viewController">
@@ -120,26 +120,26 @@
                                 <animations/>
                                 <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                 <prototypes>
-                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" selectionStyle="blue" hidesAccessoryWhenEditing="NO" indentationLevel="1" indentationWidth="0.0" reuseIdentifier="cityInfoCell" textLabel="frY-lK-9g8" detailTextLabel="N1b-Lm-ohj" style="IBUITableViewCellStyleValue2" id="KW7-5T-GDp">
+                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" selectionStyle="none" hidesAccessoryWhenEditing="NO" indentationLevel="1" indentationWidth="0.0" reuseIdentifier="cityInfoCell" textLabel="frY-lK-9g8" detailTextLabel="efw-d3-pW5" style="IBUITableViewCellStyleSubtitle" id="KW7-5T-GDp">
                                         <rect key="frame" x="0.0" y="28" width="600" height="44"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="KW7-5T-GDp" id="GFK-TL-BkP">
                                             <rect key="frame" x="0.0" y="0.0" width="600" height="43"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <subviews>
-                                                <label opaque="NO" multipleTouchEnabled="YES" contentMode="left" text="Title" textAlignment="right" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="frY-lK-9g8">
-                                                    <rect key="frame" x="15" y="14" width="91" height="15"/>
+                                                <label opaque="NO" multipleTouchEnabled="YES" contentMode="left" text="Title" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="frY-lK-9g8">
+                                                    <rect key="frame" x="15" y="5" width="32" height="20"/>
                                                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                                     <animations/>
-                                                    <fontDescription key="fontDescription" type="system" pointSize="12"/>
-                                                    <color key="textColor" red="0.0" green="0.47843137254901963" blue="1" alpha="1" colorSpace="calibratedRGB"/>
+                                                    <fontDescription key="fontDescription" type="system" pointSize="16"/>
+                                                    <color key="textColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
                                                     <nil key="highlightedColor"/>
                                                 </label>
-                                                <label opaque="NO" multipleTouchEnabled="YES" contentMode="left" text="Detail" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="N1b-Lm-ohj">
-                                                    <rect key="frame" x="112" y="14" width="33" height="15"/>
+                                                <label opaque="NO" multipleTouchEnabled="YES" contentMode="left" text="Subtitle" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="efw-d3-pW5">
+                                                    <rect key="frame" x="15" y="25" width="41" height="14"/>
                                                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                                     <animations/>
-                                                    <fontDescription key="fontDescription" type="system" pointSize="12"/>
+                                                    <fontDescription key="fontDescription" type="system" pointSize="11"/>
                                                     <color key="textColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
                                                     <nil key="highlightedColor"/>
                                                 </label>
@@ -150,16 +150,10 @@
                                     </tableViewCell>
                                 </prototypes>
                             </tableView>
-                            <activityIndicatorView hidden="YES" opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" hidesWhenStopped="YES" style="gray" translatesAutoresizingMaskIntoConstraints="NO" id="bCx-i4-j24">
-                                <rect key="frame" x="290" y="290" width="20" height="20"/>
-                                <animations/>
-                                <color key="color" red="1" green="0.1069200313" blue="0.18957415120000001" alpha="1" colorSpace="calibratedRGB"/>
-                            </activityIndicatorView>
                         </subviews>
                         <animations/>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                         <constraints>
-                            <constraint firstItem="bCx-i4-j24" firstAttribute="centerY" secondItem="jfM-vl-fit" secondAttribute="centerY" id="2Rn-ic-FGV"/>
                             <constraint firstItem="QOX-o8-zmP" firstAttribute="top" secondItem="yB8-QS-d2S" secondAttribute="bottom" id="E3Q-KC-5i2"/>
                             <constraint firstAttribute="trailing" secondItem="yB8-QS-d2S" secondAttribute="trailing" id="EAE-dJ-zAZ"/>
                             <constraint firstAttribute="trailing" secondItem="QOX-o8-zmP" secondAttribute="trailing" id="HLg-MX-OrR"/>
@@ -167,11 +161,10 @@
                             <constraint firstItem="yB8-QS-d2S" firstAttribute="bottom" secondItem="jfM-vl-fit" secondAttribute="bottom" multiplier="4:10" id="e3C-lv-k5U"/>
                             <constraint firstItem="yB8-QS-d2S" firstAttribute="leading" secondItem="jfM-vl-fit" secondAttribute="leading" id="eWO-D3-ugY"/>
                             <constraint firstItem="1B6-FH-gCn" firstAttribute="top" secondItem="QOX-o8-zmP" secondAttribute="bottom" id="jFZ-oz-htv"/>
-                            <constraint firstItem="bCx-i4-j24" firstAttribute="centerX" secondItem="jfM-vl-fit" secondAttribute="centerX" id="la4-aC-Xcg"/>
                             <constraint firstItem="yB8-QS-d2S" firstAttribute="top" secondItem="AYp-kd-Kh5" secondAttribute="bottom" id="wGS-MG-fIp"/>
                         </constraints>
                     </view>
-                    <navigationItem key="navigationItem" title="Title" id="ZoW-gP-0va">
+                    <navigationItem key="navigationItem" title="Cities" id="ZoW-gP-0va">
                         <barButtonItem key="leftBarButtonItem" systemItem="done" id="bUC-9x-Gb2">
                             <connections>
                                 <action selector="doneTapped:" destination="1PL-0Z-j2S" id="eiL-hY-sgy"/>
@@ -179,14 +172,59 @@
                         </barButtonItem>
                     </navigationItem>
                     <connections>
-                        <outlet property="activityIndicator" destination="bCx-i4-j24" id="1U0-nO-PXz"/>
                         <outlet property="mapView" destination="yB8-QS-d2S" id="dvw-h6-DjA"/>
                         <outlet property="tableView" destination="QOX-o8-zmP" id="j1j-Km-AIn"/>
+                        <segue destination="MPO-H7-Q0N" kind="show" identifier="showWiki" action="showDetailViewController:sender:" id="bKs-h5-LHH"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="E2c-v0-ZcJ" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
             <point key="canvasLocation" x="676" y="506"/>
+        </scene>
+        <!--Wiki View Controller-->
+        <scene sceneID="HQw-sw-LWb">
+            <objects>
+                <viewController id="MPO-H7-Q0N" customClass="WikiViewController" customModule="CityRoulette" customModuleProvider="target" sceneMemberID="viewController">
+                    <layoutGuides>
+                        <viewControllerLayoutGuide type="top" id="pAN-Qv-pby"/>
+                        <viewControllerLayoutGuide type="bottom" id="LG9-f7-qHh"/>
+                    </layoutGuides>
+                    <view key="view" contentMode="scaleToFill" id="r2c-IH-CkI">
+                        <rect key="frame" x="0.0" y="0.0" width="600" height="600"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <webView contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="iOv-Eu-KJA">
+                                <rect key="frame" x="0.0" y="64" width="600" height="536"/>
+                                <animations/>
+                                <color key="backgroundColor" red="0.36078431370000003" green="0.38823529410000002" blue="0.4039215686" alpha="1" colorSpace="deviceRGB"/>
+                            </webView>
+                        </subviews>
+                        <animations/>
+                        <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                        <constraints>
+                            <constraint firstItem="iOv-Eu-KJA" firstAttribute="top" secondItem="pAN-Qv-pby" secondAttribute="bottom" id="GXo-Bg-8bo"/>
+                            <constraint firstItem="LG9-f7-qHh" firstAttribute="top" secondItem="iOv-Eu-KJA" secondAttribute="bottom" id="JpS-Ub-Qqx"/>
+                            <constraint firstItem="LG9-f7-qHh" firstAttribute="top" secondItem="iOv-Eu-KJA" secondAttribute="bottom" id="PX2-0C-2Jf"/>
+                            <constraint firstItem="iOv-Eu-KJA" firstAttribute="leading" secondItem="r2c-IH-CkI" secondAttribute="leading" id="jKN-bR-Ofj"/>
+                            <constraint firstAttribute="trailing" secondItem="iOv-Eu-KJA" secondAttribute="trailing" id="muX-TI-FuQ"/>
+                            <constraint firstItem="iOv-Eu-KJA" firstAttribute="leading" secondItem="r2c-IH-CkI" secondAttribute="leading" constant="180" id="pV5-ax-CoX"/>
+                            <constraint firstAttribute="trailing" secondItem="iOv-Eu-KJA" secondAttribute="trailing" constant="180" id="tR5-ys-Vcl"/>
+                        </constraints>
+                        <variation key="default">
+                            <mask key="constraints">
+                                <exclude reference="pV5-ax-CoX"/>
+                                <exclude reference="tR5-ys-Vcl"/>
+                                <exclude reference="JpS-Ub-Qqx"/>
+                            </mask>
+                        </variation>
+                    </view>
+                    <connections>
+                        <outlet property="webView" destination="iOv-Eu-KJA" id="vbw-vs-sFn"/>
+                    </connections>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="OU5-dv-R5E" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="1542" y="403"/>
         </scene>
         <!--Navigation Controller-->
         <scene sceneID="5qb-e0-tES">

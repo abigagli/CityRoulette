@@ -41,6 +41,7 @@ extension GeoNamesClient {
     
         static let Status   = "status"
         static let Geonames = "geonames"
+        static let GeonameID = "geonameId"
     }
     
 }

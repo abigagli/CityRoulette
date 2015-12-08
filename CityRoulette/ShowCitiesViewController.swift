@@ -12,18 +12,10 @@ import CoreData
 
 class ShowCitiesViewController: UIViewController {
 
-    enum SourceType {
-        case coordinates (CLLocationCoordinate2D)
-        case city (String)
-        
-    }
-    
-    var referenceCity: SourceType!
     
     //MARK:- Outlets
     @IBOutlet weak var mapView: MKMapView!
     @IBOutlet weak var tableView: UITableView!
-    @IBOutlet weak var activityIndicator: UIActivityIndicatorView!
     
     //MARK:- Actions
     @IBAction func doneTapped(sender: UIBarButtonItem) {
@@ -31,35 +23,53 @@ class ShowCitiesViewController: UIViewController {
     }
     
     //MARK:- State
-    
+    var radius: Double!
+
     //MARK:- Lifetime
+    override func prepareForSegue(segue: UIStoryboardSegue, sender dataForNextVC: AnyObject?) {
+        var destination: UIViewController? = segue.destinationViewController
+        
+        if let navCon = destination as? UINavigationController {
+            destination = navCon.visibleViewController
+        }
+        
+        if let wikiVC = destination as? WikiViewController {
+            wikiVC.city = dataForNextVC as! City
+        }
+    }
+    
     override func viewDidLoad() {
         super.viewDidLoad()
 
+        self.navigationItem.rightBarButtonItem = self.editButtonItem()
         self.mapView.delegate = self
-        self.mapView.userInteractionEnabled = false
+        //self.mapView.userInteractionEnabled = false
         
         self.tableView.dataSource = self
         self.tableView.delegate = self
+        
         
         self.fetchedResultsController.delegate = self
         
         do {
             try self.fetchedResultsController.performFetch()
             
-            /*
-            //Update mapView based on the user's pin.
-            self.mapView.addAnnotation(pin)
+            var topCity: City?
+            for city in self.fetchedResultsController.fetchedObjects as! [City] {
+                self.mapView.addAnnotation(city)
             
-            let region = MKCoordinateRegionMakeWithDistance(pin.coordinate, PhotoAlbumViewController.miniMapSpanMeters, PhotoAlbumViewController.miniMapSpanMeters)
-            
-            self.mapView.setRegion(region, animated: false)
-            */
-            
+                if topCity == nil {
+                    topCity = city
+                    let region = MKCoordinateRegionMakeWithDistance(topCity!.coordinate, self.radius * 1.1, self.radius * 1.1)
+                    
+                    self.mapView.setRegion(region, animated: false)
+                }
+
+            }
         }
         catch {
             self.alertUserWithTitle("Error"
-                                    , message: "Couldn't obtain list of photos for this pin. Please try to remove it and add it again"
+                                    , message: "Failed to retrieve list of cities"
                                     , retryHandler: nil)
         }
 
@@ -74,11 +84,6 @@ class ShowCitiesViewController: UIViewController {
     override func viewDidAppear(animated: Bool) {
         super.viewDidAppear(animated)
         
-        /*
-        let region = MKCoordinateRegionMakeWithDistance(self.referenceCity.coordinates, 10000.0, 10000.0)
-        
-        self.mapView.setRegion(region, animated: false)
-        */
         updateUI()
     }
 
@@ -87,6 +92,11 @@ class ShowCitiesViewController: UIViewController {
         // Dispose of any resources that can be recreated.
     }
     
+    override func setEditing(editing: Bool, animated: Bool) {
+        super.setEditing(editing, animated: animated)
+        self.tableView.setEditing(editing, animated: animated)
+    }
+
     //MARK: Core Data
     private var sharedContext: NSManagedObjectContext {
         return (UIApplication.sharedApplication().delegate as! AppDelegate).managedObjectContext
@@ -96,8 +106,7 @@ class ShowCitiesViewController: UIViewController {
         
         //create fetch request with sort descriptor
         let fetchRequest = NSFetchRequest(entityName: "City")
-        //fetchRequest.predicate = NSPredicate(format: "mapPin == %@", self.pin)
-        fetchRequest.sortDescriptors = []
+        fetchRequest.sortDescriptors = [NSSortDescriptor(key: "population", ascending: false)]
         
         //create controller from fetch request
         let fetchedResultsController = NSFetchedResultsController(fetchRequest: fetchRequest, managedObjectContext: self.sharedContext, sectionNameKeyPath: nil, cacheName: nil)
@@ -125,10 +134,9 @@ extension ShowCitiesViewController: MKMapViewDelegate {
         var pinView = mapView.dequeueReusableAnnotationViewWithIdentifier(reuseId) as? MKPinAnnotationView
         if pinView == nil {
             pinView = MKPinAnnotationView(annotation: annotation, reuseIdentifier: reuseId)
+            
             pinView!.pinTintColor = UIColor.greenColor()
-            
             pinView!.animatesDrop = false
-            
         }
         else {
             pinView!.annotation = annotation
@@ -154,13 +162,41 @@ extension ShowCitiesViewController: UITableViewDataSource, UITableViewDelegate {
         let cell = tableView.dequeueReusableCellWithIdentifier("cityInfoCell", forIndexPath: indexPath)
 
         let city = fetchedResultsController.objectAtIndexPath(indexPath) as! City
-        cell.textLabel?.text = city.name + (city.parent != nil ? "" : " ROOT")
-
-        cell.detailTextLabel?.text = city.wikipedia
         
+        cell.textLabel?.text = city.name + "  " + (city.countryCode ?? "")
+        cell.detailTextLabel?.text = "Population: \(city.population)"
+        
+        if let wikipedia = city.wikipedia where !wikipedia.isEmpty {
+            cell.accessoryType = .DetailDisclosureButton
+        }
+        else {
+            cell.accessoryType = .None
+        }
+        
+
         return cell
     }
     
+    
+    func tableView(tableView: UITableView, accessoryButtonTappedForRowWithIndexPath indexPath: NSIndexPath) {
+        //TODO: REMOVEME
+        print ("accessory button tapped")
+        self.performSegueWithIdentifier("showWiki", sender: self.fetchedResultsController.objectAtIndexPath(indexPath))
+    }
+    
+    func tableView(tableView: UITableView, didSelectRowAtIndexPath indexPath: NSIndexPath) {
+        if !editing {
+            //TODO: REMOVEME AFTER SYNCING WITH MAPVIEW
+            print ("row tapped")
+        }
+    }
+    
+    func tableView(tableView: UITableView, commitEditingStyle editingStyle: UITableViewCellEditingStyle, forRowAtIndexPath indexPath: NSIndexPath) {
+        if editingStyle == .Delete {
+            self.sharedContext.deleteObject(self.fetchedResultsController.objectAtIndexPath(indexPath) as! NSManagedObject)
+            
+        }
+    }
 }
 
 //MARK: NSFetchedResultsControllerDelegate
@@ -179,8 +215,10 @@ extension ShowCitiesViewController: NSFetchedResultsControllerDelegate {
         switch type {
         case .Insert:
             tableView.insertRowsAtIndexPaths([newIndexPath!], withRowAnimation: .Fade)
+            self.mapView.addAnnotation(anObject as! MKAnnotation)
         case .Delete:
             tableView.deleteRowsAtIndexPaths([indexPath!], withRowAnimation: .Fade)
+            self.mapView.removeAnnotation(anObject as! MKAnnotation)
         default:
             return
         }

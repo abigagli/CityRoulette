@@ -8,10 +8,8 @@
         <attribute name="name" attributeType="String" syncable="YES"/>
         <attribute name="population" attributeType="Integer 32" defaultValueString="0" syncable="YES"/>
         <attribute name="wikipedia" optional="YES" attributeType="String" syncable="YES"/>
-        <relationship name="neighbours" toMany="YES" deletionRule="Cascade" ordered="YES" destinationEntity="City" inverseName="parent" inverseEntity="City" syncable="YES"/>
-        <relationship name="parent" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="City" inverseName="neighbours" inverseEntity="City" syncable="YES"/>
     </entity>
     <elements>
-        <element name="City" positionX="-63" positionY="-18" width="128" height="180"/>
+        <element name="City" positionX="-63" positionY="-18" width="128" height="150"/>
     </elements>
 </model>
