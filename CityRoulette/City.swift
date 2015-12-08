@@ -11,18 +11,24 @@ import CoreData
 import MapKit
 
 class City: NSManagedObject {
-
-// Insert code here to add functionality to your managed object subclass
-    convenience init(json: [String: AnyObject], context: NSManagedObjectContext){
+    
+    init(json: [String: AnyObject], context: NSManagedObjectContext, parent: City? = nil){
         let entity = NSEntityDescription.entityForName("City", inManagedObjectContext: context)
         
-        //Superclass' init(entity:insertIntoManagedObjectContext) designated initializer is inherited
-        //because we don't define ourselves any designated initializer, so we can call such inherited designated initializer
-        //by simple self.init delegation here
-        self.init(entity: entity!, insertIntoManagedObjectContext: context)
+        super.init(entity: entity!, insertIntoManagedObjectContext: context)
         
+        self.parent = parent
+        
+        //TODO: fill from json
         print ("Creating city from \(json)")
     }
+    
+    /*
+    @NSManaged func addNeighboursObject (neighbour: City)
+    @NSManaged func removeNeighboursObject (neighbour: City)
+    @NSManaged func addNeighbours (neighbours: NSSet)
+    @NSManaged func removeNeighbours (neighbours: NSSet)
+    */
 }
 
 extension City: MKAnnotation {

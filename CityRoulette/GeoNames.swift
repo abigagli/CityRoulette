@@ -138,7 +138,7 @@ extension GeoNamesClient {
                                 root = City (json: cityJson, context: self.sharedContext)
                             }
                             else {
-                                root!.neighbours.append(City(json: cityJson, context: self.sharedContext))
+                                let _ = City(json: cityJson, context: self.sharedContext, parent: root)
                             }
                         }
                     

@@ -42,7 +42,26 @@ class ShowCitiesViewController: UIViewController {
         self.tableView.dataSource = self
         self.tableView.delegate = self
         
-        //self.fetchedResultsController.delegate = self
+        self.fetchedResultsController.delegate = self
+        
+        do {
+            try self.fetchedResultsController.performFetch()
+            
+            /*
+            //Update mapView based on the user's pin.
+            self.mapView.addAnnotation(pin)
+            
+            let region = MKCoordinateRegionMakeWithDistance(pin.coordinate, PhotoAlbumViewController.miniMapSpanMeters, PhotoAlbumViewController.miniMapSpanMeters)
+            
+            self.mapView.setRegion(region, animated: false)
+            */
+            
+        }
+        catch {
+            self.alertUserWithTitle("Error"
+                                    , message: "Couldn't obtain list of photos for this pin. Please try to remove it and add it again"
+                                    , retryHandler: nil)
+        }
 
         // Do any additional setup after loading the view.
     }
@@ -72,7 +91,7 @@ class ShowCitiesViewController: UIViewController {
     private lazy var fetchedResultsController: NSFetchedResultsController = {
         
         //create fetch request with sort descriptor
-        let fetchRequest = NSFetchRequest(entityName: "CityInfo")
+        let fetchRequest = NSFetchRequest(entityName: "City")
         //fetchRequest.predicate = NSPredicate(format: "mapPin == %@", self.pin)
         fetchRequest.sortDescriptors = []
         
@@ -128,7 +147,7 @@ class ShowCitiesViewController: UIViewController {
 extension ShowCitiesViewController: MKMapViewDelegate {
     
     func mapView(mapView: MKMapView, viewForAnnotation annotation: MKAnnotation) -> MKAnnotationView? {
-        let reuseId = "travelLocationPin"
+        let reuseId = "cityPin"
         
         var pinView = mapView.dequeueReusableAnnotationViewWithIdentifier(reuseId) as? MKPinAnnotationView
         if pinView == nil {
@@ -150,16 +169,21 @@ extension ShowCitiesViewController: MKMapViewDelegate {
 //MARK: UITableViewDataSource, UITableViewDelegate
 extension ShowCitiesViewController: UITableViewDataSource, UITableViewDelegate {
     
+    func numberOfSectionsInTableView(tableView: UITableView) -> Int {
+        return self.fetchedResultsController.sections!.count
+    }
+    
     func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return 10
+        return self.fetchedResultsController.sections![section].numberOfObjects
     }
     
     func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCellWithIdentifier("cityInfoCell", forIndexPath: indexPath)
 
-        cell.textLabel?.text = "text"
+        let city = fetchedResultsController.objectAtIndexPath(indexPath) as! City
+        cell.textLabel?.text = city.name
 
-        cell.detailTextLabel?.text = "detail"
+        cell.detailTextLabel?.text = city.wikipedia
         
         return cell
     }
@@ -168,5 +192,31 @@ extension ShowCitiesViewController: UITableViewDataSource, UITableViewDelegate {
 
 //MARK: NSFetchedResultsControllerDelegate
 extension ShowCitiesViewController: NSFetchedResultsControllerDelegate {
-
+    func controllerWillChangeContent(controller: NSFetchedResultsController) {
+        // This invocation prepares the table to recieve a number of changes. It will store them up
+        // until it receives endUpdates(), and then perform them all at once.
+        self.tableView.beginUpdates()
+    }
+    
+    func controller(controller: NSFetchedResultsController, didChangeSection sectionInfo: NSFetchedResultsSectionInfo, atIndex sectionIndex: Int, forChangeType type: NSFetchedResultsChangeType) {
+        
+    }
+    
+    func controller(controller: NSFetchedResultsController, didChangeObject anObject: AnyObject, atIndexPath indexPath: NSIndexPath?, forChangeType type: NSFetchedResultsChangeType, newIndexPath: NSIndexPath?) {
+        switch type {
+        case .Insert:
+            tableView.insertRowsAtIndexPaths([newIndexPath!], withRowAnimation: .Fade)
+        case .Delete:
+            tableView.deleteRowsAtIndexPaths([indexPath!], withRowAnimation: .Fade)
+        default:
+            return
+        }
+    }
+    
+    // When endUpdates() is invoked, the table makes the changes visible.
+    func controllerDidChangeContent(controller: NSFetchedResultsController) {
+        self.tableView.endUpdates()
+    }
+    
+    
 }

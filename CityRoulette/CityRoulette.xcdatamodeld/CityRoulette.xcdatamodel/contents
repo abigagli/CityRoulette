@@ -6,10 +6,10 @@
         <attribute name="latitude" attributeType="Double" defaultValueString="0.0" syncable="YES"/>
         <attribute name="longitude" attributeType="Double" defaultValueString="0.0" syncable="YES"/>
         <attribute name="name" attributeType="String" syncable="YES"/>
-        <attribute name="population" optional="YES" attributeType="Integer 32" defaultValueString="0" syncable="YES"/>
+        <attribute name="population" attributeType="Integer 32" defaultValueString="0" syncable="YES"/>
         <attribute name="wikipedia" optional="YES" attributeType="String" syncable="YES"/>
-        <relationship name="neighbours" optional="YES" toMany="YES" deletionRule="Cascade" destinationEntity="City" inverseName="root" inverseEntity="City" syncable="YES"/>
-        <relationship name="root" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="City" inverseName="neighbours" inverseEntity="City" syncable="YES"/>
+        <relationship name="neighbours" toMany="YES" deletionRule="Cascade" ordered="YES" destinationEntity="City" inverseName="parent" inverseEntity="City" syncable="YES"/>
+        <relationship name="parent" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="City" inverseName="neighbours" inverseEntity="City" syncable="YES"/>
     </entity>
     <elements>
         <element name="City" positionX="-63" positionY="-18" width="128" height="180"/>

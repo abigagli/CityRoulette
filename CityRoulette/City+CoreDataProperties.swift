@@ -2,7 +2,7 @@
 //  City+CoreDataProperties.swift
 //  CityRoulette
 //
-//  Created by Andrea Bigagli on 1/12/15.
+//  Created by Andrea Bigagli on 7/12/15.
 //  Copyright © 2015 Andrea Bigagli. All rights reserved.
 //
 //  Choose "Create NSManagedObject Subclass…" from the Core Data editor menu
@@ -14,14 +14,14 @@ import CoreData
 
 extension City {
 
-    @NSManaged var name: String
+    @NSManaged var countryCode: String?
     @NSManaged var geonameID: Int64
     @NSManaged var latitude: Double
     @NSManaged var longitude: Double
-    @NSManaged var wikipedia: String?
+    @NSManaged var name: String
     @NSManaged var population: Int32
-    @NSManaged var countryCode: String?
+    @NSManaged var wikipedia: String?
     @NSManaged var neighbours: [City]
-    @NSManaged var root: City?
+    @NSManaged var parent: City?
 
 }
