@@ -13,20 +13,19 @@ class WikiViewController: UIViewController {
     @IBOutlet var webView: UIWebView!
     
     override func viewDidLoad() {
-        let url:NSURL
+        
+        self.navigationItem.title = self.city.name
+        
+        let url: NSURL
+        
         if let wikipediaInfo = self.city.wikipedia {
             url = NSURL(string: "http://\(wikipediaInfo)")!
         }
         else {
             url = NSURL(string:"http://en.wikipedia.org/w/index.php?search=\(self.city.name)")!
         }
+        
         let request = NSURLRequest(URL: url)
         self.webView.loadRequest(request)
     }
-    
-    override func didReceiveMemoryWarning() {
-        super.didReceiveMemoryWarning()
-        // Dispose of any resources that can be recreated.
-    }
-    
 }

@@ -120,11 +120,11 @@
                                 <animations/>
                                 <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                 <prototypes>
-                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" selectionStyle="none" hidesAccessoryWhenEditing="NO" indentationLevel="1" indentationWidth="0.0" reuseIdentifier="cityInfoCell" textLabel="frY-lK-9g8" detailTextLabel="efw-d3-pW5" style="IBUITableViewCellStyleSubtitle" id="KW7-5T-GDp">
+                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" selectionStyle="none" accessoryType="detailDisclosureButton" hidesAccessoryWhenEditing="NO" indentationLevel="1" indentationWidth="0.0" reuseIdentifier="cityInfoCell" textLabel="frY-lK-9g8" detailTextLabel="efw-d3-pW5" style="IBUITableViewCellStyleSubtitle" id="KW7-5T-GDp">
                                         <rect key="frame" x="0.0" y="28" width="600" height="44"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="KW7-5T-GDp" id="GFK-TL-BkP">
-                                            <rect key="frame" x="0.0" y="0.0" width="600" height="43"/>
+                                            <rect key="frame" x="0.0" y="0.0" width="533" height="43"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <subviews>
                                                 <label opaque="NO" multipleTouchEnabled="YES" contentMode="left" text="Title" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="frY-lK-9g8">
@@ -174,17 +174,17 @@
                     <connections>
                         <outlet property="mapView" destination="yB8-QS-d2S" id="dvw-h6-DjA"/>
                         <outlet property="tableView" destination="QOX-o8-zmP" id="j1j-Km-AIn"/>
-                        <segue destination="MPO-H7-Q0N" kind="show" identifier="showWiki" action="showDetailViewController:sender:" id="bKs-h5-LHH"/>
+                        <segue destination="MPO-H7-Q0N" kind="show" identifier="showWiki" id="JWR-Gb-IeS"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="E2c-v0-ZcJ" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
             <point key="canvasLocation" x="676" y="506"/>
         </scene>
-        <!--Wiki View Controller-->
+        <!--Wiki-->
         <scene sceneID="HQw-sw-LWb">
             <objects>
-                <viewController id="MPO-H7-Q0N" customClass="WikiViewController" customModule="CityRoulette" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController extendedLayoutIncludesOpaqueBars="YES" modalPresentationStyle="currentContext" id="MPO-H7-Q0N" userLabel="Wiki" customClass="WikiViewController" customModule="CityRoulette" customModuleProvider="target" sceneMemberID="viewController">
                     <layoutGuides>
                         <viewControllerLayoutGuide type="top" id="pAN-Qv-pby"/>
                         <viewControllerLayoutGuide type="bottom" id="LG9-f7-qHh"/>
@@ -194,7 +194,7 @@
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <webView contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="iOv-Eu-KJA">
-                                <rect key="frame" x="0.0" y="64" width="600" height="536"/>
+                                <rect key="frame" x="0.0" y="0.0" width="600" height="600"/>
                                 <animations/>
                                 <color key="backgroundColor" red="0.36078431370000003" green="0.38823529410000002" blue="0.4039215686" alpha="1" colorSpace="deviceRGB"/>
                             </webView>
@@ -202,22 +202,15 @@
                         <animations/>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                         <constraints>
-                            <constraint firstItem="iOv-Eu-KJA" firstAttribute="top" secondItem="pAN-Qv-pby" secondAttribute="bottom" id="GXo-Bg-8bo"/>
-                            <constraint firstItem="LG9-f7-qHh" firstAttribute="top" secondItem="iOv-Eu-KJA" secondAttribute="bottom" id="JpS-Ub-Qqx"/>
                             <constraint firstItem="LG9-f7-qHh" firstAttribute="top" secondItem="iOv-Eu-KJA" secondAttribute="bottom" id="PX2-0C-2Jf"/>
+                            <constraint firstItem="iOv-Eu-KJA" firstAttribute="top" secondItem="r2c-IH-CkI" secondAttribute="top" id="QvK-OJ-845"/>
                             <constraint firstItem="iOv-Eu-KJA" firstAttribute="leading" secondItem="r2c-IH-CkI" secondAttribute="leading" id="jKN-bR-Ofj"/>
                             <constraint firstAttribute="trailing" secondItem="iOv-Eu-KJA" secondAttribute="trailing" id="muX-TI-FuQ"/>
-                            <constraint firstItem="iOv-Eu-KJA" firstAttribute="leading" secondItem="r2c-IH-CkI" secondAttribute="leading" constant="180" id="pV5-ax-CoX"/>
-                            <constraint firstAttribute="trailing" secondItem="iOv-Eu-KJA" secondAttribute="trailing" constant="180" id="tR5-ys-Vcl"/>
                         </constraints>
-                        <variation key="default">
-                            <mask key="constraints">
-                                <exclude reference="pV5-ax-CoX"/>
-                                <exclude reference="tR5-ys-Vcl"/>
-                                <exclude reference="JpS-Ub-Qqx"/>
-                            </mask>
-                        </variation>
                     </view>
+                    <navigationItem key="navigationItem" id="sq7-I3-57Q">
+                        <barButtonItem key="backBarButtonItem" title="Back" id="JPu-5E-Eaf"/>
+                    </navigationItem>
                     <connections>
                         <outlet property="webView" destination="iOv-Eu-KJA" id="vbw-vs-sFn"/>
                     </connections>
