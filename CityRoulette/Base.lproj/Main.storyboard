@@ -5,6 +5,7 @@
         <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="9051"/>
         <capability name="Aspect ratio constraints" minToolsVersion="5.1"/>
         <capability name="Constraints with non-1.0 multipliers" minToolsVersion="5.1"/>
+        <capability name="Navigation items with more than one left or right bar item" minToolsVersion="7.0"/>
     </dependencies>
     <scenes>
         <!--Initial View Controller-->
@@ -210,8 +211,22 @@
                     </view>
                     <navigationItem key="navigationItem" id="sq7-I3-57Q">
                         <barButtonItem key="backBarButtonItem" title="Back" id="JPu-5E-Eaf"/>
+                        <rightBarButtonItems>
+                            <barButtonItem enabled="NO" title="&gt;" id="nhL-17-Bd6">
+                                <connections>
+                                    <action selector="goForward:" destination="MPO-H7-Q0N" id="dIX-Q1-6fa"/>
+                                </connections>
+                            </barButtonItem>
+                            <barButtonItem enabled="NO" title="&lt;" id="fd1-Cb-gaE">
+                                <connections>
+                                    <action selector="goBackward:" destination="MPO-H7-Q0N" id="Hgk-Dg-Rn6"/>
+                                </connections>
+                            </barButtonItem>
+                        </rightBarButtonItems>
                     </navigationItem>
                     <connections>
+                        <outlet property="goBackwardButton" destination="fd1-Cb-gaE" id="EYe-aI-2S0"/>
+                        <outlet property="goForwardButton" destination="nhL-17-Bd6" id="BsO-S7-ohz"/>
                         <outlet property="webView" destination="iOv-Eu-KJA" id="vbw-vs-sFn"/>
                     </connections>
                 </viewController>

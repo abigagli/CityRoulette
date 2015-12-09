@@ -9,12 +9,28 @@
 import UIKit
 
 class WikiViewController: UIViewController {
-    var city: City!
     @IBOutlet var webView: UIWebView!
+    @IBOutlet weak var goBackwardButton: UIBarButtonItem!
+    @IBOutlet weak var goForwardButton: UIBarButtonItem!
     
+    //MARK:- Actions
+    @IBAction func goForward(sender: UIBarButtonItem) {
+        self.webView.goForward()
+    }
+    @IBAction func goBackward(sender: UIBarButtonItem) {
+        self.webView.goBack()
+    }
+    
+    
+    //MARK:- State
+    var city: City!
+    
+    //MARK:- Lifetime
     override func viewDidLoad() {
         
         self.navigationItem.title = self.city.name
+        
+        self.webView.delegate = self
         
         let url: NSURL
         
@@ -22,10 +38,39 @@ class WikiViewController: UIViewController {
             url = NSURL(string: "http://\(wikipediaInfo)")!
         }
         else {
-            url = NSURL(string:"http://en.wikipedia.org/w/index.php?search=\(self.city.name)")!
+            let noSpaceName = self.city.name.stringByReplacingOccurrencesOfString(" ", withString: "+", options: .LiteralSearch, range:nil)
+            url = NSURL(string:"http://en.wikipedia.org/w/index.php?search=\(noSpaceName)")!
         }
         
         let request = NSURLRequest(URL: url)
         self.webView.loadRequest(request)
+    }
+}
+
+
+extension WikiViewController: UIWebViewDelegate {
+    
+    func webView(webView: UIWebView, shouldStartLoadWithRequest request: NSURLRequest, navigationType: UIWebViewNavigationType) -> Bool {
+        
+        
+        return true
+    }
+    
+    func webViewDidFinishLoad(webView: UIWebView) {
+        if (webView.canGoBack) {
+            self.goBackwardButton.enabled = true
+        }
+        else {
+            self.goBackwardButton.enabled = false
+        }
+        
+        if (webView.canGoForward) {
+            self.goForwardButton.enabled = true
+        }
+        else {
+            self.goForwardButton.enabled = false
+        }
+    }
+    func webViewDidStartLoad(webView: UIWebView) {
     }
 }
