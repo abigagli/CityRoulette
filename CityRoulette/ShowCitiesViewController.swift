@@ -129,6 +129,11 @@ class ShowCitiesViewController: UIViewController {
 extension ShowCitiesViewController: MKMapViewDelegate {
     
     func mapView(mapView: MKMapView, viewForAnnotation annotation: MKAnnotation) -> MKAnnotationView? {
+        
+        if (annotation is MKUserLocation) {
+                return nil
+        }
+        
         let reuseId = "cityPin"
         
         var pinView = mapView.dequeueReusableAnnotationViewWithIdentifier(reuseId) as? MKPinAnnotationView
