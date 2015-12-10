@@ -93,10 +93,16 @@ extension UIViewController {
         
         alert.addAction(alertOkAction)
         
-        //Ensure presentation is always done by a visible viewcontroller, since with
-        //particularly slow network connections, the user might have pushed/popped
-        //before the alert is presented
-        self.presentViewController(alert, animated: true, completion: nil)
+        //Ensure presentation is always done by a visible viewcontroller, to handle
+        //the case where the user might have presenting-segued to another VC before this
+        //method was invoked
+        
+        var presentingVC = self //The normal case
+        
+        if let presentedVC = UIApplication.sharedApplication().keyWindow!.rootViewController!.presentedViewController {
+            presentingVC = presentedVC //If there is a presented VC, then have it presenting the alert
+        }
+        presentingVC.presentViewController(alert, animated: true, completion: nil)
     }
 }
 

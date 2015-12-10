@@ -56,7 +56,8 @@ class ShowCitiesViewController: UIViewController {
         self.navigationItem.rightBarButtonItem = self.editButtonItem()
         self.mapView.delegate = self
         self.mapView.showsCompass = true
-        
+        //self.mapView.tintAdjustmentMode = .Normal
+
         self.tableView.dataSource = self
         self.tableView.delegate = self
         
