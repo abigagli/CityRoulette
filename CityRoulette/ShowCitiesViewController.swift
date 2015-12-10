@@ -17,16 +17,28 @@ class ShowCitiesViewController: UIViewController {
     @IBOutlet weak var mapView: MKMapView!
     @IBOutlet weak var tableView: UITableView!
     
-    //MARK:- Actions
-    @IBAction func doneTapped(sender: UIBarButtonItem) {
-        self.dismissViewControllerAnimated(true, completion: nil)
+    //MARK:- State
+    //TODO: Remove if using dynamic radius
+    var radius: Double!
+    var currentCoreDataContext: NSManagedObjectContext!
+    
+    //MARK:- UI
+    private func updateUI() {
+        if (self.fetchedResultsController.fetchedObjects?.count ?? 0) > 0 {
+            self.navigationItem.rightBarButtonItem!.enabled = true
+        }
+        else {
+            super.setEditing(false, animated: true)
+            self.navigationItem.rightBarButtonItem!.enabled = false
+        }
+        self.navigationItem.leftBarButtonItem!.enabled = !self.editing
     }
     
-    //MARK:- State
-    var radius: Double!
 
     //MARK:- Lifetime
     override func prepareForSegue(segue: UIStoryboardSegue, sender dataForNextVC: AnyObject?) {
+        super.prepareForSegue(segue, sender: dataForNextVC)
+        
         var destination: UIViewController? = segue.destinationViewController
         
         if let navCon = destination as? UINavigationController {
@@ -43,7 +55,7 @@ class ShowCitiesViewController: UIViewController {
 
         self.navigationItem.rightBarButtonItem = self.editButtonItem()
         self.mapView.delegate = self
-        //self.mapView.userInteractionEnabled = false
+        self.mapView.showsCompass = true
         
         self.tableView.dataSource = self
         self.tableView.delegate = self
@@ -58,13 +70,14 @@ class ShowCitiesViewController: UIViewController {
             for city in self.fetchedResultsController.fetchedObjects as! [City] {
                 self.mapView.addAnnotation(city)
             
+                //self.mapView.showAnnotations(self.mapView.annotations, animated: true)
+                
                 if topCity == nil {
                     topCity = city
                     let region = MKCoordinateRegionMakeWithDistance(topCity!.coordinate, self.radius * 1.1, self.radius * 1.1)
                     
                     self.mapView.setRegion(region, animated: false)
                 }
-
             }
         }
         catch {
@@ -76,31 +89,25 @@ class ShowCitiesViewController: UIViewController {
         // Do any additional setup after loading the view.
     }
 
-    override func viewWillAppear(animated: Bool) {
-        super.viewWillAppear(animated)
-        
-        updateUI()
-    }
     override func viewDidAppear(animated: Bool) {
         super.viewDidAppear(animated)
         
         updateUI()
     }
 
-    override func didReceiveMemoryWarning() {
-        super.didReceiveMemoryWarning()
-        // Dispose of any resources that can be recreated.
-    }
-    
     override func setEditing(editing: Bool, animated: Bool) {
         super.setEditing(editing, animated: animated)
         self.tableView.setEditing(editing, animated: animated)
+        updateUI()
     }
 
     //MARK: Core Data
+    //TODO: REMOVEME?
+    /*
     private var sharedContext: NSManagedObjectContext {
         return (UIApplication.sharedApplication().delegate as! AppDelegate).managedObjectContext
     }
+    */
     
     private lazy var fetchedResultsController: NSFetchedResultsController = {
         
@@ -109,19 +116,11 @@ class ShowCitiesViewController: UIViewController {
         fetchRequest.sortDescriptors = [NSSortDescriptor(key: "population", ascending: false)]
         
         //create controller from fetch request
-        let fetchedResultsController = NSFetchedResultsController(fetchRequest: fetchRequest, managedObjectContext: self.sharedContext, sectionNameKeyPath: nil, cacheName: nil)
+        let fetchedResultsController = NSFetchedResultsController(fetchRequest: fetchRequest, managedObjectContext: self.currentCoreDataContext, sectionNameKeyPath: nil, cacheName: nil)
         
         //fetchedResultsController.delegate = self
         return fetchedResultsController
     }()
-
-
-    //MARK:- Business Logic
-    
-    private func updateUI() {
-        
-    }
-    
 }
 //MARK:- Protocol Conformance
 
@@ -135,8 +134,9 @@ extension ShowCitiesViewController: MKMapViewDelegate {
         if pinView == nil {
             pinView = MKPinAnnotationView(annotation: annotation, reuseIdentifier: reuseId)
             
-            pinView!.pinTintColor = UIColor.greenColor()
+            pinView!.pinTintColor = UIColor.redColor()
             pinView!.animatesDrop = false
+            pinView!.canShowCallout = true
         }
         else {
             pinView!.annotation = annotation
@@ -193,7 +193,7 @@ extension ShowCitiesViewController: UITableViewDataSource, UITableViewDelegate {
     
     func tableView(tableView: UITableView, commitEditingStyle editingStyle: UITableViewCellEditingStyle, forRowAtIndexPath indexPath: NSIndexPath) {
         if editingStyle == .Delete {
-            self.sharedContext.deleteObject(self.fetchedResultsController.objectAtIndexPath(indexPath) as! NSManagedObject)
+            self.currentCoreDataContext.deleteObject(self.fetchedResultsController.objectAtIndexPath(indexPath) as! NSManagedObject)
             
         }
     }
@@ -227,6 +227,7 @@ extension ShowCitiesViewController: NSFetchedResultsControllerDelegate {
     // When endUpdates() is invoked, the table makes the changes visible.
     func controllerDidChangeContent(controller: NSFetchedResultsController) {
         self.tableView.endUpdates()
+        self.updateUI()
     }
     
     

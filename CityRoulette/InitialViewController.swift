@@ -24,7 +24,12 @@ class InitialViewController: UIViewController {
     
     @IBOutlet weak var aroundMeTopSpace: NSLayoutConstraint!
     @IBOutlet weak var chooseBottomSpace: NSLayoutConstraint!
+    
     //MARK:- Actions
+    @IBAction func saveCities (segue: UIStoryboardSegue) {
+        
+        //(segue.sourceViewController as! ShowCitiesViewController).currentCoreDataContext
+    }
     
     @IBAction func chooseTapped(sender: UIButton) {
         self.hideButtons()
@@ -120,7 +125,12 @@ class InitialViewController: UIViewController {
             , completion: andThen)
     }
     
+    
+    //MARK:- Lifetime
     override func prepareForSegue(segue: UIStoryboardSegue, sender dataForNextVC: AnyObject?) {
+
+        super.prepareForSegue (segue, sender: dataForNextVC)
+
         var destination: UIViewController? = segue.destinationViewController
         
         if let navCon = destination as? UINavigationController {
@@ -128,11 +138,11 @@ class InitialViewController: UIViewController {
         }
         
         if let citiesInfoVC = destination as? ShowCitiesViewController {
+            citiesInfoVC.currentCoreDataContext = self.scratchContext
             citiesInfoVC.radius = self.k_radius
         }
     }
     
-    //MARK:- Lifetime
     override func viewDidLoad() {
         super.viewDidLoad()
         self.verticalConstraintConstant = self.aroundMeTopSpace.constant

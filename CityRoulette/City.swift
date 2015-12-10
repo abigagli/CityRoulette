@@ -37,10 +37,21 @@ extension City: MKAnnotation {
             return CLLocationCoordinate2D (latitude: self.latitude, longitude: self.longitude)
         }
         
+        //TODO: REMOVEME if not dragging
+        /*
         set {
             self.latitude = newValue.latitude
             self.longitude = newValue.longitude
         }
+        */
+    }
+    
+    var title: String? {
+        return self.name
+    }
+    
+    var subtitle: String? {
+        return self.population > 0 ? "Pop: \(self.population)" : ""
     }
 }
 

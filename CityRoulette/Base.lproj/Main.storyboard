@@ -97,6 +97,7 @@
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="dkx-z0-nzr" sceneMemberID="firstResponder"/>
+                <exit id="Dux-uN-SHo" userLabel="Exit" sceneMemberID="exit"/>
             </objects>
             <point key="canvasLocation" x="-1122" y="511"/>
         </scene>
@@ -112,7 +113,7 @@
                         <rect key="frame" x="0.0" y="0.0" width="600" height="600"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
-                            <mapView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" mapType="standard" translatesAutoresizingMaskIntoConstraints="NO" id="yB8-QS-d2S">
+                            <mapView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" mapType="standard" pitchEnabled="NO" showsUserLocation="YES" showsBuildings="NO" showsPointsOfInterest="NO" translatesAutoresizingMaskIntoConstraints="NO" id="yB8-QS-d2S">
                                 <rect key="frame" x="0.0" y="64" width="600" height="176"/>
                                 <animations/>
                             </mapView>
@@ -166,9 +167,9 @@
                         </constraints>
                     </view>
                     <navigationItem key="navigationItem" title="Cities" id="ZoW-gP-0va">
-                        <barButtonItem key="leftBarButtonItem" systemItem="done" id="bUC-9x-Gb2">
+                        <barButtonItem key="leftBarButtonItem" title="Save" id="bUC-9x-Gb2">
                             <connections>
-                                <action selector="doneTapped:" destination="1PL-0Z-j2S" id="eiL-hY-sgy"/>
+                                <segue destination="Dux-uN-SHo" kind="unwind" unwindAction="saveCities:" id="eB0-rA-LK5"/>
                             </connections>
                         </barButtonItem>
                     </navigationItem>

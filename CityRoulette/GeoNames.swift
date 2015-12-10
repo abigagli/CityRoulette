@@ -91,7 +91,7 @@ class GeoNamesClient {
 
 //MARK:- Convenience
 extension GeoNamesClient {
-    func getCitiesAroundLocation (location: CLLocationCoordinate2D, withRadius radiusInMeters: Double, completionHandler: (success: Bool, error: NSError?) -> Void) {
+    func getCitiesAroundLocation (location: CLLocationCoordinate2D, withRadius radiusInMeters: Double, andStoreIn context: NSManagedObjectContext, completionHandler: (success: Bool, error: NSError?) -> Void) {
         
         let region = MKCoordinateRegionMakeWithDistance(location, radiusInMeters, radiusInMeters)
         
@@ -147,7 +147,7 @@ extension GeoNamesClient {
                                 continue
                             }
                             
-                            let _ = City(json: cityJson, context: self.sharedContext)
+                            let _ = City(json: cityJson, context: context)
                         }
                     
                     }
@@ -159,10 +159,12 @@ extension GeoNamesClient {
     }
     
     //MARK: Core Data
+    
+    //TODO: REMOVEME
+    /* 
     private var sharedContext: NSManagedObjectContext  {
         return (UIApplication.sharedApplication().delegate as! AppDelegate).managedObjectContext
     }
-    
     private var persistentStoreCoordinator: NSPersistentStoreCoordinator  {
         return (UIApplication.sharedApplication().delegate as! AppDelegate).persistentStoreCoordinator
     }
@@ -179,13 +181,14 @@ extension GeoNamesClient {
             debugPrint(error)
         }
     }
+    */
     
-    private func alreadyKnown (geonameID: Int64) -> Bool {
+    private func alreadyKnown (geonameID: Int64, inContext context: NSManagedObjectContext) -> Bool {
         let fetchRequest = NSFetchRequest (entityName: "City")
         fetchRequest.predicate = NSPredicate (format: "geonameID == %lld", geonameID)
         
         var error: NSError?
-        let n = self.sharedContext.countForFetchRequest(fetchRequest, error: &error)
+        let n = context.countForFetchRequest(fetchRequest, error: &error)
         
         return error == nil && n > 0
     }
