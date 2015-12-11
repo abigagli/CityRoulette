@@ -234,6 +234,9 @@ extension ShowCitiesViewController: NSFetchedResultsControllerDelegate {
     func controllerDidChangeContent(controller: NSFetchedResultsController) {
         self.tableView.endUpdates()
         self.updateUI()
+        
+        //print ("Scratch Context: \(self.currentCoreDataContext.registeredObjects.count)")
+        //print ("Main Context: \(CoreDataStackManager.sharedInstance.managedObjectContext.registeredObjects.count)")
     }
     
     
