@@ -29,6 +29,7 @@ class InitialViewController: UIViewController {
     //MARK:- Actions
     @IBAction func saveCities (segue: UIStoryboardSegue) {
         CoreDataStackManager.sharedInstance.saveContext()
+        self.acquireID = 0
     }
     
     
@@ -67,7 +68,7 @@ class InitialViewController: UIViewController {
     private var colorImage: UIImageView?
     private lazy var locationManager = CLLocationManager()
     private var busyStatusManager: BusyStatusManager!
-
+    private var acquireID: Int64 = 0
     
     //MARK: - UI
     private func hideButtons()
@@ -139,7 +140,10 @@ class InitialViewController: UIViewController {
         }
         
         if let citiesInfoVC = destination as? ShowCitiesViewController {
+            
+            //Configure destination viewcontroller
             citiesInfoVC.currentCoreDataContext = dataForNextVC as! NSManagedObjectContext
+            citiesInfoVC.acquireID = self.acquireID
             citiesInfoVC.radius = self.k_radius
             
             //TODO: REMOVEME
@@ -202,6 +206,7 @@ class InitialViewController: UIViewController {
         //context.persistentStoreCoordinator = CoreDataStackManager.sharedInstance.persistentStoreCoordinator
         context.parentContext = CoreDataStackManager.sharedInstance.managedObjectContext
         context.mergePolicy = NSMergeByPropertyObjectTrumpMergePolicy
+        //context.undoManager = nil
         return context
     }
 
@@ -222,11 +227,12 @@ extension InitialViewController: CLLocationManagerDelegate {
         let context = self.scratchContext()
         
         GeoNamesClient.sharedInstance.getCitiesAroundLocation(lastLocation.coordinate, withRadius: self.k_radius, andStoreIn: context) /* And then, on another thread...*/ {
-            success, error in
+            acquireID, error in
             
             dispatch_async(dispatch_get_main_queue()) { //Touch the UI on the main thread only
                 self.busyStatusManager.setBusyStatus(false)
-                if success {
+                if acquireID > 0 {
+                    self.acquireID = acquireID
                     self.performSegueWithIdentifier("showCitiesInfo", sender: context)
                 }
                 else {

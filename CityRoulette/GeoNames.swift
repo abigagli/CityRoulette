@@ -91,7 +91,7 @@ class GeoNamesClient {
 
 //MARK:- Convenience
 extension GeoNamesClient {
-    func getCitiesAroundLocation (location: CLLocationCoordinate2D, withRadius radiusInMeters: Double, andStoreIn context: NSManagedObjectContext, completionHandler: (success: Bool, error: NSError?) -> Void) {
+    func getCitiesAroundLocation (location: CLLocationCoordinate2D, withRadius radiusInMeters: Double, andStoreIn context: NSManagedObjectContext, completionHandler: (acquireID: Int64, error: NSError?) -> Void) {
         
         let region = MKCoordinateRegionMakeWithDistance(location, radiusInMeters, radiusInMeters)
         
@@ -118,7 +118,7 @@ extension GeoNamesClient {
             result, error in
             
             if let error = error {
-                completionHandler (success: false, error: error)
+                completionHandler (acquireID: 0, error: error)
             }
             else {
                 let resultDictionary = result as! [String: AnyObject]
@@ -127,11 +127,12 @@ extension GeoNamesClient {
                     let message = status["message"] as! String
                     let value = status["value"] as! Int
                     let userInfo = [NSLocalizedDescriptionKey: message]
-                    completionHandler(success: false, error: NSError (domain: "GeoNames API", code: value, userInfo: userInfo))
+                    completionHandler(acquireID: 0, error: NSError (domain: "GeoNames API", code: value, userInfo: userInfo))
                 }
                 else {
                     guard let cities = resultDictionary[JSONResponseKeys.Geonames] as? [[String: AnyObject]] where cities.count >= 1 else {
-                        completionHandler (success: false, error: NSError(domain: "GeoNames Result", code: 1, userInfo: [NSLocalizedDescriptionKey: "City information not found"]))
+                        completionHandler (acquireID: 0, error: NSError(domain: "GeoNames Result", code: 1, userInfo: [NSLocalizedDescriptionKey: "City information not found"]))
+                        
                         return
                     }
                     
@@ -153,22 +154,17 @@ extension GeoNamesClient {
                     
                     }
                     */
+                    let id = Int64(NSDate().timeIntervalSince1970)
+                    
+                    //Ensure CoreData context is accessed on whatever queue it's working on
                     context.performBlock() {
-                        
+
                         for cityJson in cities {
-                            /*
-                            let currentID = Int64(cityJson[JSONResponseKeys.GeonameID] as! Int)
-                            
-                            if self.alreadyKnown (currentID, inContext: context) {
-                                continue
-                            }
-                            */
-                            
-                            let _ = City(json: cityJson, context: context)
+                            let _ = City(json: cityJson, acquireID: id, context: context)
                         }
                     }
                     
-                    completionHandler(success: true, error: nil)
+                    completionHandler(acquireID: id, error: nil)
                 }
             }
         }

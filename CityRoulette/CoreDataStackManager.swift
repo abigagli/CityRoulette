@@ -80,6 +80,7 @@ class CoreDataStackManager {
         var managedObjectContext = NSManagedObjectContext(concurrencyType: .MainQueueConcurrencyType)
         managedObjectContext.persistentStoreCoordinator = coordinator
         managedObjectContext.mergePolicy = NSMergeByPropertyObjectTrumpMergePolicy
+        //managedObjectContext.undoManager = nil
         return managedObjectContext
     }()
 

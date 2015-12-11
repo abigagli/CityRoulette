@@ -21,5 +21,5 @@ extension City {
     @NSManaged var name: String
     @NSManaged var population: Int32
     @NSManaged var wikipedia: String?
-
+    @NSManaged var acquireID: Int64
 }

@@ -21,6 +21,7 @@ class ShowCitiesViewController: UIViewController {
     //TODO: Remove if using dynamic radius
     var radius: Double!
     var currentCoreDataContext: NSManagedObjectContext!
+    var acquireID: Int64 = 0
     
     //MARK:- UI
     private func updateUI() {
@@ -145,6 +146,10 @@ class ShowCitiesViewController: UIViewController {
         //create fetch request with sort descriptor
         let fetchRequest = NSFetchRequest(entityName: "City")
         fetchRequest.sortDescriptors = [NSSortDescriptor(key: "population", ascending: false)]
+        
+        if self.acquireID > 0 {
+            fetchRequest.predicate = NSPredicate(format: "acquireID == %lld", self.acquireID)
+        }
         
         //create controller from fetch request
         let fetchedResultsController = NSFetchedResultsController(fetchRequest: fetchRequest, managedObjectContext: self.currentCoreDataContext, sectionNameKeyPath: nil, cacheName: nil)

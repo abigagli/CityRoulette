@@ -12,7 +12,7 @@ import MapKit
 
 class City: NSManagedObject {
     
-    convenience init (json: [String: AnyObject], context: NSManagedObjectContext) {
+    convenience init (json: [String: AnyObject], acquireID: Int64, context: NSManagedObjectContext) {
         
         let entity = NSEntityDescription.entityForName("City", inManagedObjectContext: context)
         
@@ -27,6 +27,7 @@ class City: NSManagedObject {
         self.latitude = json["lat"] as! Double
         self.longitude = json["lng"] as! Double
         self.geonameID = Int64(json["geonameId"] as! Int)
+        self.acquireID = acquireID
     }
 }
 

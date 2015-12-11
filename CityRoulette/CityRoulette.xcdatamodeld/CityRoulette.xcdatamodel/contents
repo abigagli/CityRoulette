@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <model userDefinedModelVersionIdentifier="" type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="9525" systemVersion="15B42" minimumToolsVersion="Automatic">
     <entity name="City" representedClassName=".City" syncable="YES">
+        <attribute name="acquireID" attributeType="Integer 64" defaultValueString="0" syncable="YES"/>
         <attribute name="countryCode" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="geonameID" attributeType="Integer 64" defaultValueString="0" syncable="YES"/>
         <attribute name="latitude" attributeType="Double" defaultValueString="0.0" syncable="YES"/>
@@ -15,6 +16,6 @@
         </uniquenessConstraints>
     </entity>
     <elements>
-        <element name="City" positionX="-63" positionY="-18" width="128" height="150"/>
+        <element name="City" positionX="-63" positionY="-18" width="128" height="165"/>
     </elements>
 </model>
