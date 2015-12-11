@@ -37,16 +37,46 @@ class ShowCitiesViewController: UIViewController {
 
     //MARK:- Lifetime
     override func prepareForSegue(segue: UIStoryboardSegue, sender dataForNextVC: AnyObject?) {
+        
         super.prepareForSegue(segue, sender: dataForNextVC)
         
         var destination: UIViewController? = segue.destinationViewController
-        
-        if let navCon = destination as? UINavigationController {
-            destination = navCon.visibleViewController
+
+        if segue.identifier == "showWiki" {
+            
+            //Be nice and do the right thing regardless the destination being embedded in
+            //a navigation controller or not
+            if let navCon = destination as? UINavigationController {
+                destination = navCon.visibleViewController
+            }
+            
+            if let wikiVC = destination as? WikiViewController {
+                wikiVC.city = dataForNextVC as! City
+            }
         }
-        
-        if let wikiVC = destination as? WikiViewController {
-            wikiVC.city = dataForNextVC as! City
+        else if segue.identifier == "returnToInitialVC" {
+            
+            if self.currentCoreDataContext.hasChanges {
+                do {
+                    //Severe our connection with the fetchedResultsController to avoid
+                    //receiving notifications due to potential conflicts being resolved while saving
+                    //as we are segue-ing away
+                    self.fetchedResultsController.delegate = nil
+                    
+                    try self.currentCoreDataContext.save()
+                    
+                } catch {
+                    let nserror = error as NSError
+                    
+                    self.alertUserWithTitle("Error saving cities"
+                        , message: nserror.localizedDescription
+                        , retryHandler: nil)
+
+                }
+            }
+            //TODO: REMOVEME
+            print ("Scratch Context After: \(self.currentCoreDataContext.registeredObjects.count)")
+            print ("Main Context: \(CoreDataStackManager.sharedInstance.managedObjectContext.registeredObjects.count)")
         }
     }
     

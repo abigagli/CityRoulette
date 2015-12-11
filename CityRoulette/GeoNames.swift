@@ -136,20 +136,36 @@ extension GeoNamesClient {
                     }
                     
                     //TODO: REMOVEME
-                    print ("Cities: \(resultDictionary)")
+                    //print ("Cities: \(resultDictionary)")
                     
+                    /*
                     dispatch_async(dispatch_get_main_queue()) { //managedObjectContext must be used on the owner (main in this case) thread only
                         
                         for cityJson in cities {
                             let currentID = Int64(cityJson[JSONResponseKeys.GeonameID] as! Int)
                             
-                            if self.alreadyKnown (currentID) {
+                            if self.alreadyKnown (currentID, inContext: context) {
                                 continue
                             }
                             
                             let _ = City(json: cityJson, context: context)
                         }
                     
+                    }
+                    */
+                    context.performBlock() {
+                        
+                        for cityJson in cities {
+                            /*
+                            let currentID = Int64(cityJson[JSONResponseKeys.GeonameID] as! Int)
+                            
+                            if self.alreadyKnown (currentID, inContext: context) {
+                                continue
+                            }
+                            */
+                            
+                            let _ = City(json: cityJson, context: context)
+                        }
                     }
                     
                     completionHandler(success: true, error: nil)
@@ -181,8 +197,7 @@ extension GeoNamesClient {
             debugPrint(error)
         }
     }
-    */
-    
+
     private func alreadyKnown (geonameID: Int64, inContext context: NSManagedObjectContext) -> Bool {
         let fetchRequest = NSFetchRequest (entityName: "City")
         fetchRequest.predicate = NSPredicate (format: "geonameID == %lld", geonameID)
@@ -193,4 +208,5 @@ extension GeoNamesClient {
         return error == nil && n > 0
     }
     
+    */
 }

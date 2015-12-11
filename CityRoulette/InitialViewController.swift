@@ -7,6 +7,7 @@
 //
 
 import UIKit
+import CoreData
 import CoreLocation
 
 class InitialViewController: UIViewController {
@@ -27,9 +28,9 @@ class InitialViewController: UIViewController {
     
     //MARK:- Actions
     @IBAction func saveCities (segue: UIStoryboardSegue) {
-        
-        //(segue.sourceViewController as! ShowCitiesViewController).currentCoreDataContext
+        CoreDataStackManager.sharedInstance.saveContext()
     }
+    
     
     @IBAction func chooseTapped(sender: UIButton) {
         self.hideButtons()
@@ -138,8 +139,12 @@ class InitialViewController: UIViewController {
         }
         
         if let citiesInfoVC = destination as? ShowCitiesViewController {
-            citiesInfoVC.currentCoreDataContext = self.scratchContext
+            citiesInfoVC.currentCoreDataContext = dataForNextVC as! NSManagedObjectContext
             citiesInfoVC.radius = self.k_radius
+            
+            //TODO: REMOVEME
+            print ("Scratch Context: \(citiesInfoVC.currentCoreDataContext.registeredObjects.count)")
+            print ("Main Context: \(CoreDataStackManager.sharedInstance.managedObjectContext.registeredObjects.count)")
         }
     }
     
@@ -189,6 +194,17 @@ class InitialViewController: UIViewController {
             self.view.insertSubview(colorImage, aboveSubview: self.backgroundImage)
         }
     }
+    
+    //MARK:- Core Data
+    func scratchContext() -> NSManagedObjectContext {
+        //let context = NSManagedObjectContext(concurrencyType: .PrivateQueueConcurrencyType)
+        let context = NSManagedObjectContext(concurrencyType: .MainQueueConcurrencyType)
+        //context.persistentStoreCoordinator = CoreDataStackManager.sharedInstance.persistentStoreCoordinator
+        context.parentContext = CoreDataStackManager.sharedInstance.managedObjectContext
+        context.mergePolicy = NSMergeByPropertyObjectTrumpMergePolicy
+        return context
+    }
+
 }
 
 //MARK:- Protocol conformance
@@ -202,13 +218,16 @@ extension InitialViewController: CLLocationManagerDelegate {
         
         self.hideButtons()
         self.busyStatusManager.setBusyStatus(true)
-        GeoNamesClient.sharedInstance.getCitiesAroundLocation(lastLocation.coordinate, withRadius: self.k_radius) /* And then, on another thread...*/ {
+        
+        let context = self.scratchContext()
+        
+        GeoNamesClient.sharedInstance.getCitiesAroundLocation(lastLocation.coordinate, withRadius: self.k_radius, andStoreIn: context) /* And then, on another thread...*/ {
             success, error in
             
             dispatch_async(dispatch_get_main_queue()) { //Touch the UI on the main thread only
                 self.busyStatusManager.setBusyStatus(false)
                 if success {
-                    self.performSegueWithIdentifier("showCitiesInfo", sender: lastLocation)
+                    self.performSegueWithIdentifier("showCitiesInfo", sender: context)
                 }
                 else {
                     self.alertUserWithTitle ("Failed Retrieving Nearby Cities", message: error!.localizedDescription, retryHandler: nil, okHandler: { _ in
