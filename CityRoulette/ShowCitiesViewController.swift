@@ -186,6 +186,17 @@ extension ShowCitiesViewController: MKMapViewDelegate {
         return pinView
     }
     
+    func mapView(mapView: MKMapView, didSelectAnnotationView view: MKAnnotationView) {
+        let city = view.annotation as! City
+
+        let indexPath = self.fetchedResultsController.indexPathForObject(city)
+        self.tableView.selectRowAtIndexPath(indexPath, animated: true, scrollPosition: .Middle)
+        
+        delay(seconds: 2) {
+            mapView.deselectAnnotation(view.annotation, animated: true)
+            self.tableView.deselectRowAtIndexPath(indexPath!, animated: true)
+        }
+    }
 }
 
 //MARK: UITableViewDataSource, UITableViewDelegate
@@ -206,6 +217,7 @@ extension ShowCitiesViewController: UITableViewDataSource, UITableViewDelegate {
         
         cell.textLabel?.text = city.name + "  " + (city.countryCode ?? "")
         cell.detailTextLabel?.text = "Population: \(city.population)"
+        cell.selectionStyle = .Gray
         
         if let wikipedia = city.wikipedia where !wikipedia.isEmpty {
             cell.accessoryType = .DetailDisclosureButton
@@ -226,11 +238,21 @@ extension ShowCitiesViewController: UITableViewDataSource, UITableViewDelegate {
     }
     
     func tableView(tableView: UITableView, didSelectRowAtIndexPath indexPath: NSIndexPath) {
-        if !editing {
-            //TODO: REMOVEME AFTER SYNCING WITH MAPVIEW
-            print ("row tapped")
+        let city = fetchedResultsController.objectAtIndexPath(indexPath) as! City
+        self.mapView.selectAnnotation(city, animated: true)
+        
+        delay(seconds: 2) {
+            tableView.deselectRowAtIndexPath(indexPath, animated: true)
+            self.mapView.deselectAnnotation(city, animated: true)
         }
     }
+    
+    /*
+    func tableView(tableView: UITableView, didDeselectRowAtIndexPath indexPath: NSIndexPath) {
+        let city = fetchedResultsController.objectAtIndexPath(indexPath) as! City
+        self.mapView.deselectAnnotation(city, animated: false)
+    }
+    */
     
     func tableView(tableView: UITableView, commitEditingStyle editingStyle: UITableViewCellEditingStyle, forRowAtIndexPath indexPath: NSIndexPath) {
         if editingStyle == .Delete {

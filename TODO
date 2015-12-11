@@ -1,5 +1,3 @@
 - Implement busystatus functionality (from OnTheMap) possibly as a protocol extension
 - Implement auto-bounding box
 - Pull to refresh centers map view
-- Highlight pin when selecting table view
-- Show callout view with city name on pin
