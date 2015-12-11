@@ -92,7 +92,6 @@
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="dkx-z0-nzr" sceneMemberID="firstResponder"/>
-                <exit id="Dux-uN-SHo" userLabel="Exit" sceneMemberID="exit"/>
             </objects>
             <point key="canvasLocation" x="-1122" y="511"/>
         </scene>
@@ -157,7 +156,7 @@
                     <navigationItem key="navigationItem" title="Cities" id="ZoW-gP-0va">
                         <barButtonItem key="leftBarButtonItem" title="Save" id="bUC-9x-Gb2">
                             <connections>
-                                <segue destination="Dux-uN-SHo" kind="unwind" unwindAction="saveCities:" id="eB0-rA-LK5"/>
+                                <segue destination="qif-zh-x0q" kind="unwind" identifier="returnToInitialVC" unwindAction="saveCities:" id="daJ-dg-JJ1"/>
                             </connections>
                         </barButtonItem>
                     </navigationItem>
@@ -168,6 +167,7 @@
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="E2c-v0-ZcJ" userLabel="First Responder" sceneMemberID="firstResponder"/>
+                <exit id="qif-zh-x0q" userLabel="Exit" sceneMemberID="exit"/>
             </objects>
             <point key="canvasLocation" x="676" y="506"/>
         </scene>
