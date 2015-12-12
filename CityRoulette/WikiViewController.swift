@@ -45,6 +45,11 @@ class WikiViewController: UIViewController {
         let request = NSURLRequest(URL: url)
         self.webView.loadRequest(request)
     }
+    
+    override func viewWillDisappear(animated: Bool) {
+        super.viewWillDisappear(animated)
+        UIApplication.sharedApplication().networkActivityIndicatorVisible = false
+    }
 }
 
 
@@ -70,7 +75,9 @@ extension WikiViewController: UIWebViewDelegate {
         else {
             self.goForwardButton.enabled = false
         }
+        UIApplication.sharedApplication().networkActivityIndicatorVisible = false
     }
     func webViewDidStartLoad(webView: UIWebView) {
+        UIApplication.sharedApplication().networkActivityIndicatorVisible = true
     }
 }
