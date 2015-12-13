@@ -8,16 +8,37 @@
 
 import UIKit
 
+//This class implements a simple star-shaped favorite button.
+//I could have probably done it in a simpler way by just using some icon,
+//but I was afraid of scaling issues with non-vectorial graphics, and I 
+//found a nice example of how to do this using the "PaintCode" application.
+//I adapted that example to remove all animation-related code and leave a much
+//simpler button that does the job
 class FavoritedUIButton: UIButton {
     
-    private var starShape: CAShapeLayer!
+    private lazy var starShape: CAShapeLayer = {
+        var starFrame = self.bounds
+        starFrame.size.width = CGRectGetWidth(starFrame)/2.5
+        starFrame.size.height = CGRectGetHeight(starFrame)/2.5
+        
+        let shape = CAShapeLayer()
+        shape.path = rescaleForFrame(path: Paths.star, frame: starFrame)
+        shape.bounds = CGPathGetBoundingBox(shape.path)
+        shape.fillColor = self.notFavoriteColor.CGColor
+        shape.position = CGPoint(x: self.bounds.width/2, y: self.bounds.height/2)
+        shape.opacity = 0.5
+        self.layer.addSublayer(shape)
+
+        return shape
+    }()
+    
     let notFavoriteColor = UIColor.lightGrayColor()
-    let starFavoriteColor = UIColor.redColor()
+    let favoriteColor = UIColor.redColor()
     
     var isFavorite : Bool = false {
         didSet {
             if self.isFavorite {
-                self.starShape.fillColor = self.starFavoriteColor.CGColor
+                self.starShape.fillColor = self.favoriteColor.CGColor
                 self.starShape.opacity = 1
             }
             else {
@@ -30,35 +51,22 @@ class FavoritedUIButton: UIButton {
     
     override func layoutSubviews() {
         super.layoutSubviews()
-        createLayersIfNeeded()
         
         if self.isFavorite {
-            self.starShape.fillColor = starFavoriteColor.CGColor
+            self.starShape.fillColor = favoriteColor.CGColor
         }
         else {
             self.starShape.fillColor = notFavoriteColor.CGColor
         }
     }
     
-    private func createLayersIfNeeded() {
-        
-        if self.starShape == nil {
-            var starFrame = self.bounds
-            starFrame.size.width = CGRectGetWidth(starFrame)/2.5
-            starFrame.size.height = CGRectGetHeight(starFrame)/2.5
-            
-            self.starShape = CAShapeLayer()
-            self.starShape.path = rescaleForFrame(path: Paths.star, frame: starFrame)
-            self.starShape.bounds = CGPathGetBoundingBox(starShape.path)
-            self.starShape.fillColor = notFavoriteColor.CGColor
-            self.starShape.position = CGPoint(x: self.bounds.width/2, y: self.bounds.height/2)
-            self.starShape.opacity = 0.5
-            self.layer.addSublayer(starShape)
-        }
-    }
-    
 }
 
+//As the shape is "statically" designed in an external tool that creates code
+//for it to be drawn, if you want to properly draw it at different sizes when
+//putting it on the UI, you have to somehow rescale it, trying to preserve as much as
+//possible its aspect ratio.
+//This is what this function tries to achieve
 private func rescaleForFrame(path path: CGPath, frame: CGRect) -> CGPath {
     let boundingBox = CGPathGetBoundingBox(path)
     let boundingBoxAspectRatio = CGRectGetWidth(boundingBox)/CGRectGetHeight(boundingBox)
