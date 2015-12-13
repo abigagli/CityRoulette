@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		8D2F9C761C1C7E7400DC2624 /* CityTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8D2F9C751C1C7E7400DC2624 /* CityTableViewCell.swift */; };
+		8D2F9C781C1C9FA100DC2624 /* FavoritedUIButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8D2F9C771C1C9FA100DC2624 /* FavoritedUIButton.swift */; };
 		8D64D3111C07C25B00FBC661 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8D64D3101C07C25B00FBC661 /* AppDelegate.swift */; };
 		8D64D3131C07C25B00FBC661 /* InitialViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8D64D3121C07C25B00FBC661 /* InitialViewController.swift */; };
 		8D64D3161C07C25B00FBC661 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 8D64D3141C07C25B00FBC661 /* Main.storyboard */; };
@@ -26,6 +28,8 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		8D2F9C751C1C7E7400DC2624 /* CityTableViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = CityTableViewCell.swift; path = ../CityTableViewCell.swift; sourceTree = "<group>"; };
+		8D2F9C771C1C9FA100DC2624 /* FavoritedUIButton.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FavoritedUIButton.swift; sourceTree = "<group>"; };
 		8D64D30D1C07C25B00FBC661 /* CityRoulette.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = CityRoulette.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		8D64D3101C07C25B00FBC661 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		8D64D3121C07C25B00FBC661 /* InitialViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InitialViewController.swift; sourceTree = "<group>"; };
@@ -114,6 +118,8 @@
 		8DE3B7251C0B65D500CE642A /* UI and Assets */ = {
 			isa = PBXGroup;
 			children = (
+				8D2F9C771C1C9FA100DC2624 /* FavoritedUIButton.swift */,
+				8D2F9C751C1C7E7400DC2624 /* CityTableViewCell.swift */,
 				8D64D3141C07C25B00FBC661 /* Main.storyboard */,
 				8D64D31A1C07C25B00FBC661 /* Assets.xcassets */,
 				8D64D31C1C07C25B00FBC661 /* LaunchScreen.storyboard */,
@@ -213,11 +219,13 @@
 				8DFDF1AA1C0E4C3C00BF6D32 /* City.swift in Sources */,
 				8D64D3111C07C25B00FBC661 /* AppDelegate.swift in Sources */,
 				8DFD88751C0A250B000F497B /* Utils.swift in Sources */,
+				8D2F9C761C1C7E7400DC2624 /* CityTableViewCell.swift in Sources */,
 				8DFDF1A91C0E4C3C00BF6D32 /* City+CoreDataProperties.swift in Sources */,
 				8DE3B72A1C0B7DE200CE642A /* Constants.swift in Sources */,
 				8DE3B7281C0B7DA300CE642A /* GeoNames.swift in Sources */,
 				8DB49FBE1C17654600BB7EF6 /* WikiViewController.swift in Sources */,
 				8DE3B7221C0B5BD800CE642A /* ShowCitiesViewController.swift in Sources */,
+				8D2F9C781C1C9FA100DC2624 /* FavoritedUIButton.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

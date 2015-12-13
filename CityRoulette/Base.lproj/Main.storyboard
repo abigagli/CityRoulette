@@ -114,29 +114,41 @@
                                 <rect key="frame" x="0.0" y="240" width="600" height="360"/>
                                 <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                 <prototypes>
-                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" selectionStyle="none" accessoryType="detailDisclosureButton" hidesAccessoryWhenEditing="NO" indentationLevel="1" indentationWidth="0.0" reuseIdentifier="cityInfoCell" textLabel="frY-lK-9g8" detailTextLabel="efw-d3-pW5" style="IBUITableViewCellStyleSubtitle" id="KW7-5T-GDp">
+                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" selectionStyle="gray" accessoryType="detailButton" hidesAccessoryWhenEditing="NO" indentationLevel="1" indentationWidth="0.0" reuseIdentifier="cityInfoCell" id="KW7-5T-GDp" customClass="CityTableViewCell" customModule="CityRoulette" customModuleProvider="target">
                                         <rect key="frame" x="0.0" y="28" width="600" height="44"/>
                                         <autoresizingMask key="autoresizingMask"/>
-                                        <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="KW7-5T-GDp" id="GFK-TL-BkP">
-                                            <rect key="frame" x="0.0" y="0.0" width="533" height="43"/>
+                                        <tableViewCellContentView key="contentView" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="KW7-5T-GDp" id="GFK-TL-BkP">
+                                            <rect key="frame" x="0.0" y="0.0" width="553" height="43"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <subviews>
-                                                <label opaque="NO" multipleTouchEnabled="YES" contentMode="left" text="Title" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="frY-lK-9g8">
-                                                    <rect key="frame" x="15" y="5" width="32" height="20"/>
-                                                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                                    <fontDescription key="fontDescription" type="system" pointSize="16"/>
-                                                    <color key="textColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
-                                                    <nil key="highlightedColor"/>
-                                                </label>
-                                                <label opaque="NO" multipleTouchEnabled="YES" contentMode="left" text="Subtitle" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="efw-d3-pW5">
-                                                    <rect key="frame" x="15" y="25" width="41" height="14"/>
-                                                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                                    <fontDescription key="fontDescription" type="system" pointSize="11"/>
-                                                    <color key="textColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
+                                                <button contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="mGV-yV-ZUU" customClass="FavoritedUIButton" customModule="CityRoulette" customModuleProvider="target">
+                                                    <rect key="frame" x="20" y="0.0" width="44" height="44"/>
+                                                    <constraints>
+                                                        <constraint firstAttribute="width" constant="44" id="SKQ-FD-eHS"/>
+                                                        <constraint firstAttribute="height" constant="44" id="oaq-Kh-Ypt"/>
+                                                    </constraints>
+                                                    <connections>
+                                                        <action selector="ratingTapped:" destination="KW7-5T-GDp" eventType="touchUpInside" id="ajg-js-jtV"/>
+                                                    </connections>
+                                                </button>
+                                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Name" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Cva-S6-Aqo">
+                                                    <rect key="frame" x="72" y="11" width="45" height="21"/>
+                                                    <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                                    <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
                                                     <nil key="highlightedColor"/>
                                                 </label>
                                             </subviews>
+                                            <constraints>
+                                                <constraint firstItem="Cva-S6-Aqo" firstAttribute="leading" secondItem="mGV-yV-ZUU" secondAttribute="trailing" constant="8" symbolic="YES" id="2EY-dD-Cbt"/>
+                                                <constraint firstItem="Cva-S6-Aqo" firstAttribute="centerY" secondItem="GFK-TL-BkP" secondAttribute="centerY" id="2wE-NP-7zC"/>
+                                                <constraint firstItem="mGV-yV-ZUU" firstAttribute="leading" secondItem="GFK-TL-BkP" secondAttribute="leading" constant="20" symbolic="YES" id="3ku-Rc-EQ8"/>
+                                                <constraint firstItem="mGV-yV-ZUU" firstAttribute="centerY" secondItem="GFK-TL-BkP" secondAttribute="centerY" id="iL6-wc-GfA"/>
+                                            </constraints>
                                         </tableViewCellContentView>
+                                        <connections>
+                                            <outlet property="nameLabel" destination="Cva-S6-Aqo" id="5Q8-Xv-q4d"/>
+                                            <outlet property="ratingButton" destination="mGV-yV-ZUU" id="4g5-4Q-F1r"/>
+                                        </connections>
                                     </tableViewCell>
                                 </prototypes>
                             </tableView>

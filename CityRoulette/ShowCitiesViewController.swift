@@ -211,16 +211,18 @@ extension ShowCitiesViewController: UITableViewDataSource, UITableViewDelegate {
     }
     
     func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCellWithIdentifier("cityInfoCell", forIndexPath: indexPath)
+        
+        let cell = tableView.dequeueReusableCellWithIdentifier("cityInfoCell", forIndexPath: indexPath) as! CityTableViewCell
 
         let city = fetchedResultsController.objectAtIndexPath(indexPath) as! City
         
-        cell.textLabel?.text = city.name + "  " + (city.countryCode ?? "")
-        cell.detailTextLabel?.text = "Population: \(city.population)"
-        cell.selectionStyle = .Gray
+        //cell.textLabel?.text = city.name + "  " + (city.countryCode ?? "")
+        //cell.detailTextLabel?.text = "Population: \(city.population)"
+        cell.nameLabel.text = city.name + "  " + (city.countryCode ?? "")
+        cell.delegate = self
         
         if let wikipedia = city.wikipedia where !wikipedia.isEmpty {
-            cell.accessoryType = .DetailDisclosureButton
+            cell.accessoryType = .DetailButton
         }
         else {
             cell.accessoryType = .None
@@ -297,4 +299,11 @@ extension ShowCitiesViewController: NSFetchedResultsControllerDelegate {
     }
     
     
+}
+
+extension ShowCitiesViewController: CityTableViewCellDelegate {
+    func ratingButtonTappedOnCell (cell: CityTableViewCell) {
+        let ip = self.tableView.indexPathForCell (cell)
+        
+    }
 }
