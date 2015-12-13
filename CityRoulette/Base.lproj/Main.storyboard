@@ -111,7 +111,7 @@
                                 <rect key="frame" x="0.0" y="64" width="600" height="176"/>
                             </mapView>
                             <tableView clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="44" sectionHeaderHeight="28" sectionFooterHeight="28" translatesAutoresizingMaskIntoConstraints="NO" id="QOX-o8-zmP">
-                                <rect key="frame" x="0.0" y="240" width="600" height="360"/>
+                                <rect key="frame" x="0.0" y="240" width="600" height="316"/>
                                 <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                 <prototypes>
                                     <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" selectionStyle="gray" accessoryType="detailButton" hidesAccessoryWhenEditing="NO" indentationLevel="1" indentationWidth="0.0" reuseIdentifier="cityInfoCell" id="KW7-5T-GDp" customClass="CityTableViewCell" customModule="CityRoulette" customModuleProvider="target">
@@ -153,7 +153,7 @@
                                 </prototypes>
                             </tableView>
                             <toolbar opaque="NO" clearsContextBeforeDrawing="NO" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="3gi-dJ-sI0">
-                                <rect key="frame" x="0.0" y="600" width="600" height="44"/>
+                                <rect key="frame" x="0.0" y="556" width="600" height="44"/>
                                 <items>
                                     <barButtonItem style="plain" systemItem="flexibleSpace" id="vXp-vY-d2p"/>
                                     <barButtonItem title="Delete unfavorites" id="NEf-0C-c0y" userLabel="deleteUnfavorites">
@@ -169,14 +169,14 @@
                         <constraints>
                             <constraint firstItem="3gi-dJ-sI0" firstAttribute="leading" secondItem="jfM-vl-fit" secondAttribute="leading" id="0DW-6t-N32"/>
                             <constraint firstAttribute="trailing" secondItem="3gi-dJ-sI0" secondAttribute="trailing" id="5WT-EC-Flb"/>
-                            <constraint firstAttribute="bottom" secondItem="3gi-dJ-sI0" secondAttribute="bottom" constant="-44" id="DJx-Fi-hS4"/>
+                            <constraint firstAttribute="bottom" secondItem="3gi-dJ-sI0" secondAttribute="bottom" id="DJx-Fi-hS4"/>
                             <constraint firstItem="QOX-o8-zmP" firstAttribute="top" secondItem="yB8-QS-d2S" secondAttribute="bottom" id="E3Q-KC-5i2"/>
                             <constraint firstAttribute="trailing" secondItem="yB8-QS-d2S" secondAttribute="trailing" id="EAE-dJ-zAZ"/>
                             <constraint firstAttribute="trailing" secondItem="QOX-o8-zmP" secondAttribute="trailing" id="HLg-MX-OrR"/>
+                            <constraint firstItem="3gi-dJ-sI0" firstAttribute="top" secondItem="QOX-o8-zmP" secondAttribute="bottom" id="OGo-2d-hlH"/>
                             <constraint firstItem="QOX-o8-zmP" firstAttribute="leading" secondItem="jfM-vl-fit" secondAttribute="leading" id="dXc-XS-Qgt"/>
                             <constraint firstItem="yB8-QS-d2S" firstAttribute="bottom" secondItem="jfM-vl-fit" secondAttribute="bottom" multiplier="4:10" id="e3C-lv-k5U"/>
                             <constraint firstItem="yB8-QS-d2S" firstAttribute="leading" secondItem="jfM-vl-fit" secondAttribute="leading" id="eWO-D3-ugY"/>
-                            <constraint firstItem="1B6-FH-gCn" firstAttribute="top" secondItem="QOX-o8-zmP" secondAttribute="bottom" id="jFZ-oz-htv"/>
                             <constraint firstItem="yB8-QS-d2S" firstAttribute="top" secondItem="AYp-kd-Kh5" secondAttribute="bottom" id="wGS-MG-fIp"/>
                         </constraints>
                     </view>
@@ -200,6 +200,7 @@
                         <outlet property="mapView" destination="yB8-QS-d2S" id="dvw-h6-DjA"/>
                         <outlet property="saveBarButton" destination="bUC-9x-Gb2" id="L8n-SI-FHW"/>
                         <outlet property="tableView" destination="QOX-o8-zmP" id="j1j-Km-AIn"/>
+                        <outlet property="toolbar" destination="3gi-dJ-sI0" id="KgZ-7F-Ii2"/>
                         <outlet property="toolbarBottomConstraint" destination="DJx-Fi-hS4" id="k2X-DJ-WPq"/>
                         <segue destination="MPO-H7-Q0N" kind="show" identifier="showWiki" id="JWR-Gb-IeS"/>
                     </connections>

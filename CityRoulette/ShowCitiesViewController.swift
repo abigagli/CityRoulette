@@ -18,6 +18,7 @@ class ShowCitiesViewController: UIViewController {
     @IBOutlet weak var tableView: UITableView!
     @IBOutlet weak var deleteUnfavoritesButton: UIBarButtonItem!
     @IBOutlet weak var toolbarBottomConstraint: NSLayoutConstraint!
+    @IBOutlet weak var toolbar: UIToolbar!
     @IBOutlet weak var saveBarButton: UIBarButtonItem!
     @IBOutlet weak var cancelBarButton: UIBarButtonItem!
     
@@ -39,22 +40,22 @@ class ShowCitiesViewController: UIViewController {
     var acquireID: Int64 = 0
     var numUnfavorites: Int = 0
     
-    private var showBottomToolbar: Bool = false {
-        didSet {
-            if showBottomToolbar == true {
-                self.toolbarBottomConstraint.constant = 0
-            }
-            else {
-                self.toolbarBottomConstraint.constant = -44
-            }
-            
-            UIView.animateWithDuration(0.5) {
-                self.view.layoutIfNeeded()
-            }
+
+    //MARK:- UI
+    private func showBottomToolbar(show: Bool) {
+    
+        if show == true {
+            self.toolbarBottomConstraint.constant = 0
+        }
+        else {
+            self.toolbarBottomConstraint.constant = -self.toolbar.frame.height
+        }
+        
+        UIView.animateWithDuration(0.5) {
+            self.view.layoutIfNeeded()
         }
     }
     
-    //MARK:- UI
     private func updateUI() {
         if (self.fetchedResultsController.fetchedObjects?.count ?? 0) > 0 {
             self.navigationItem.rightBarButtonItem!.enabled = true
@@ -144,8 +145,7 @@ class ShowCitiesViewController: UIViewController {
                     self.numUnfavorites++
                 }
                 
-                //self.mapView.showAnnotations(self.mapView.annotations, animated: true)
-                
+                //Just set the map to show the first city in the center
                 if topCity == nil {
                     topCity = city
                     let region = MKCoordinateRegionMakeWithDistance(topCity!.coordinate, self.radius * 1.1, self.radius * 1.1)
@@ -163,13 +163,15 @@ class ShowCitiesViewController: UIViewController {
 
     override func viewWillAppear(animated: Bool) {
         super.viewWillAppear(animated)
+        self.toolbarBottomConstraint.constant = -self.toolbar.frame.height
+
         updateUI()
     }
 
     override func setEditing(editing: Bool, animated: Bool) {
         super.setEditing(editing, animated: animated)
         self.tableView.setEditing(editing, animated: animated)
-        self.showBottomToolbar = self.editing
+        self.showBottomToolbar(self.editing)
         updateUI()
     }
 
@@ -334,9 +336,6 @@ extension ShowCitiesViewController: NSFetchedResultsControllerDelegate {
     func controllerDidChangeContent(controller: NSFetchedResultsController) {
         self.tableView.endUpdates()
         self.updateUI()
-        
-        //print ("Scratch Context: \(self.currentCoreDataContext.registeredObjects.count)")
-        //print ("Main Context: \(CoreDataStackManager.sharedInstance.managedObjectContext.registeredObjects.count)")
     }
     
     
