@@ -1,4 +1,4 @@
 - Implement busystatus functionality (from OnTheMap) possibly as a protocol extension
 - Implement auto-bounding box
 - Pull to refresh centers map view
-- Remove flickering of leftbarbutton item (cancel/save)
+- Move list full screen when editing
