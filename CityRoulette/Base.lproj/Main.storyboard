@@ -128,7 +128,7 @@
                                                         <constraint firstAttribute="height" constant="44" id="oaq-Kh-Ypt"/>
                                                     </constraints>
                                                     <connections>
-                                                        <action selector="ratingTapped:" destination="KW7-5T-GDp" eventType="touchUpInside" id="ajg-js-jtV"/>
+                                                        <action selector="favoriteButtonTapped:" destination="KW7-5T-GDp" eventType="touchUpInside" id="SMm-7A-hci"/>
                                                     </connections>
                                                 </button>
                                                 <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Name" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Cva-S6-Aqo">
@@ -146,8 +146,8 @@
                                             </constraints>
                                         </tableViewCellContentView>
                                         <connections>
+                                            <outlet property="favoriteButton" destination="mGV-yV-ZUU" id="6fz-Op-Srm"/>
                                             <outlet property="nameLabel" destination="Cva-S6-Aqo" id="5Q8-Xv-q4d"/>
-                                            <outlet property="ratingButton" destination="mGV-yV-ZUU" id="4g5-4Q-F1r"/>
                                         </connections>
                                     </tableViewCell>
                                 </prototypes>
@@ -166,7 +166,7 @@
                         </constraints>
                     </view>
                     <navigationItem key="navigationItem" title="Cities" id="ZoW-gP-0va">
-                        <barButtonItem key="leftBarButtonItem" title="Save" id="bUC-9x-Gb2">
+                        <barButtonItem key="leftBarButtonItem" title="Cancel" id="bUC-9x-Gb2">
                             <connections>
                                 <segue destination="qif-zh-x0q" kind="unwind" identifier="returnToInitialVC" unwindAction="saveCities:" id="daJ-dg-JJ1"/>
                             </connections>

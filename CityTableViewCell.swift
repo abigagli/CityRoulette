@@ -13,24 +13,23 @@ import UIKit
 //will conform to, we'll notify it about the tap and pass ourselves
 //and it will find our indexpath at every tap
 protocol CityTableViewCellDelegate: class {
-    func ratingButtonTappedOnCell (cell: CityTableViewCell)
+    func favoriteButtonTapped (sender: FavoritedUIButton, cell: CityTableViewCell)
 }
 
 class CityTableViewCell: UITableViewCell {
 
-    @IBOutlet weak var ratingButton: UIButton!
+    @IBOutlet weak var favoriteButton: FavoritedUIButton!
     
     @IBOutlet weak var nameLabel: UILabel!
-    @IBAction func ratingTapped(sender: UIButton) {
+    
+    @IBAction func favoriteButtonTapped(sender: FavoritedUIButton) {
         
-        let favoriteButton = sender as! FavoritedUIButton
-        
-        favoriteButton.isFavorite = !favoriteButton.isFavorite
+        sender.isFavorite = !sender.isFavorite
         
         if let tapdelegate = self.delegate {
             //Let the delegate do higher level stuff related to our cell
-            //having been tapped
-            tapdelegate.ratingButtonTappedOnCell (self)
+            //having been favorited
+            tapdelegate.favoriteButtonTapped(sender, cell: self)
         }
     }
     

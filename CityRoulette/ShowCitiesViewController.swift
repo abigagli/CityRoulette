@@ -23,6 +23,17 @@ class ShowCitiesViewController: UIViewController {
     var currentCoreDataContext: NSManagedObjectContext!
     var acquireID: Int64 = 0
     
+    var numFavorites = 0 {
+        didSet {
+            if oldValue == 0 {
+                self.navigationItem.leftBarButtonItem!.title = "Save"
+            }
+            else if self.numFavorites == 0 {
+                self.navigationItem.leftBarButtonItem!.title = "Cancel"
+            }
+        }
+    }
+    
     //MARK:- UI
     private func updateUI() {
         if (self.fetchedResultsController.fetchedObjects?.count ?? 0) > 0 {
@@ -216,8 +227,6 @@ extension ShowCitiesViewController: UITableViewDataSource, UITableViewDelegate {
 
         let city = fetchedResultsController.objectAtIndexPath(indexPath) as! City
         
-        //cell.textLabel?.text = city.name + "  " + (city.countryCode ?? "")
-        //cell.detailTextLabel?.text = "Population: \(city.population)"
         cell.nameLabel.text = city.name + "  " + (city.countryCode ?? "")
         cell.delegate = self
         
@@ -302,8 +311,18 @@ extension ShowCitiesViewController: NSFetchedResultsControllerDelegate {
 }
 
 extension ShowCitiesViewController: CityTableViewCellDelegate {
-    func ratingButtonTappedOnCell (cell: CityTableViewCell) {
-        let ip = self.tableView.indexPathForCell (cell)
+    func favoriteButtonTapped(sender: FavoritedUIButton, cell: CityTableViewCell) {
+        let indexPath = self.tableView.indexPathForCell (cell)
+        //(self.fetchedResultsController.objectAtIndexPath(indexPath) as! City).favorite = sender.isFavorite
         
+        if sender.isFavorite {
+            self.numFavorites++
+        }
+        else {
+            self.numFavorites--
+            
+        }
+        
+        //self.updateUI()
     }
 }
