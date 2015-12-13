@@ -38,7 +38,7 @@ class ShowCitiesViewController: UIViewController {
     var radius: Double!
     var currentCoreDataContext: NSManagedObjectContext!
     var acquireID: Int64 = 0
-    var numUnfavorites: Int = 0
+    private var numUnfavorites: Int = 0
     
 
     //MARK:- UI
