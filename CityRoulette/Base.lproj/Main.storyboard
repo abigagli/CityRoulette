@@ -155,11 +155,13 @@
                             <toolbar opaque="NO" clearsContextBeforeDrawing="NO" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="3gi-dJ-sI0">
                                 <rect key="frame" x="0.0" y="600" width="600" height="44"/>
                                 <items>
-                                    <barButtonItem systemItem="trash" id="NEf-0C-c0y">
+                                    <barButtonItem style="plain" systemItem="flexibleSpace" id="vXp-vY-d2p"/>
+                                    <barButtonItem title="Delete unfavorites" id="NEf-0C-c0y" userLabel="deleteUnfavorites">
                                         <connections>
-                                            <action selector="trashTapped:" destination="1PL-0Z-j2S" id="PLk-On-9qL"/>
+                                            <action selector="deleteUnfavoritesTapped:" destination="1PL-0Z-j2S" id="TKa-90-Oq5"/>
                                         </connections>
                                     </barButtonItem>
+                                    <barButtonItem style="plain" systemItem="flexibleSpace" id="Qw1-rU-rlC"/>
                                 </items>
                             </toolbar>
                         </subviews>
@@ -179,17 +181,26 @@
                         </constraints>
                     </view>
                     <navigationItem key="navigationItem" title="Cities" id="ZoW-gP-0va">
-                        <barButtonItem key="leftBarButtonItem" title="Save" id="bUC-9x-Gb2">
-                            <connections>
-                                <segue destination="qif-zh-x0q" kind="unwind" identifier="returnToInitialVC" unwindAction="saveCities:" id="daJ-dg-JJ1"/>
-                            </connections>
-                        </barButtonItem>
+                        <leftBarButtonItems>
+                            <barButtonItem systemItem="cancel" id="46k-kA-73b">
+                                <connections>
+                                    <segue destination="qif-zh-x0q" kind="unwind" identifier="exitToInitialVC" unwindAction="unwindFromCancel:" id="PB9-pw-GI9"/>
+                                </connections>
+                            </barButtonItem>
+                            <barButtonItem title="Save" id="bUC-9x-Gb2">
+                                <connections>
+                                    <segue destination="qif-zh-x0q" kind="unwind" identifier="saveAndReturnToInitialVC" unwindAction="unwindFromSave:" id="dzL-nM-dvS"/>
+                                </connections>
+                            </barButtonItem>
+                        </leftBarButtonItems>
                     </navigationItem>
                     <connections>
+                        <outlet property="cancelBarButton" destination="46k-kA-73b" id="bF6-NB-VPI"/>
+                        <outlet property="deleteUnfavoritesButton" destination="NEf-0C-c0y" id="q2I-6P-Dyg"/>
                         <outlet property="mapView" destination="yB8-QS-d2S" id="dvw-h6-DjA"/>
+                        <outlet property="saveBarButton" destination="bUC-9x-Gb2" id="L8n-SI-FHW"/>
                         <outlet property="tableView" destination="QOX-o8-zmP" id="j1j-Km-AIn"/>
                         <outlet property="toolbarBottomConstraint" destination="DJx-Fi-hS4" id="k2X-DJ-WPq"/>
-                        <outlet property="trashButton" destination="NEf-0C-c0y" id="YV2-91-GFB"/>
                         <segue destination="MPO-H7-Q0N" kind="show" identifier="showWiki" id="JWR-Gb-IeS"/>
                     </connections>
                 </viewController>

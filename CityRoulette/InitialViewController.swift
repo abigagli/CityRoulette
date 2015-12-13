@@ -27,15 +27,19 @@ class InitialViewController: UIViewController {
     @IBOutlet weak var chooseBottomSpace: NSLayoutConstraint!
     
     //MARK:- Actions
-    @IBAction func saveCities (segue: UIStoryboardSegue) {
+    @IBAction func unwindFromSave (segue: UIStoryboardSegue) {
         CoreDataStackManager.sharedInstance.saveContext()
         self.acquireID = 0
     }
     
+    @IBAction func unwindFromCancel (segue: UIStoryboardSegue) {
+        self.acquireID = 0
+    }
     
     @IBAction func chooseTapped(sender: UIButton) {
         self.hideButtons()
-        self.showButtons()
+        self.performSegueWithIdentifier("showCitiesInfo", sender: CoreDataStackManager.sharedInstance.managedObjectContext)
+        //self.showButtons()
     }
     
     @IBAction func surpriseMeTapped(sender: UIButton) {

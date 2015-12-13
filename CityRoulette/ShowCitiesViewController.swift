@@ -16,16 +16,20 @@ class ShowCitiesViewController: UIViewController {
     //MARK:- Outlets
     @IBOutlet weak var mapView: MKMapView!
     @IBOutlet weak var tableView: UITableView!
-    @IBOutlet weak var trashButton: UIBarButtonItem!
+    @IBOutlet weak var deleteUnfavoritesButton: UIBarButtonItem!
     @IBOutlet weak var toolbarBottomConstraint: NSLayoutConstraint!
+    @IBOutlet weak var saveBarButton: UIBarButtonItem!
+    @IBOutlet weak var cancelBarButton: UIBarButtonItem!
     
     //MARK:- Actions
-    @IBAction func trashTapped(sender: UIBarButtonItem) {
+    @IBAction func deleteUnfavoritesTapped(sender: UIBarButtonItem) {
         for city in self.fetchedResultsController.fetchedObjects as! [City] {
             if !city.favorite {
                 self.currentCoreDataContext.deleteObject(city)
+                self.numUnfavorites--
             }
         }
+        self.updateUI()
     }
     
     //MARK:- State
@@ -33,6 +37,8 @@ class ShowCitiesViewController: UIViewController {
     var radius: Double!
     var currentCoreDataContext: NSManagedObjectContext!
     var acquireID: Int64 = 0
+    var numUnfavorites: Int = 0
+    
     private var showBottomToolbar: Bool = false {
         didSet {
             if showBottomToolbar == true {
@@ -52,16 +58,16 @@ class ShowCitiesViewController: UIViewController {
     private func updateUI() {
         if (self.fetchedResultsController.fetchedObjects?.count ?? 0) > 0 {
             self.navigationItem.rightBarButtonItem!.enabled = true
-            self.navigationItem.leftBarButtonItem!.title = "Save"
-            self.trashButton.enabled = true
+            self.deleteUnfavoritesButton.enabled = self.numUnfavorites > 0
         }
         else {
             super.setEditing(false, animated: true)
             self.navigationItem.rightBarButtonItem!.enabled = false
-            self.navigationItem.leftBarButtonItem!.title = "Exit"
-            self.trashButton.enabled = false
+            self.deleteUnfavoritesButton.enabled = false
         }
-        self.navigationItem.leftBarButtonItem!.enabled = !self.editing
+        
+        self.saveBarButton.enabled = self.currentCoreDataContext.hasChanges && !self.editing
+        self.cancelBarButton.enabled = !self.editing
     }
     
 
@@ -84,7 +90,7 @@ class ShowCitiesViewController: UIViewController {
                 wikiVC.city = dataForNextVC as! City
             }
         }
-        else if segue.identifier == "returnToInitialVC" {
+        else if segue.identifier == "saveAndReturnToInitialVC" {
             
             if self.currentCoreDataContext.hasChanges {
                 do {
@@ -108,6 +114,9 @@ class ShowCitiesViewController: UIViewController {
             print ("Scratch Context After: \(self.currentCoreDataContext.registeredObjects.count)")
             print ("Main Context: \(CoreDataStackManager.sharedInstance.managedObjectContext.registeredObjects.count)")
         }
+        else if segue.identifier == "exitToInitialVC" {
+           self.currentCoreDataContext.reset()
+        }
     }
     
     override func viewDidLoad() {
@@ -130,7 +139,11 @@ class ShowCitiesViewController: UIViewController {
             var topCity: City?
             for city in self.fetchedResultsController.fetchedObjects as! [City] {
                 self.mapView.addAnnotation(city)
-            
+                
+                if !city.favorite {
+                    self.numUnfavorites++
+                }
+                
                 //self.mapView.showAnnotations(self.mapView.annotations, animated: true)
                 
                 if topCity == nil {
@@ -333,6 +346,14 @@ extension ShowCitiesViewController: CityTableViewCellDelegate {
     func favoriteButtonTapped(sender: FavoritedUIButton, cell: CityTableViewCell) {
         let indexPath = self.tableView.indexPathForCell (cell)
         let city = self.fetchedResultsController.objectAtIndexPath(indexPath!) as! City
+        
+        if sender.isFavorite {
+            self.numUnfavorites--
+        }
+        else {
+            self.numUnfavorites++
+        }
+        
         city.favorite = sender.isFavorite
     }
 }
