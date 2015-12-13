@@ -16,20 +16,34 @@ class ShowCitiesViewController: UIViewController {
     //MARK:- Outlets
     @IBOutlet weak var mapView: MKMapView!
     @IBOutlet weak var tableView: UITableView!
+    @IBOutlet weak var trashButton: UIBarButtonItem!
+    @IBOutlet weak var toolbarBottomConstraint: NSLayoutConstraint!
+    
+    //MARK:- Actions
+    @IBAction func trashTapped(sender: UIBarButtonItem) {
+        for city in self.fetchedResultsController.fetchedObjects as! [City] {
+            if !city.favorite {
+                self.currentCoreDataContext.deleteObject(city)
+            }
+        }
+    }
     
     //MARK:- State
     //TODO: Remove if using dynamic radius
     var radius: Double!
     var currentCoreDataContext: NSManagedObjectContext!
     var acquireID: Int64 = 0
-    
-    var numFavorites = 0 {
+    private var showBottomToolbar: Bool = false {
         didSet {
-            if oldValue == 0 {
-                self.navigationItem.leftBarButtonItem!.title = "Save"
+            if showBottomToolbar == true {
+                self.toolbarBottomConstraint.constant = 0
             }
-            else if self.numFavorites == 0 {
-                self.navigationItem.leftBarButtonItem!.title = "Cancel"
+            else {
+                self.toolbarBottomConstraint.constant = -44
+            }
+            
+            UIView.animateWithDuration(0.5) {
+                self.view.layoutIfNeeded()
             }
         }
     }
@@ -38,10 +52,14 @@ class ShowCitiesViewController: UIViewController {
     private func updateUI() {
         if (self.fetchedResultsController.fetchedObjects?.count ?? 0) > 0 {
             self.navigationItem.rightBarButtonItem!.enabled = true
+            self.navigationItem.leftBarButtonItem!.title = "Save"
+            self.trashButton.enabled = true
         }
         else {
             super.setEditing(false, animated: true)
             self.navigationItem.rightBarButtonItem!.enabled = false
+            self.navigationItem.leftBarButtonItem!.title = "Exit"
+            self.trashButton.enabled = false
         }
         self.navigationItem.leftBarButtonItem!.enabled = !self.editing
     }
@@ -128,19 +146,17 @@ class ShowCitiesViewController: UIViewController {
                                     , message: "Failed to retrieve list of cities"
                                     , retryHandler: nil)
         }
-
-        // Do any additional setup after loading the view.
     }
 
-    override func viewDidAppear(animated: Bool) {
-        super.viewDidAppear(animated)
-        
+    override func viewWillAppear(animated: Bool) {
+        super.viewWillAppear(animated)
         updateUI()
     }
 
     override func setEditing(editing: Bool, animated: Bool) {
         super.setEditing(editing, animated: animated)
         self.tableView.setEditing(editing, animated: animated)
+        self.showBottomToolbar = self.editing
         updateUI()
     }
 
@@ -156,7 +172,7 @@ class ShowCitiesViewController: UIViewController {
         
         //create fetch request with sort descriptor
         let fetchRequest = NSFetchRequest(entityName: "City")
-        fetchRequest.sortDescriptors = [NSSortDescriptor(key: "population", ascending: false)]
+        fetchRequest.sortDescriptors = [NSSortDescriptor(key: "favorite", ascending: false), NSSortDescriptor(key: "population", ascending: false)]
         
         if self.acquireID > 0 {
             fetchRequest.predicate = NSPredicate(format: "acquireID == %lld", self.acquireID)
@@ -229,6 +245,7 @@ extension ShowCitiesViewController: UITableViewDataSource, UITableViewDelegate {
         
         cell.nameLabel.text = city.name + "  " + (city.countryCode ?? "")
         cell.delegate = self
+        cell.favoriteButton.isFavorite = city.favorite
         
         if let wikipedia = city.wikipedia where !wikipedia.isEmpty {
             cell.accessoryType = .DetailButton
@@ -293,6 +310,8 @@ extension ShowCitiesViewController: NSFetchedResultsControllerDelegate {
         case .Delete:
             tableView.deleteRowsAtIndexPaths([indexPath!], withRowAnimation: .Fade)
             self.mapView.removeAnnotation(anObject as! MKAnnotation)
+        case .Move:
+            self.tableView.moveRowAtIndexPath(indexPath!, toIndexPath: newIndexPath!)
         default:
             return
         }
@@ -313,16 +332,7 @@ extension ShowCitiesViewController: NSFetchedResultsControllerDelegate {
 extension ShowCitiesViewController: CityTableViewCellDelegate {
     func favoriteButtonTapped(sender: FavoritedUIButton, cell: CityTableViewCell) {
         let indexPath = self.tableView.indexPathForCell (cell)
-        //(self.fetchedResultsController.objectAtIndexPath(indexPath) as! City).favorite = sender.isFavorite
-        
-        if sender.isFavorite {
-            self.numFavorites++
-        }
-        else {
-            self.numFavorites--
-            
-        }
-        
-        //self.updateUI()
+        let city = self.fetchedResultsController.objectAtIndexPath(indexPath!) as! City
+        city.favorite = sender.isFavorite
     }
 }

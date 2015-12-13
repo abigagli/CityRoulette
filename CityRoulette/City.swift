@@ -28,6 +28,7 @@ class City: NSManagedObject {
         self.longitude = json["lng"] as! Double
         self.geonameID = Int64(json["geonameId"] as! Int)
         self.acquireID = acquireID
+        self.favorite = false
     }
 }
 

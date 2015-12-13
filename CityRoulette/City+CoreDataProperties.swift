@@ -22,4 +22,5 @@ extension City {
     @NSManaged var population: Int32
     @NSManaged var wikipedia: String?
     @NSManaged var acquireID: Int64
+    @NSManaged var favorite: Bool
 }

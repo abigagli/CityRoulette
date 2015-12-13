@@ -152,9 +152,22 @@
                                     </tableViewCell>
                                 </prototypes>
                             </tableView>
+                            <toolbar opaque="NO" clearsContextBeforeDrawing="NO" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="3gi-dJ-sI0">
+                                <rect key="frame" x="0.0" y="600" width="600" height="44"/>
+                                <items>
+                                    <barButtonItem systemItem="trash" id="NEf-0C-c0y">
+                                        <connections>
+                                            <action selector="trashTapped:" destination="1PL-0Z-j2S" id="PLk-On-9qL"/>
+                                        </connections>
+                                    </barButtonItem>
+                                </items>
+                            </toolbar>
                         </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                         <constraints>
+                            <constraint firstItem="3gi-dJ-sI0" firstAttribute="leading" secondItem="jfM-vl-fit" secondAttribute="leading" id="0DW-6t-N32"/>
+                            <constraint firstAttribute="trailing" secondItem="3gi-dJ-sI0" secondAttribute="trailing" id="5WT-EC-Flb"/>
+                            <constraint firstAttribute="bottom" secondItem="3gi-dJ-sI0" secondAttribute="bottom" constant="-44" id="DJx-Fi-hS4"/>
                             <constraint firstItem="QOX-o8-zmP" firstAttribute="top" secondItem="yB8-QS-d2S" secondAttribute="bottom" id="E3Q-KC-5i2"/>
                             <constraint firstAttribute="trailing" secondItem="yB8-QS-d2S" secondAttribute="trailing" id="EAE-dJ-zAZ"/>
                             <constraint firstAttribute="trailing" secondItem="QOX-o8-zmP" secondAttribute="trailing" id="HLg-MX-OrR"/>
@@ -166,7 +179,7 @@
                         </constraints>
                     </view>
                     <navigationItem key="navigationItem" title="Cities" id="ZoW-gP-0va">
-                        <barButtonItem key="leftBarButtonItem" title="Cancel" id="bUC-9x-Gb2">
+                        <barButtonItem key="leftBarButtonItem" title="Save" id="bUC-9x-Gb2">
                             <connections>
                                 <segue destination="qif-zh-x0q" kind="unwind" identifier="returnToInitialVC" unwindAction="saveCities:" id="daJ-dg-JJ1"/>
                             </connections>
@@ -175,6 +188,8 @@
                     <connections>
                         <outlet property="mapView" destination="yB8-QS-d2S" id="dvw-h6-DjA"/>
                         <outlet property="tableView" destination="QOX-o8-zmP" id="j1j-Km-AIn"/>
+                        <outlet property="toolbarBottomConstraint" destination="DJx-Fi-hS4" id="k2X-DJ-WPq"/>
+                        <outlet property="trashButton" destination="NEf-0C-c0y" id="YV2-91-GFB"/>
                         <segue destination="MPO-H7-Q0N" kind="show" identifier="showWiki" id="JWR-Gb-IeS"/>
                     </connections>
                 </viewController>
