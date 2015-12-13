@@ -27,7 +27,6 @@ class ShowCitiesViewController: UIViewController {
         for city in self.fetchedResultsController.fetchedObjects as! [City] {
             if !city.favorite {
                 self.currentCoreDataContext.deleteObject(city)
-                self.numUnfavorites--
             }
         }
         self.updateUI()
@@ -39,7 +38,14 @@ class ShowCitiesViewController: UIViewController {
     var currentCoreDataContext: NSManagedObjectContext!
     var acquireID: Int64 = 0
     private var numUnfavorites: Int = 0
+    private let searchController = UISearchController(searchResultsController: nil)
+    private var inSearch: Bool {
+        return self.searchController.active && self.searchController.searchBar.text != ""
+    }
     
+    private var isMainContext: Bool {
+        return self.currentCoreDataContext == CoreDataStackManager.sharedInstance.managedObjectContext
+    }
 
     //MARK:- UI
     private func showBottomToolbar(show: Bool) {
@@ -57,7 +63,9 @@ class ShowCitiesViewController: UIViewController {
     }
     
     private func updateUI() {
+        var recordsToSave = false
         if (self.fetchedResultsController.fetchedObjects?.count ?? 0) > 0 {
+            recordsToSave = true
             self.navigationItem.rightBarButtonItem!.enabled = true
             self.deleteUnfavoritesButton.enabled = self.numUnfavorites > 0
         }
@@ -67,7 +75,14 @@ class ShowCitiesViewController: UIViewController {
             self.deleteUnfavoritesButton.enabled = false
         }
         
-        self.saveBarButton.enabled = self.currentCoreDataContext.hasChanges && !self.editing
+        if (!self.editing && (self.isMainContext && self.currentCoreDataContext.hasChanges ||
+                             !self.isMainContext && recordsToSave)) {
+            self.saveBarButton.enabled = true
+        }
+        else {
+            self.saveBarButton.enabled = false
+        }
+        
         self.cancelBarButton.enabled = !self.editing
     }
     
@@ -124,6 +139,13 @@ class ShowCitiesViewController: UIViewController {
         super.viewDidLoad()
 
         self.navigationItem.rightBarButtonItem = self.editButtonItem()
+        if self.acquireID > 0 {
+            self.saveBarButton.title = "Import"
+        }
+        else {
+            self.saveBarButton.title = "Save"
+        }
+        
         self.mapView.delegate = self
         self.mapView.showsCompass = true
         //self.mapView.tintAdjustmentMode = .Normal
@@ -155,10 +177,17 @@ class ShowCitiesViewController: UIViewController {
             }
         }
         catch {
+            let nserror = error as NSError
             self.alertUserWithTitle("Error"
-                                    , message: "Failed to retrieve list of cities"
+                                    , message: nserror.localizedDescription
                                     , retryHandler: nil)
         }
+        
+        self.searchController.searchResultsUpdater = self
+        self.searchController.dimsBackgroundDuringPresentation = false
+        self.searchController.hidesNavigationBarDuringPresentation = false
+        self.definesPresentationContext = true
+        self.tableView.tableHeaderView = self.searchController.searchBar
     }
 
     override func viewWillAppear(animated: Bool) {
@@ -175,7 +204,7 @@ class ShowCitiesViewController: UIViewController {
         updateUI()
     }
 
-    //MARK: Core Data
+    //MARK:- Core Data
     //TODO: REMOVEME?
     /*
     private var sharedContext: NSManagedObjectContext {
@@ -199,6 +228,42 @@ class ShowCitiesViewController: UIViewController {
         //fetchedResultsController.delegate = self
         return fetchedResultsController
     }()
+    
+    //MARK:- Searching
+    func filterContentForSearchText(searchText: String, scope: String = "All") {
+        
+        var predicateFormatString = ""
+        var predicateArgs = [AnyObject]()
+        
+        if self.acquireID > 0 {
+            predicateFormatString = "acquireID == %lld"
+            let id = NSNumber(longLong: self.acquireID)
+            predicateArgs.append(id)
+        }
+        
+        if searchText != "" {
+            predicateFormatString += (predicateFormatString != "" ? " AND " : "") + "name contains[c] %@"
+            predicateArgs.append(searchText)
+        }
+
+        var predicateToUse: NSPredicate?
+        if predicateFormatString != "" {
+            predicateToUse = NSPredicate(format: predicateFormatString, argumentArray: predicateArgs)
+        }
+
+        self.fetchedResultsController.fetchRequest.predicate = predicateToUse
+        do {
+            try self.fetchedResultsController.performFetch()
+            self.tableView.reloadData()
+            self.updateUI()
+        }
+        catch {
+            let nserror = error as NSError
+            self.alertUserWithTitle("Error"
+                                    , message: nserror.localizedDescription
+                                    , retryHandler: nil)
+        }
+    }
 }
 //MARK:- Protocol Conformance
 
@@ -320,9 +385,21 @@ extension ShowCitiesViewController: NSFetchedResultsControllerDelegate {
     func controller(controller: NSFetchedResultsController, didChangeObject anObject: AnyObject, atIndexPath indexPath: NSIndexPath?, forChangeType type: NSFetchedResultsChangeType, newIndexPath: NSIndexPath?) {
         switch type {
         case .Insert:
+            let city = anObject as! City
+            
+            if !city.favorite {
+                self.numUnfavorites++
+            }
+            
             tableView.insertRowsAtIndexPaths([newIndexPath!], withRowAnimation: .Fade)
             self.mapView.addAnnotation(anObject as! MKAnnotation)
         case .Delete:
+            let city = anObject as! City
+
+            if !city.favorite {
+                self.numUnfavorites--
+            }
+            
             tableView.deleteRowsAtIndexPaths([indexPath!], withRowAnimation: .Fade)
             self.mapView.removeAnnotation(anObject as! MKAnnotation)
         case .Move:
@@ -341,6 +418,7 @@ extension ShowCitiesViewController: NSFetchedResultsControllerDelegate {
     
 }
 
+//MARK: CityTableViewCellDelegate
 extension ShowCitiesViewController: CityTableViewCellDelegate {
     func favoriteButtonTapped(sender: FavoritedUIButton, cell: CityTableViewCell) {
         let indexPath = self.tableView.indexPathForCell (cell)
@@ -354,5 +432,12 @@ extension ShowCitiesViewController: CityTableViewCellDelegate {
         }
         
         city.favorite = sender.isFavorite
+    }
+}
+
+//MARK: UISearchResultsUpdating
+extension ShowCitiesViewController: UISearchResultsUpdating {
+    func updateSearchResultsForSearchController(searchController: UISearchController) {
+        self.filterContentForSearchText(self.searchController.searchBar.text!)
     }
 }
