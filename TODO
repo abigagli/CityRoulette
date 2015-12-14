@@ -2,3 +2,4 @@
 - Implement auto-bounding box
 - Pull to refresh centers map view
 - Move list full screen when editing
+- Clean up save/import button naming and viewcontroller operating mode (import/browse)

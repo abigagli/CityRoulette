@@ -15,8 +15,8 @@ extension GeoNamesClient {
         static let Username = "abigagli"
         static let Language = "local"
         
-        static let BaseURL = "http://api.geonames.org/citiesJSON"
-        //static let BaseURL = "http://api.geonames.org/findNearbyPlaceNameJSON"
+        static let CitiesEndpoint = "http://api.geonames.org/citiesJSON"
+        static let CountryInfoJSON = "http://api.geonames.org/countryInfoJSON"
     }
     
 
@@ -28,11 +28,12 @@ extension GeoNamesClient {
         static let East         = "east"
         static let West         = "west"
         static let Language     = "lang"
+        static let MaxRows      = "maxRows"
         static let Username     = "username"
-        
         static let Lat          = "lat"
         static let Lon          = "lng"
         static let Radius       = "radius"
+        static let Country      = "country"
     }
 
     //MARK: JSON Response Keys

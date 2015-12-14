@@ -25,10 +25,10 @@ class GeoNamesClient {
     var session: NSURLSession
     
     //MARK:- Business Logic
-    private func getWithParameters (parameters: [String : AnyObject],
+    private func getWithEndpoint (apiEndpoint: String, parameters: [String : AnyObject],
         completionHandler: (result: AnyObject?, error: NSError?) -> Void) {
             //Build the URL and URL request specific to the website required.
-            let urlString = Constants.BaseURL + GeoNamesClient.escapedParameters(parameters)
+            let urlString = apiEndpoint + GeoNamesClient.escapedParameters(parameters)
             let request = NSMutableURLRequest(URL: NSURL(string: urlString)!)
             
             //Make the request.
@@ -91,7 +91,7 @@ class GeoNamesClient {
 
 //MARK:- Convenience
 extension GeoNamesClient {
-    func getCitiesAroundLocation (location: CLLocationCoordinate2D, withRadius radiusInMeters: Double, andStoreIn context: NSManagedObjectContext, completionHandler: (acquireID: Int64, error: NSError?) -> Void) {
+    func getCitiesAroundLocation (location: CLLocationCoordinate2D, withRadius radiusInMeters: Double, maxResults: Int = 10, andStoreIn context: NSManagedObjectContext, completionHandler: (acquireID: Int64, error: NSError?) -> Void) {
         
         let region = MKCoordinateRegionMakeWithDistance(location, radiusInMeters, radiusInMeters)
         
@@ -111,10 +111,11 @@ extension GeoNamesClient {
             URLKeys.Radius      : "10",
             */
             URLKeys.Language    : Constants.Language,
+            URLKeys.MaxRows     : "\(maxResults)",
             URLKeys.Username    : Constants.Username
         ]
         
-        getWithParameters(parameters) /* And then, on another thread... */ {
+        getWithEndpoint(Constants.CitiesEndpoint, parameters: parameters) /* And then, on another thread... */ {
             result, error in
             
             if let error = error {

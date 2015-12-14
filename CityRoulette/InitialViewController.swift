@@ -12,8 +12,10 @@ import CoreLocation
 
 class InitialViewController: UIViewController {
     //MARK:- Constants
-    //TODO: MAKE THIS CONFIGURABLE
+    
+    //TODO: MAKE THIS CONFIGURABLE?
     let k_radius = 10000.0
+    let k_maxImportAtOnce = 30
     
     //MARK:- Outlets
     
@@ -230,7 +232,7 @@ extension InitialViewController: CLLocationManagerDelegate {
         
         let context = self.scratchContext()
         
-        GeoNamesClient.sharedInstance.getCitiesAroundLocation(lastLocation.coordinate, withRadius: self.k_radius, andStoreIn: context) /* And then, on another thread...*/ {
+        GeoNamesClient.sharedInstance.getCitiesAroundLocation(lastLocation.coordinate, withRadius: self.k_radius, maxResults:self.k_maxImportAtOnce, andStoreIn: context) /* And then, on another thread...*/ {
             acquireID, error in
             
             dispatch_async(dispatch_get_main_queue()) { //Touch the UI on the main thread only
@@ -262,5 +264,49 @@ extension InitialViewController: CLLocationManagerDelegate {
     }
 
 }
+
+/*
+//MARK: Map region preservation
+extension TravelLocationsMapViewController
+{
+var filePath : String {
+let url = CoreDataStackManager.sharedInstance.applicationDocumentsDirectory
+return url.URLByAppendingPathComponent("mapRegionArchive").path!
+}
+func saveMapRegion() {
+
+//Persist center and span of the map into a dictionary
+//for later rerieval
+let dictionary = [
+"latitude" : mapView.region.center.latitude,
+"longitude" : mapView.region.center.longitude,
+"latitudeDelta" : mapView.region.span.latitudeDelta,
+"longitudeDelta" : mapView.region.span.longitudeDelta
+]
+
+NSKeyedArchiver.archiveRootObject(dictionary, toFile: filePath)
+}
+
+func restoreMapRegion(animated: Bool) {
+
+//Restore the map back to the persisted region
+if let regionDictionary = NSKeyedUnarchiver.unarchiveObjectWithFile(filePath) as? [String : AnyObject] {
+
+let longitude = regionDictionary["longitude"] as! CLLocationDegrees
+let latitude = regionDictionary["latitude"] as! CLLocationDegrees
+let center = CLLocationCoordinate2D(latitude: latitude, longitude: longitude)
+
+let longitudeDelta = regionDictionary["latitudeDelta"] as! CLLocationDegrees
+let latitudeDelta = regionDictionary["longitudeDelta"] as! CLLocationDegrees
+let span = MKCoordinateSpan(latitudeDelta: latitudeDelta, longitudeDelta: longitudeDelta)
+
+let savedRegion = MKCoordinateRegion(center: center, span: span)
+
+self.mapView.setRegion(savedRegion, animated: animated)
+}
+}
+
+}
+*/
 
 
