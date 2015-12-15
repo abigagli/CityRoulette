@@ -3,4 +3,8 @@
 - Pull to refresh centers map view
 - Move list full screen when editing
 - Clean up save/import button naming and viewcontroller operating mode (import/browse)
-- Stop springAnimate
+- Save history of countries
+- Show busy status while deleting all unfavorites
+- Network spinning when map loading
+
+- CLEAN ALL //TODO: 

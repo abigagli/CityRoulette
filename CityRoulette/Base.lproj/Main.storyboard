@@ -25,7 +25,7 @@
                                 <edgeInsets key="layoutMargins" top="0.0" left="0.0" bottom="0.0" right="0.0"/>
                             </imageView>
                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="0St-Y8-OTj">
-                                <rect key="frame" x="234" y="78" width="132" height="22"/>
+                                <rect key="frame" x="230" y="78" width="140" height="22"/>
                                 <constraints>
                                     <constraint firstAttribute="height" constant="22" id="pAC-gO-U3S"/>
                                 </constraints>
@@ -38,7 +38,7 @@
                                 </connections>
                             </button>
                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="ZH7-6j-8Cc">
-                                <rect key="frame" x="234" y="234" width="132" height="132"/>
+                                <rect key="frame" x="230" y="230" width="140" height="140"/>
                                 <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
                                 <constraints>
                                     <constraint firstAttribute="width" secondItem="ZH7-6j-8Cc" secondAttribute="height" multiplier="1:1" id="bog-5s-4RP"/>
@@ -52,16 +52,16 @@
                                 </connections>
                             </button>
                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Paf-vl-EmA">
-                                <rect key="frame" x="234" y="500" width="132" height="22"/>
+                                <rect key="frame" x="230" y="500" width="140" height="22"/>
                                 <constraints>
                                     <constraint firstAttribute="height" constant="22" id="Mnp-rn-hbH"/>
                                 </constraints>
                                 <fontDescription key="fontDescription" type="system" pointSize="22"/>
-                                <state key="normal" title="Choose">
+                                <state key="normal" title="Browse Saved">
                                     <color key="titleColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                 </state>
                                 <connections>
-                                    <action selector="chooseTapped:" destination="BYZ-38-t0r" eventType="touchUpInside" id="DE9-KU-Ekk"/>
+                                    <action selector="browseTapped:" destination="BYZ-38-t0r" eventType="touchUpInside" id="MCQ-bA-kGN"/>
                                 </connections>
                             </button>
                         </subviews>
@@ -82,12 +82,12 @@
                         </constraints>
                     </view>
                     <connections>
-                        <outlet property="aroundMe" destination="0St-Y8-OTj" id="epQ-aR-Twa"/>
+                        <outlet property="aroundMeButton" destination="0St-Y8-OTj" id="5LU-rB-Kb2"/>
                         <outlet property="aroundMeTopSpace" destination="c32-P4-Rhc" id="Kbk-gN-zvd"/>
                         <outlet property="backgroundImage" destination="47P-lf-6FF" id="c8J-ya-HT4"/>
-                        <outlet property="choose" destination="Paf-vl-EmA" id="GES-mH-53O"/>
-                        <outlet property="chooseBottomSpace" destination="pDf-J3-OWO" id="0cN-ig-stu"/>
-                        <outlet property="surpriseMe" destination="ZH7-6j-8Cc" id="i7L-Ar-IFp"/>
+                        <outlet property="browseBottomSpace" destination="pDf-J3-OWO" id="NkU-xk-nPy"/>
+                        <outlet property="browseButton" destination="Paf-vl-EmA" id="tRx-a6-3fj"/>
+                        <outlet property="surpriseMeButton" destination="ZH7-6j-8Cc" id="CpL-4L-7VD"/>
                         <segue destination="LbY-4m-IKW" kind="presentation" identifier="showCitiesInfo" id="Hxp-kn-oSc"/>
                     </connections>
                 </viewController>

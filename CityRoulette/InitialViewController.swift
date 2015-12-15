@@ -13,7 +13,10 @@ import CoreLocation
 class InitialViewController: UIViewController {
     //MARK:- Constants
     
-    //TODO: MAKE THIS CONFIGURABLE?
+    let k_randomAttempts = 3
+    let k_randomCountryNoRepeatHistory = 10
+    
+    //TODO: MAKE THESE CONFIGURABLE?
     let k_radius = 10000.0
     let k_maxImportAtOnce = 30
     
@@ -21,12 +24,12 @@ class InitialViewController: UIViewController {
     
     @IBOutlet weak var backgroundImage: UIImageView!
     
-    @IBOutlet weak var surpriseMe: UIButton!
-    @IBOutlet weak var choose: UIButton!
-    @IBOutlet weak var aroundMe: UIButton!
+    @IBOutlet weak var surpriseMeButton: UIButton!
+    @IBOutlet weak var browseButton: UIButton!
+    @IBOutlet weak var aroundMeButton: UIButton!
     
     @IBOutlet weak var aroundMeTopSpace: NSLayoutConstraint!
-    @IBOutlet weak var chooseBottomSpace: NSLayoutConstraint!
+    @IBOutlet weak var browseBottomSpace: NSLayoutConstraint!
     
     //MARK:- Actions
     @IBAction func unwindFromSave (segue: UIStoryboardSegue) {
@@ -38,21 +41,25 @@ class InitialViewController: UIViewController {
         self.acquireID = 0
     }
     
-    @IBAction func chooseTapped(sender: UIButton) {
+    @IBAction func browseTapped(sender: UIButton) {
         self.hideButtons()
         self.performSegueWithIdentifier("showCitiesInfo", sender: CoreDataStackManager.sharedInstance.managedObjectContext)
         //self.showButtons()
     }
     
     @IBAction func surpriseMeTapped(sender: UIButton) {
-        self.springAnimate(sender, repeating: true)
+        
+        //self.springAnimate(sender, repeating: true)
+        
+        self.hideButtons()
+        self.busyStatusManager.setBusyStatus(true)
         
         let importingContext = self.scratchContext()
         
         if let randomLocation = self.randomLocation {
             //We already were able to choose a random location,
             //let's go and pick up some cites...
-            self.importCitiesAroundLocation (randomLocation, intoContext: importingContext, maxAttempts: 3)
+            self.importCitiesAroundLocation (randomLocation, intoContext: importingContext, randomAttempts: self.k_randomAttempts)
         }
         else {
             //Info for all countries hasn't yet been downloaded.
@@ -71,11 +78,13 @@ class InitialViewController: UIViewController {
                         //we can finally pick up some random city, and let the process repeat 
                         //for a certain amount of attempts, as the random coordinate might
                         //fall where there are no cities around...
-                        self.importCitiesAroundLocation (self.randomLocation!, intoContext: importingContext, maxAttempts: 3)
+                        self.importCitiesAroundLocation (self.randomLocation!, intoContext: importingContext, randomAttempts: self.k_randomAttempts)
                         
                     }
                     else {
-                        self.alertUserWithTitle ("Failed Retrieving Countries", message: error!.localizedDescription, retryHandler: nil, okHandler: nil)
+                        self.alertUserWithTitle ("Failed Retrieving Countries", message: error!.localizedDescription, retryHandler: nil, okHandler: { _ in
+                            self.busyStatusManager.setBusyStatus(false)
+                            })
                     }
                 }
             }
@@ -112,6 +121,13 @@ class InitialViewController: UIViewController {
     private var acquireID: Int64 = 0
     private var countries = [Country]()
     
+    private lazy var countryHistoryFilePath: String = {
+        let url = CoreDataStackManager.sharedInstance.applicationDocumentsDirectory
+        return url.URLByAppendingPathComponent("countryHistory").path!
+    }()
+
+    private var randomCountriesHistory = [Country]()
+    
     private var randomLocation: CLLocation? {
         if self.countries.count == 0 {
             self.countries = self.fetchAllCountries()
@@ -121,7 +137,19 @@ class InitialViewController: UIViewController {
         
         guard numCountries >= 1 else {return nil}
         
-        let randomCountry = self.countries[Int(arc4random_uniform (numCountries))]
+        var randomCountry: Country
+        
+        repeat {
+            randomCountry = self.countries[Int(arc4random_uniform (numCountries))]
+        } while self.randomCountriesHistory.contains(randomCountry)
+        
+        self.randomCountriesHistory.append(randomCountry)
+        
+        if self.randomCountriesHistory.count > self.k_randomCountryNoRepeatHistory {
+            self.randomCountriesHistory.removeAtIndex(0)
+        }
+        
+        self.saveCountryHistory()
         
         let minLat = randomCountry.south
         let maxLat = randomCountry.north
@@ -140,8 +168,8 @@ class InitialViewController: UIViewController {
     private func hideButtons()
     {
         self.aroundMeTopSpace.constant = 0
-        self.surpriseMe.alpha = 0
-        self.chooseBottomSpace.constant = 0
+        self.surpriseMeButton.alpha = 0
+        self.browseBottomSpace.constant = 0
         
         self.view.layoutIfNeeded()
     }
@@ -157,7 +185,7 @@ class InitialViewController: UIViewController {
                 let springBackOptions: UIViewAnimationOptions = repeating ? [.Repeat] : []
                 UIView.animateWithDuration(1.0, delay: 0.1, usingSpringWithDamping: 0.20, initialSpringVelocity: 0, options: springBackOptions, animations: {
                     
-                    self.surpriseMe.transform = CGAffineTransformConcat(CGAffineTransformMakeScale(1, 1), CGAffineTransformMakeRotation(0))
+                    button.transform = CGAffineTransformConcat(CGAffineTransformMakeScale(1, 1), CGAffineTransformMakeRotation(0))
                     //button.layer.cornerRadius = 30
                     //button.layer.borderWidth = 0
                     
@@ -175,14 +203,14 @@ class InitialViewController: UIViewController {
     private func showButtons()
     {
         self.aroundMeTopSpace.constant = self.verticalConstraintConstant
-        self.chooseBottomSpace.constant = self.verticalConstraintConstant
-        self.surpriseMe.alpha = 1
+        self.browseBottomSpace.constant = self.verticalConstraintConstant
+        self.surpriseMeButton.alpha = 1
 
         UIView.animateWithDuration(1.0) {
             self.view.layoutIfNeeded()
         }
         
-        self.springAnimate(self.surpriseMe)
+        self.springAnimate(self.surpriseMeButton)
     }
     
     private func fadeColorImage(andThen andThen: ((Bool) -> Void)?) {
@@ -225,8 +253,10 @@ class InitialViewController: UIViewController {
         self.colorImage = UIImageView(image: UIImage(named: "Florence"))
         
         self.busyStatusManager = BusyStatusManager(forView: self.view)
+        
+        self.loadCountryHistory()
     }
-
+    
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
         // Dispose of any resources that can be recreated.
@@ -235,7 +265,15 @@ class InitialViewController: UIViewController {
     override func viewWillAppear(animated: Bool) {
         super.viewWillAppear(animated)
         
+        let fetchRequest = NSFetchRequest (entityName: "City")
+        
+        var error: NSError?
+        let n = CoreDataStackManager.sharedInstance.managedObjectContext.countForFetchRequest(fetchRequest, error: &error)
+        
+        self.browseButton.hidden = (error != nil) || (n == 0)
+        
         self.hideButtons()
+        self.busyStatusManager.setBusyStatus(false)
     }
     
     override func viewDidAppear(animated: Bool) {
@@ -253,6 +291,11 @@ class InitialViewController: UIViewController {
         }
     }
     
+    override func viewDidDisappear(animated: Bool) {
+        super.viewDidDisappear(animated)
+        self.locationManager.delegate = nil
+        self.locationManager.stopUpdatingLocation()
+    }
     override func viewDidLayoutSubviews() {
         super.viewDidLayoutSubviews()
         
@@ -268,30 +311,44 @@ class InitialViewController: UIViewController {
     
     //MARK:- Business Logic
     
-    private func importCitiesAroundLocation (location: CLLocation, intoContext importingContext: NSManagedObjectContext, maxAttempts: Int) {
+    private func importCitiesAroundLocation (location: CLLocation, intoContext importingContext: NSManagedObjectContext, randomAttempts: Int?) {
         
         GeoNamesClient.sharedInstance.getCitiesAroundLocation(location.coordinate, withRadius: self.k_radius, maxResults:self.k_maxImportAtOnce, andStoreIn: importingContext) /* And then, on another thread...*/ {
             acquireID, error in
             
             dispatch_async(dispatch_get_main_queue()) { //Touch the UI on the main thread only
-                self.busyStatusManager.setBusyStatus(false)
+                //self.busyStatusManager.setBusyStatus(false)
                 if acquireID > 0 {
                     self.acquireID = acquireID
                     self.performSegueWithIdentifier("showCitiesInfo", sender: importingContext)
                 }
                 else {
-                    if maxAttempts > 0 {
-                        self.importCitiesAroundLocation(self.randomLocation!, intoContext: importingContext, maxAttempts: maxAttempts - 1)
+                    //Couldn't find cities around this location.
+                    //If this is a random search, let's do some additional attempts
+                    if let randomAttempts = randomAttempts where randomAttempts > 0 {
+                        self.importCitiesAroundLocation(self.randomLocation!, intoContext: importingContext, randomAttempts: randomAttempts - 1)
                     }
                     else {
-                        //TODO: if spring animating, stop it
-                        self.alertUserWithTitle ("Failed Retrieving Nearby Cities", message: error!.localizedDescription, retryHandler: nil, okHandler: nil)
+                        self.alertUserWithTitle ("Failed Retrieving Nearby Cities", message: error!.localizedDescription, retryHandler: nil, okHandler: {_ in
+                            self.busyStatusManager.setBusyStatus(false)
+                        })
                     }
                 }
             }
         }
     }
 
+    private func saveCountryHistory() {
+        //NSKeyedArchiver.archiveRootObject(self.randomCountriesHistory, toFile: self.countryHistoryFilePath)
+    }
+
+    private func loadCountryHistory() {
+        if let savedCountries = NSKeyedUnarchiver.unarchiveObjectWithFile(self.countryHistoryFilePath) as? [Country] {
+            self.randomCountriesHistory = savedCountries
+        }
+    }
+    
+    
     
     //MARK:- Core Data
     private func scratchContext() -> NSManagedObjectContext {
@@ -335,7 +392,7 @@ extension InitialViewController: CLLocationManagerDelegate {
         
         let importingContext = self.scratchContext()
         
-        self.importCitiesAroundLocation(lastLocation, intoContext: importingContext, maxAttempts: 1)
+        self.importCitiesAroundLocation(lastLocation, intoContext: importingContext, randomAttempts: nil)
     }
     
     func locationManager(manager: CLLocationManager,
@@ -352,49 +409,4 @@ extension InitialViewController: CLLocationManagerDelegate {
     }
 
 }
-
-/*
-//MARK: Map region preservation
-extension TravelLocationsMapViewController
-{
-var filePath : String {
-let url = CoreDataStackManager.sharedInstance.applicationDocumentsDirectory
-return url.URLByAppendingPathComponent("mapRegionArchive").path!
-}
-func saveMapRegion() {
-
-//Persist center and span of the map into a dictionary
-//for later rerieval
-let dictionary = [
-"latitude" : mapView.region.center.latitude,
-"longitude" : mapView.region.center.longitude,
-"latitudeDelta" : mapView.region.span.latitudeDelta,
-"longitudeDelta" : mapView.region.span.longitudeDelta
-]
-
-NSKeyedArchiver.archiveRootObject(dictionary, toFile: filePath)
-}
-
-func restoreMapRegion(animated: Bool) {
-
-//Restore the map back to the persisted region
-if let regionDictionary = NSKeyedUnarchiver.unarchiveObjectWithFile(filePath) as? [String : AnyObject] {
-
-let longitude = regionDictionary["longitude"] as! CLLocationDegrees
-let latitude = regionDictionary["latitude"] as! CLLocationDegrees
-let center = CLLocationCoordinate2D(latitude: latitude, longitude: longitude)
-
-let longitudeDelta = regionDictionary["latitudeDelta"] as! CLLocationDegrees
-let latitudeDelta = regionDictionary["longitudeDelta"] as! CLLocationDegrees
-let span = MKCoordinateSpan(latitudeDelta: latitudeDelta, longitudeDelta: longitudeDelta)
-
-let savedRegion = MKCoordinateRegion(center: center, span: span)
-
-self.mapView.setRegion(savedRegion, animated: animated)
-}
-}
-
-}
-*/
-
 
