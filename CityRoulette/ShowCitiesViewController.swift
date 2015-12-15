@@ -86,6 +86,12 @@ class ShowCitiesViewController: UIViewController {
         self.cancelBarButton.enabled = !self.editing
     }
     
+    override func setEditing(editing: Bool, animated: Bool) {
+        super.setEditing(editing, animated: animated)
+        self.tableView.setEditing(editing, animated: animated)
+        self.showBottomToolbar(self.editing)
+        updateUI()
+    }
 
     //MARK:- Lifetime
     override func prepareForSegue(segue: UIStoryboardSegue, sender dataForNextVC: AnyObject?) {
@@ -176,10 +182,9 @@ class ShowCitiesViewController: UIViewController {
                 }
             }
         }
-        catch {
-            let nserror = error as NSError
+        catch let error as NSError {
             self.alertUserWithTitle("Error"
-                                    , message: nserror.localizedDescription
+                                    , message: error.localizedDescription
                                     , retryHandler: nil)
         }
         
@@ -197,13 +202,15 @@ class ShowCitiesViewController: UIViewController {
         updateUI()
     }
 
-    override func setEditing(editing: Bool, animated: Bool) {
-        super.setEditing(editing, animated: animated)
-        self.tableView.setEditing(editing, animated: animated)
-        self.showBottomToolbar(self.editing)
-        updateUI()
+    deinit {
+        //Apparently there's a bug that causes a 
+        //"Attempting to load the view of a view controller while it is deallocating is not allowed and may result in undefined behavior (<UISearchController: 0x7f9acb000380>)"
+        //warning if, when dismissing the current viewcontroller, UISearchController has
+        //not yet loaded its view.
+        //The following (new in iOS9) API call, will ensure UISearchController has its view
+        //loaded when we're being dismissed
+        self.searchController.loadViewIfNeeded()
     }
-
     //MARK:- Core Data
     //TODO: REMOVEME?
     /*

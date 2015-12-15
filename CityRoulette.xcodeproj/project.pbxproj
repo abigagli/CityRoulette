@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		8D0796251C1F6E6600E9AF32 /* Country+CoreDataProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8D0796231C1F6E6600E9AF32 /* Country+CoreDataProperties.swift */; };
+		8D0796261C1F6E6600E9AF32 /* Country.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8D0796241C1F6E6600E9AF32 /* Country.swift */; };
 		8D2F9C761C1C7E7400DC2624 /* CityTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8D2F9C751C1C7E7400DC2624 /* CityTableViewCell.swift */; };
 		8D2F9C781C1C9FA100DC2624 /* FavoritedUIButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8D2F9C771C1C9FA100DC2624 /* FavoritedUIButton.swift */; };
 		8D64D3111C07C25B00FBC661 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8D64D3101C07C25B00FBC661 /* AppDelegate.swift */; };
@@ -28,6 +30,8 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		8D0796231C1F6E6600E9AF32 /* Country+CoreDataProperties.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "Country+CoreDataProperties.swift"; sourceTree = "<group>"; };
+		8D0796241C1F6E6600E9AF32 /* Country.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Country.swift; sourceTree = "<group>"; };
 		8D2F9C751C1C7E7400DC2624 /* CityTableViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = CityTableViewCell.swift; path = ../CityTableViewCell.swift; sourceTree = "<group>"; };
 		8D2F9C771C1C9FA100DC2624 /* FavoritedUIButton.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FavoritedUIButton.swift; sourceTree = "<group>"; };
 		8D64D30D1C07C25B00FBC661 /* CityRoulette.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = CityRoulette.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -108,6 +112,8 @@
 		8DE3B7241C0B65B600CE642A /* Model */ = {
 			isa = PBXGroup;
 			children = (
+				8D0796231C1F6E6600E9AF32 /* Country+CoreDataProperties.swift */,
+				8D0796241C1F6E6600E9AF32 /* Country.swift */,
 				8D64D3171C07C25B00FBC661 /* CityRoulette.xcdatamodeld */,
 				8DFDF1A71C0E4C3C00BF6D32 /* City+CoreDataProperties.swift */,
 				8DFDF1A81C0E4C3C00BF6D32 /* City.swift */,
@@ -223,6 +229,7 @@
 			files = (
 				8D64D3191C07C25B00FBC661 /* CityRoulette.xcdatamodeld in Sources */,
 				8D64D3131C07C25B00FBC661 /* InitialViewController.swift in Sources */,
+				8D0796251C1F6E6600E9AF32 /* Country+CoreDataProperties.swift in Sources */,
 				8DF13DB51C19A5F200527F24 /* CoreDataStackManager.swift in Sources */,
 				8DFDF1AA1C0E4C3C00BF6D32 /* City.swift in Sources */,
 				8D64D3111C07C25B00FBC661 /* AppDelegate.swift in Sources */,
@@ -233,6 +240,7 @@
 				8DE3B7281C0B7DA300CE642A /* GeoNames.swift in Sources */,
 				8DB49FBE1C17654600BB7EF6 /* WikiViewController.swift in Sources */,
 				8DE3B7221C0B5BD800CE642A /* ShowCitiesViewController.swift in Sources */,
+				8D0796261C1F6E6600E9AF32 /* Country.swift in Sources */,
 				8D2F9C781C1C9FA100DC2624 /* FavoritedUIButton.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

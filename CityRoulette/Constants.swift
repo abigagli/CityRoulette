@@ -16,7 +16,7 @@ extension GeoNamesClient {
         static let Language = "local"
         
         static let CitiesEndpoint = "http://api.geonames.org/citiesJSON"
-        static let CountryInfoJSON = "http://api.geonames.org/countryInfoJSON"
+        static let CountryInfoEndpoint = "http://api.geonames.org/countryInfoJSON"
     }
     
 

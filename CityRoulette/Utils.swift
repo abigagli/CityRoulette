@@ -106,4 +106,16 @@ extension UIViewController {
     }
 }
 
+//Add a simple way to generate random coordinates in a bounding box
+//by extending Double with a random(min, max) method
+extension Double {
+    
+    public static func random() -> Double {
+        return Double(arc4random()) / 0xFFFFFFFF
+    }
+
+    public static func random(min min: Double, max: Double) -> Double {
+        return Double.random() * (max - min) + min
+    }
+}
 
