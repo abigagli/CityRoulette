@@ -46,7 +46,42 @@ class InitialViewController: UIViewController {
     
     @IBAction func surpriseMeTapped(sender: UIButton) {
         self.springAnimate(sender, repeating: true)
+        
+        let importingContext = self.scratchContext()
+        
+        if let randomLocation = self.randomLocation {
+            //We already were able to choose a random location,
+            //let's go and pick up some cites...
+            self.importCitiesAroundLocation (randomLocation, intoContext: importingContext, maxAttempts: 3)
+        }
+        else {
+            //Info for all countries hasn't yet been downloaded.
+            //Let's call the API and store into the main context, as this info has to be persisted for sure
+            GeoNamesClient.sharedInstance.getCountryInfo (nil, andStoreIn: CoreDataStackManager.sharedInstance.managedObjectContext) /* And then, on another thread...*/ {
+                success, error in
+                
+                dispatch_async(dispatch_get_main_queue()) { //Touch the UI on the main thread only
+                    
+                    if success {
+                        
+                        //Persist the main context to save all the country info we got from the API
+                        CoreDataStackManager.sharedInstance.saveContext()
+                        
+                        //With all the info succesfully retrieved from the API, we know
+                        //we can finally pick up some random city, and let the process repeat 
+                        //for a certain amount of attempts, as the random coordinate might
+                        //fall where there are no cities around...
+                        self.importCitiesAroundLocation (self.randomLocation!, intoContext: importingContext, maxAttempts: 3)
+                        
+                    }
+                    else {
+                        self.alertUserWithTitle ("Failed Retrieving Countries", message: error!.localizedDescription, retryHandler: nil, okHandler: nil)
+                    }
+                }
+            }
+        }
     }
+    
     
     @IBAction func aroundMeTapped(sender: UIButton) {
         self.locationManager.delegate = self
@@ -75,8 +110,33 @@ class InitialViewController: UIViewController {
     private lazy var locationManager = CLLocationManager()
     private var busyStatusManager: BusyStatusManager!
     private var acquireID: Int64 = 0
+    private var countries = [Country]()
     
-    //MARK: - UI
+    private var randomLocation: CLLocation? {
+        if self.countries.count == 0 {
+            self.countries = self.fetchAllCountries()
+        }
+        
+        let numCountries = UInt32(self.countries.count)
+        
+        guard numCountries >= 1 else {return nil}
+        
+        let randomCountry = self.countries[Int(arc4random_uniform (numCountries))]
+        
+        let minLat = randomCountry.south
+        let maxLat = randomCountry.north
+        let minLong = randomCountry.west
+        let maxLong = randomCountry.east
+        
+        
+        let randomLat = Double.random(min: minLat, max: maxLat)
+        let randomLong = Double.random(min: minLong, max: maxLong)
+        
+        return CLLocation(latitude: randomLat, longitude: randomLong)
+    }
+    
+
+    //MARK:- UI
     private func hideButtons()
     {
         self.aroundMeTopSpace.constant = 0
@@ -205,8 +265,36 @@ class InitialViewController: UIViewController {
         }
     }
     
+    
+    //MARK:- Business Logic
+    
+    private func importCitiesAroundLocation (location: CLLocation, intoContext importingContext: NSManagedObjectContext, maxAttempts: Int) {
+        
+        GeoNamesClient.sharedInstance.getCitiesAroundLocation(location.coordinate, withRadius: self.k_radius, maxResults:self.k_maxImportAtOnce, andStoreIn: importingContext) /* And then, on another thread...*/ {
+            acquireID, error in
+            
+            dispatch_async(dispatch_get_main_queue()) { //Touch the UI on the main thread only
+                self.busyStatusManager.setBusyStatus(false)
+                if acquireID > 0 {
+                    self.acquireID = acquireID
+                    self.performSegueWithIdentifier("showCitiesInfo", sender: importingContext)
+                }
+                else {
+                    if maxAttempts > 0 {
+                        self.importCitiesAroundLocation(self.randomLocation!, intoContext: importingContext, maxAttempts: maxAttempts - 1)
+                    }
+                    else {
+                        //TODO: if spring animating, stop it
+                        self.alertUserWithTitle ("Failed Retrieving Nearby Cities", message: error!.localizedDescription, retryHandler: nil, okHandler: nil)
+                    }
+                }
+            }
+        }
+    }
+
+    
     //MARK:- Core Data
-    func scratchContext() -> NSManagedObjectContext {
+    private func scratchContext() -> NSManagedObjectContext {
         //let context = NSManagedObjectContext(concurrencyType: .PrivateQueueConcurrencyType)
         let context = NSManagedObjectContext(concurrencyType: .MainQueueConcurrencyType)
         //context.persistentStoreCoordinator = CoreDataStackManager.sharedInstance.persistentStoreCoordinator
@@ -215,7 +303,21 @@ class InitialViewController: UIViewController {
         //context.undoManager = nil
         return context
     }
-
+    
+    private func fetchAllCountries() -> [Country] {
+        let fetchRequest = NSFetchRequest(entityName: "Country")
+        do {
+            return try CoreDataStackManager.sharedInstance.managedObjectContext.executeFetchRequest(fetchRequest) as! [Country]
+        }
+        catch let error as NSError {
+            self.alertUserWithTitle("Error"
+                                    , message: error.localizedDescription
+                                    , retryHandler: nil)
+        }
+        
+        return [Country]()
+    }
+    
 }
 
 //MARK:- Protocol conformance
@@ -230,24 +332,10 @@ extension InitialViewController: CLLocationManagerDelegate {
         self.hideButtons()
         self.busyStatusManager.setBusyStatus(true)
         
-        let context = self.scratchContext()
         
-        GeoNamesClient.sharedInstance.getCitiesAroundLocation(lastLocation.coordinate, withRadius: self.k_radius, maxResults:self.k_maxImportAtOnce, andStoreIn: context) /* And then, on another thread...*/ {
-            acquireID, error in
-            
-            dispatch_async(dispatch_get_main_queue()) { //Touch the UI on the main thread only
-                self.busyStatusManager.setBusyStatus(false)
-                if acquireID > 0 {
-                    self.acquireID = acquireID
-                    self.performSegueWithIdentifier("showCitiesInfo", sender: context)
-                }
-                else {
-                    self.alertUserWithTitle ("Failed Retrieving Nearby Cities", message: error!.localizedDescription, retryHandler: nil, okHandler: { _ in
-                        self.showButtons()
-                    })
-                }
-            }
-        }
+        let importingContext = self.scratchContext()
+        
+        self.importCitiesAroundLocation(lastLocation, intoContext: importingContext, maxAttempts: 1)
     }
     
     func locationManager(manager: CLLocationManager,

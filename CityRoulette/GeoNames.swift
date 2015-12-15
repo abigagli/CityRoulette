@@ -126,42 +126,24 @@ extension GeoNamesClient {
                 
                 if let status = resultDictionary[JSONResponseKeys.Status] as? [String: AnyObject] {
                     let message = status["message"] as! String
-                    let value = status["value"] as! Int
+                    let value = status["value"] as? Int ?? 0
                     let userInfo = [NSLocalizedDescriptionKey: message]
-                    completionHandler(acquireID: 0, error: NSError (domain: "GeoNames API", code: value, userInfo: userInfo))
+                    completionHandler(acquireID: 0, error: NSError (domain: "GeoNames \"cities\" endpoint", code: value, userInfo: userInfo))
                 }
                 else {
                     guard let cities = resultDictionary[JSONResponseKeys.Geonames] as? [[String: AnyObject]] where cities.count >= 1 else {
-                        completionHandler (acquireID: 0, error: NSError(domain: "GeoNames Result", code: 1, userInfo: [NSLocalizedDescriptionKey: "City information not found"]))
+                        completionHandler (acquireID: 0, error: NSError(domain: "GeoNames \"cities\" endpoint", code: 1, userInfo: [NSLocalizedDescriptionKey: "City information not found"]))
                         
                         return
                     }
                     
-                    //TODO: REMOVEME
-                    //print ("Cities: \(resultDictionary)")
-                    
-                    /*
-                    dispatch_async(dispatch_get_main_queue()) { //managedObjectContext must be used on the owner (main in this case) thread only
-                        
-                        for cityJson in cities {
-                            let currentID = Int64(cityJson[JSONResponseKeys.GeonameID] as! Int)
-                            
-                            if self.alreadyKnown (currentID, inContext: context) {
-                                continue
-                            }
-                            
-                            let _ = City(json: cityJson, context: context)
-                        }
-                    
-                    }
-                    */
                     let id = Int64(NSDate().timeIntervalSince1970)
                     
                     //Ensure CoreData context is accessed on whatever queue it's working on
                     context.performBlock() {
 
-                        for cityJson in cities {
-                            let _ = City(json: cityJson, acquireID: id, context: context)
+                        for cityJSON in cities {
+                            let _ = City(json: cityJSON, acquireID: id, context: context)
                         }
                     }
                     
@@ -170,6 +152,52 @@ extension GeoNamesClient {
             }
         }
     }
+    
+    func getCountryInfo (countryCode: String?, andStoreIn context: NSManagedObjectContext, completionHandler: (success: Bool, error: NSError?) -> Void) {
+        
+        //Parameters for API invocation
+        let parameters: [String : AnyObject] = [
+            URLKeys.Country     : countryCode ?? "",
+            URLKeys.Language    : Constants.Language,
+            URLKeys.Username    : Constants.Username
+        ]
+        
+        getWithEndpoint(Constants.CountryInfoEndpoint, parameters: parameters) /* And then, on another thread... */ {
+            result, error in
+            
+            if let error = error {
+                completionHandler (success: false, error: error)
+            }
+            else {
+                let resultDictionary = result as! [String: AnyObject]
+                
+                if let status = resultDictionary[JSONResponseKeys.Status] as? [String: AnyObject] {
+                    let message = status["message"] as! String
+                    let value = status["value"] as? Int ?? 0
+                    let userInfo = [NSLocalizedDescriptionKey: message]
+                    completionHandler(success: false, error: NSError (domain: "GeoNames \"countryInfo\" endpoint", code: value, userInfo: userInfo))
+                }
+                else {
+                    guard let countries = resultDictionary[JSONResponseKeys.Geonames] as? [[String: AnyObject]] where countries.count >= 1 else {
+                        completionHandler (success: false, error: NSError(domain: "GeoNames \"countryInfo\" endpoint", code: 2, userInfo: [NSLocalizedDescriptionKey: "Country information not found"]))
+                        
+                        return
+                    }
+                    
+                    //Ensure CoreData context is accessed on whatever queue it's working on
+                    context.performBlock() {
+                        
+                        for countryJSON in countries {
+                            let _ = Country(json: countryJSON, context: context)
+                        }
+                    }
+                    
+                    completionHandler(success: true, error: nil)
+                }
+            }
+        }
+    }
+
     
     //MARK: Core Data
     
