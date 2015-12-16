@@ -13,7 +13,7 @@ import CoreLocation
 class InitialViewController: UIViewController {
     //MARK:- Constants
     
-    let k_randomAttempts = 3
+    let k_randomAttempts = 4
     
     //Try to add some more randomness by preventing the same country to be
     //chosen for at least k_randomCountryNoRepeatHistory times
@@ -325,7 +325,6 @@ class InitialViewController: UIViewController {
             acquireID, error in
             
             dispatch_async(dispatch_get_main_queue()) { //Touch the UI on the main thread only
-                //self.busyStatusManager.setBusyStatus(false)
                 if acquireID > 0 {
                     self.acquireID = acquireID
                     self.performSegueWithIdentifier("showCitiesInfo", sender: importingContext)
@@ -339,6 +338,7 @@ class InitialViewController: UIViewController {
                     else {
                         self.alertUserWithTitle ("Failed Retrieving Nearby Cities", message: error!.localizedDescription, retryHandler: nil, okHandler: {_ in
                             self.busyStatusManager.setBusyStatus(false)
+                            self.showButtons()
                         })
                     }
                 }
