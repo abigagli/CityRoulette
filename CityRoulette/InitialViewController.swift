@@ -277,6 +277,7 @@ class InitialViewController: UIViewController {
         var error: NSError?
         let n = CoreDataStackManager.sharedInstance.managedObjectContext.countForFetchRequest(fetchRequest, error: &error)
         
+        self.browseButton.setTitle("Browse \(n) archived cities", forState: .Normal)
         self.browseButton.hidden = (error != nil) || (n == 0)
         
         self.hideButtons()
