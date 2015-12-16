@@ -3,7 +3,6 @@
 - Pull to refresh centers map view
 - Clean up save/import button naming and viewcontroller operating mode (import/browse)
 - Show busy status while deleting all unfavorites
-- Network spinning when map loading
 
 ? Select radius
 ? Weather

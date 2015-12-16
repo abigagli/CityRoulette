@@ -203,7 +203,12 @@ class ShowCitiesViewController: UIViewController {
 
         updateUI()
     }
-
+    
+    override func viewWillDisappear(animated: Bool) {
+        super.viewWillDisappear(animated)
+        UIApplication.sharedApplication().networkActivityIndicatorVisible = false
+    }
+    
     deinit {
         //Apparently there's a bug that causes a 
         //"Attempting to load the view of a view controller while it is deallocating is not allowed and may result in undefined behavior (<UISearchController: 0x7f9acb000380>)"
@@ -320,6 +325,14 @@ extension ShowCitiesViewController: MKMapViewDelegate {
             mapView.deselectAnnotation(view.annotation, animated: true)
             self.tableView.deselectRowAtIndexPath(indexPath!, animated: true)
         }
+    }
+    
+    func mapViewWillStartLoadingMap(mapView: MKMapView) {
+        UIApplication.sharedApplication().networkActivityIndicatorVisible = true
+    }
+    
+    func mapViewDidFinishRenderingMap(mapView: MKMapView, fullyRendered: Bool) {
+        UIApplication.sharedApplication().networkActivityIndicatorVisible = false
     }
 }
 
