@@ -331,7 +331,7 @@ extension ShowCitiesViewController: MKMapViewDelegate {
         UIApplication.sharedApplication().networkActivityIndicatorVisible = true
     }
     
-    func mapViewDidFinishRenderingMap(mapView: MKMapView, fullyRendered: Bool) {
+    func mapViewDidFinishLoadingMap(mapView: MKMapView) {
         UIApplication.sharedApplication().networkActivityIndicatorVisible = false
     }
 }
