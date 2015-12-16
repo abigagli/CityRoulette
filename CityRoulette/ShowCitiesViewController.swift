@@ -190,9 +190,11 @@ class ShowCitiesViewController: UIViewController {
         
         self.searchController.searchResultsUpdater = self
         self.searchController.dimsBackgroundDuringPresentation = false
-        self.searchController.hidesNavigationBarDuringPresentation = false
+        self.searchController.hidesNavigationBarDuringPresentation = true
         self.definesPresentationContext = true
         self.tableView.tableHeaderView = self.searchController.searchBar
+        self.searchController.searchBar.scopeButtonTitles = ["All", "Favorites", "Unfavorites"]
+        self.searchController.searchBar.delegate = self
     }
 
     override func viewWillAppear(animated: Bool) {
@@ -242,6 +244,7 @@ class ShowCitiesViewController: UIViewController {
         var predicateFormatString = ""
         var predicateArgs = [AnyObject]()
         
+        //If we're doing an import, prepend the filtering on acquireID
         if self.acquireID > 0 {
             predicateFormatString = "acquireID == %lld"
             let id = NSNumber(longLong: self.acquireID)
@@ -251,6 +254,13 @@ class ShowCitiesViewController: UIViewController {
         if searchText != "" {
             predicateFormatString += (predicateFormatString != "" ? " AND " : "") + "name contains[c] %@"
             predicateArgs.append(searchText)
+        }
+        
+        if scope == "Favorites" {
+            predicateFormatString += (predicateFormatString != "" ? " AND " : "") + "favorite==true"
+        }
+        else if scope == "Unfavorites" {
+            predicateFormatString += (predicateFormatString != "" ? " AND " : "") + "favorite==false"
         }
 
         var predicateToUse: NSPredicate?
@@ -445,6 +455,15 @@ extension ShowCitiesViewController: CityTableViewCellDelegate {
 //MARK: UISearchResultsUpdating
 extension ShowCitiesViewController: UISearchResultsUpdating {
     func updateSearchResultsForSearchController(searchController: UISearchController) {
-        self.filterContentForSearchText(self.searchController.searchBar.text!)
+        let searchBar = self.searchController.searchBar
+        let scope = searchBar.scopeButtonTitles![searchBar.selectedScopeButtonIndex]
+        self.filterContentForSearchText(self.searchController.searchBar.text!, scope: scope)
+    }
+}
+
+//MARK: UISearchBarDelegate
+extension ShowCitiesViewController: UISearchBarDelegate {
+    func searchBar(searchBar: UISearchBar, selectedScopeButtonIndexDidChange selectedScope: Int) {
+        filterContentForSearchText(searchBar.text!, scope: searchBar.scopeButtonTitles![selectedScope])
     }
 }

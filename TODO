@@ -1,12 +1,9 @@
 - Implement busystatus functionality (from OnTheMap) possibly as a protocol extension
 - Implement auto-bounding box
 - Pull to refresh centers map view
-- Move list full screen when editing
 - Clean up save/import button naming and viewcontroller operating mode (import/browse)
-- Save history of countries
 - Show busy status while deleting all unfavorites
 - Network spinning when map loading
-- Sections in searchbar
 
 ? Select radius
 ? Weather
