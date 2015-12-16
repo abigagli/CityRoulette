@@ -14,6 +14,9 @@ class InitialViewController: UIViewController {
     //MARK:- Constants
     
     let k_randomAttempts = 3
+    
+    //Try to add some more randomness by preventing the same country to be
+    //chosen for at least k_randomCountryNoRepeatHistory times
     let k_randomCountryNoRepeatHistory = 10
     
     //TODO: MAKE THESE CONFIGURABLE?
@@ -84,6 +87,7 @@ class InitialViewController: UIViewController {
                     else {
                         self.alertUserWithTitle ("Failed Retrieving Countries", message: error!.localizedDescription, retryHandler: nil, okHandler: { _ in
                             self.busyStatusManager.setBusyStatus(false)
+                            self.showButtons()
                             })
                     }
                 }
@@ -126,7 +130,7 @@ class InitialViewController: UIViewController {
         return url.URLByAppendingPathComponent("countryHistory").path!
     }()
 
-    private var randomCountriesHistory = [Country]()
+    private var randomCountriesHistory = [String]()
     
     private var randomLocation: CLLocation? {
         if self.countries.count == 0 {
@@ -139,11 +143,14 @@ class InitialViewController: UIViewController {
         
         var randomCountry: Country
         
+        //Keep choosing a random country if its countryName is for whatever reason empty
+        //or it has been already chosen in the previous k_randomCountryNoRepeatHistory attempts
         repeat {
             randomCountry = self.countries[Int(arc4random_uniform (numCountries))]
-        } while self.randomCountriesHistory.contains(randomCountry)
+        } while (randomCountry.countryCode == "")
+             || (self.randomCountriesHistory.contains(randomCountry.countryCode))
         
-        self.randomCountriesHistory.append(randomCountry)
+        self.randomCountriesHistory.append(randomCountry.countryCode)
         
         if self.randomCountriesHistory.count > self.k_randomCountryNoRepeatHistory {
             self.randomCountriesHistory.removeAtIndex(0)
@@ -339,11 +346,11 @@ class InitialViewController: UIViewController {
     }
 
     private func saveCountryHistory() {
-        //NSKeyedArchiver.archiveRootObject(self.randomCountriesHistory, toFile: self.countryHistoryFilePath)
+        NSKeyedArchiver.archiveRootObject(self.randomCountriesHistory, toFile: self.countryHistoryFilePath)
     }
 
     private func loadCountryHistory() {
-        if let savedCountries = NSKeyedUnarchiver.unarchiveObjectWithFile(self.countryHistoryFilePath) as? [Country] {
+        if let savedCountries = NSKeyedUnarchiver.unarchiveObjectWithFile(self.countryHistoryFilePath) as? [String] {
             self.randomCountriesHistory = savedCountries
         }
     }
