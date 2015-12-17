@@ -29,7 +29,6 @@ class ShowCitiesViewController: UIViewController {
                 self.currentCoreDataContext.deleteObject(city)
             }
         }
-        self.updateUI()
     }
     
     //MARK:- State
@@ -62,6 +61,15 @@ class ShowCitiesViewController: UIViewController {
         }
     }
     
+    //Need to factor some parts of edit-mode transitioning logic in a separate
+    //function that can be called by different places
+    private func setVCEditingMode (editing: Bool, animated: Bool)
+    {
+        super.setEditing(editing, animated: animated)
+        self.tableView.setEditing(editing, animated: animated)
+        self.showBottomToolbar(self.editing)
+    }
+    
     private func updateUI() {
         var recordsToSave = false
         if (self.fetchedResultsController.fetchedObjects?.count ?? 0) > 0 {
@@ -70,9 +78,9 @@ class ShowCitiesViewController: UIViewController {
             self.deleteUnfavoritesButton.enabled = self.numUnfavorites > 0
         }
         else {
-            super.setEditing(false, animated: true)
+            self.setVCEditingMode(false, animated: true)
             self.navigationItem.rightBarButtonItem!.enabled = false
-            self.deleteUnfavoritesButton.enabled = false
+            //self.deleteUnfavoritesButton.enabled = false
         }
         
         //We only want to enable the save/import button if 
@@ -93,9 +101,7 @@ class ShowCitiesViewController: UIViewController {
     }
     
     override func setEditing(editing: Bool, animated: Bool) {
-        super.setEditing(editing, animated: animated)
-        self.tableView.setEditing(editing, animated: animated)
-        self.showBottomToolbar(self.editing)
+        self.setVCEditingMode(editing, animated: animated)
         updateUI()
     }
 
@@ -230,7 +236,8 @@ class ShowCitiesViewController: UIViewController {
         
         //create fetch request with sort descriptor
         let fetchRequest = NSFetchRequest(entityName: "City")
-        fetchRequest.sortDescriptors = [NSSortDescriptor(key: "favorite", ascending: false), NSSortDescriptor(key: "population", ascending: false)]
+        fetchRequest.sortDescriptors = [NSSortDescriptor(key: "favorite", ascending: false), NSSortDescriptor(key: "population", ascending: false),
+            NSSortDescriptor(key: "name", ascending: true)]
         
         if self.acquireID > 0 {
             fetchRequest.predicate = NSPredicate(format: "acquireID == %lld", self.acquireID)
@@ -276,6 +283,13 @@ class ShowCitiesViewController: UIViewController {
         self.fetchedResultsController.fetchRequest.predicate = predicateToUse
         do {
             try self.fetchedResultsController.performFetch()
+            let cities = self.fetchedResultsController.fetchedObjects as! [City]
+            
+            //Re-evaluate the number of unfavorite entries after every new fetch
+            self.numUnfavorites = cities.reduce(0, combine: { val, city in
+                return val + (city.favorite ? 0 : 1)
+            })
+            
             self.tableView.reloadData()
             self.updateUI()
         }
