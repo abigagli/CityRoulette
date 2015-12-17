@@ -88,7 +88,9 @@
                         <outlet property="browseBottomSpace" destination="pDf-J3-OWO" id="NkU-xk-nPy"/>
                         <outlet property="browseButton" destination="Paf-vl-EmA" id="tRx-a6-3fj"/>
                         <outlet property="surpriseMeButton" destination="ZH7-6j-8Cc" id="CpL-4L-7VD"/>
-                        <segue destination="LbY-4m-IKW" kind="presentation" identifier="showCitiesInfo" id="Hxp-kn-oSc"/>
+                        <segue destination="LbY-4m-IKW" kind="presentation" identifier="importFromCurrentLocation" id="Hxp-kn-oSc"/>
+                        <segue destination="LbY-4m-IKW" kind="presentation" identifier="importFromRandomLocation" id="izw-ua-YPy"/>
+                        <segue destination="LbY-4m-IKW" kind="presentation" identifier="browseArchivedCities" id="Jzj-8e-8Eo"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="dkx-z0-nzr" sceneMemberID="firstResponder"/>
@@ -187,7 +189,7 @@
                                     <segue destination="qif-zh-x0q" kind="unwind" identifier="exitToInitialVC" unwindAction="unwindFromCancel:" id="PB9-pw-GI9"/>
                                 </connections>
                             </barButtonItem>
-                            <barButtonItem title="Save" id="bUC-9x-Gb2">
+                            <barButtonItem title="Save/Import" id="bUC-9x-Gb2">
                                 <connections>
                                     <segue destination="qif-zh-x0q" kind="unwind" identifier="saveAndReturnToInitialVC" unwindAction="unwindFromSave:" id="dzL-nM-dvS"/>
                                 </connections>
@@ -282,4 +284,7 @@
     <resources>
         <image name="Florence-desat" width="375" height="667"/>
     </resources>
+    <inferredMetricsTieBreakers>
+        <segue reference="Jzj-8e-8Eo"/>
+    </inferredMetricsTieBreakers>
 </document>

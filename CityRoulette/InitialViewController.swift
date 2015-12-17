@@ -11,6 +11,14 @@ import CoreData
 import CoreLocation
 
 class InitialViewController: UIViewController {
+    
+    //NOTE: This is a bit backward as I would have preferred to define the 
+    //enum in this VC as its strings represents the segue identifiers, which
+    //are defined in the storyboard's scene for this VC, but for some
+    //reason, defining the enum here and typealias-ing it in 
+    //the ShowCitiesViewController causes a segmentation fault in the swift compiler
+    typealias ShowCitiesMode = ShowCitiesViewController.Mode
+    
     //MARK:- Constants
     
     let k_randomAttempts = 4
@@ -19,9 +27,12 @@ class InitialViewController: UIViewController {
     //chosen for at least k_randomCountryNoRepeatHistory times
     let k_randomCountryNoRepeatHistory = 10
     
+    
     //TODO: MAKE THESE CONFIGURABLE?
     let k_radius = 10000.0
     let k_maxImportAtOnce = 30
+    
+    
     
     //MARK:- Outlets
     
@@ -46,8 +57,8 @@ class InitialViewController: UIViewController {
     
     @IBAction func browseTapped(sender: UIButton) {
         self.hideButtons()
-        self.performSegueWithIdentifier("showCitiesInfo", sender: CoreDataStackManager.sharedInstance.managedObjectContext)
-        //self.showButtons()
+        
+        self.performSegueWithIdentifier(ShowCitiesMode.browseArchivedCities.rawValue, sender: CoreDataStackManager.sharedInstance.managedObjectContext)
     }
     
     @IBAction func surpriseMeTapped(sender: UIButton) {
@@ -234,11 +245,16 @@ class InitialViewController: UIViewController {
 
         super.prepareForSegue (segue, sender: dataForNextVC)
 
+        
+        //Make sure we can reach into ShowCitiesViewController regardless
+        //of it being contained in a navigation controller or not
         var destination: UIViewController? = segue.destinationViewController
         
         if let navCon = destination as? UINavigationController {
             destination = navCon.visibleViewController
         }
+        
+        
         
         if let citiesInfoVC = destination as? ShowCitiesViewController {
             
@@ -246,6 +262,12 @@ class InitialViewController: UIViewController {
             citiesInfoVC.currentCoreDataContext = dataForNextVC as! NSManagedObjectContext
             citiesInfoVC.acquireID = self.acquireID
             citiesInfoVC.radius = self.k_radius
+            
+            
+            //I do really like how mapping segue identifiers' strings to enum values
+            //allows me to safely and easily determine the operating mode of the destination viewcontroller....
+            citiesInfoVC.operatingMode = ShowCitiesMode(rawValue: segue.identifier!)!
+            
             
             //TODO: REMOVEME
             print ("Scratch Context: \(citiesInfoVC.currentCoreDataContext.registeredObjects.count)")
@@ -327,7 +349,17 @@ class InitialViewController: UIViewController {
             dispatch_async(dispatch_get_main_queue()) { //Touch the UI on the main thread only
                 if acquireID > 0 {
                     self.acquireID = acquireID
-                    self.performSegueWithIdentifier("showCitiesInfo", sender: importingContext)
+                    
+                    let segueIdentifier: String
+                    
+                    if let _ = randomAttempts {
+                        segueIdentifier = ShowCitiesMode.importFromRandomLocation.rawValue
+                    }
+                    else {
+                        segueIdentifier = ShowCitiesMode.importFromCurrentLocation.rawValue
+                    }
+                    
+                    self.performSegueWithIdentifier(segueIdentifier, sender: importingContext)
                 }
                 else {
                     //Couldn't find cities around this location.

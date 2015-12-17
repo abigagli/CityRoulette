@@ -12,7 +12,6 @@ import CoreData
 
 class ShowCitiesViewController: UIViewController {
 
-    
     //MARK:- Outlets
     @IBOutlet weak var mapView: MKMapView!
     @IBOutlet weak var tableView: UITableView!
@@ -38,14 +37,38 @@ class ShowCitiesViewController: UIViewController {
     var acquireID: Int64 = 0
     private var numUnfavorites: Int = 0
     private let searchController = UISearchController(searchResultsController: nil)
-    private var inSearch: Bool {
-        return self.searchController.active && self.searchController.searchBar.text != ""
+    
+    //MARK: Operating mode
+    //This VC is (re-)used for three different purposes,
+    //So we'd better be sure in which mode we're operating to adjust
+    //some behaviours
+    //NOTE: The associated string values are exactly the segue identifiers
+    //that lead here, and so it would probably make more sense to define this enum 
+    //in the InitialViewController (i.e. in the VC the segues originate from)
+    //but see my other NOTE there.
+    //tl;dr doing in that way causes the swift compiler to crash
+    enum Mode: String {
+        case importFromCurrentLocation = "importFromCurrentLocation"
+        case importFromRandomLocation = "importFromRandomLocation"
+        case browseArchivedCities = "browseArchivedCities"
+    }
+    var operatingMode: Mode!
+    
+    var isImportingFromCurrentLocation: Bool {
+        return self.operatingMode == .importFromCurrentLocation
+    }
+    var isImportingFromRandomLocation: Bool {
+        return self.operatingMode == .importFromRandomLocation
     }
     
-    private var isMainContext: Bool {
-        return self.currentCoreDataContext == CoreDataStackManager.sharedInstance.managedObjectContext
+    var isImporting: Bool {
+        return self.isImportingFromCurrentLocation || self.isImportingFromRandomLocation
     }
-
+    var isBrowsing: Bool {
+        return self.operatingMode == .browseArchivedCities
+    }
+    
+    
     //MARK:- UI
     private func showBottomToolbar(show: Bool) {
     
@@ -89,8 +112,8 @@ class ShowCitiesViewController: UIViewController {
         //      2) either we are browsing and we made some changes
         //         OR
         //         we are importing and there are some records to import
-        if (!self.editing && (self.isMainContext && self.currentCoreDataContext.hasChanges ||
-                             !self.isMainContext && recordsToSave)) {
+        if (!self.editing && (self.isBrowsing && self.currentCoreDataContext.hasChanges ||
+                              self.isImporting && recordsToSave)) {
             self.saveBarButton.enabled = true
         }
         else {
@@ -157,11 +180,12 @@ class ShowCitiesViewController: UIViewController {
         super.viewDidLoad()
 
         self.navigationItem.rightBarButtonItem = self.editButtonItem()
-        if self.acquireID > 0 {
-            self.saveBarButton.title = "Import"
+        
+        if self.isBrowsing{
+            self.saveBarButton.title = "Save"
         }
         else {
-            self.saveBarButton.title = "Save"
+            self.saveBarButton.title = "Import"
         }
         
         self.mapView.delegate = self
@@ -239,7 +263,7 @@ class ShowCitiesViewController: UIViewController {
         fetchRequest.sortDescriptors = [NSSortDescriptor(key: "favorite", ascending: false), NSSortDescriptor(key: "population", ascending: false),
             NSSortDescriptor(key: "name", ascending: true)]
         
-        if self.acquireID > 0 {
+        if self.isImporting {
             fetchRequest.predicate = NSPredicate(format: "acquireID == %lld", self.acquireID)
         }
         
@@ -257,7 +281,7 @@ class ShowCitiesViewController: UIViewController {
         var predicateArgs = [AnyObject]()
         
         //If we're doing an import, prepend acquireID filtering
-        if self.acquireID > 0 {
+        if self.isImporting {
             predicateFormatString = "acquireID == %lld"
             let id = NSNumber(longLong: self.acquireID)
             predicateArgs.append(id)
