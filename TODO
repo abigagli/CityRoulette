@@ -1,7 +1,6 @@
 - Implement busystatus functionality (from OnTheMap) possibly as a protocol extension
 - Implement auto-bounding box
 - Pull to refresh centers map view
-- Clean up save/import button naming and viewcontroller operating mode (import/browse)
 - Show busy status while deleting all unfavorites
 
 ? Select radius
