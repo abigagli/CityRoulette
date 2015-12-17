@@ -75,6 +75,12 @@ class ShowCitiesViewController: UIViewController {
             self.deleteUnfavoritesButton.enabled = false
         }
         
+        //We only want to enable the save/import button if 
+        //1) We are not editing 
+        //   AND
+        //      2) either we are browsing and we made some changes
+        //         OR
+        //         we are importing and there are some records to import
         if (!self.editing && (self.isMainContext && self.currentCoreDataContext.hasChanges ||
                              !self.isMainContext && recordsToSave)) {
             self.saveBarButton.enabled = true
@@ -218,14 +224,8 @@ class ShowCitiesViewController: UIViewController {
         //loaded when we're being dismissed
         self.searchController.loadViewIfNeeded()
     }
-    //MARK:- Core Data
-    //TODO: REMOVEME?
-    /*
-    private var sharedContext: NSManagedObjectContext {
-        return (UIApplication.sharedApplication().delegate as! AppDelegate).managedObjectContext
-    }
-    */
     
+    //MARK:- Core Data
     private lazy var fetchedResultsController: NSFetchedResultsController = {
         
         //create fetch request with sort descriptor
@@ -249,7 +249,7 @@ class ShowCitiesViewController: UIViewController {
         var predicateFormatString = ""
         var predicateArgs = [AnyObject]()
         
-        //If we're doing an import, prepend the filtering on acquireID
+        //If we're doing an import, prepend acquireID filtering
         if self.acquireID > 0 {
             predicateFormatString = "acquireID == %lld"
             let id = NSNumber(longLong: self.acquireID)
