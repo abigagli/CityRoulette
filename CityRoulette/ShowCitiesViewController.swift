@@ -416,17 +416,19 @@ extension ShowCitiesViewController: UITableViewDataSource, UITableViewDelegate {
     
     func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         if self.fetchedResultsController.sections![section].numberOfObjects > 0 {
+            self.tableView.backgroundView = nil
+            self.tableView.separatorStyle = .SingleLine
             return self.fetchedResultsController.sections![section].numberOfObjects
         }
         else {
             // Display a message when the table is empty
             let messageLabel = UILabel(frame: CGRectMake(0, 0, self.view.bounds.size.width, self.view.bounds.size.height))
             
-            messageLabel.text = "No archived cities. Please tap \"Cancel\" and import new ones"
+            messageLabel.text = "No cities to display"
             messageLabel.textColor = UIColor.blackColor()
             messageLabel.numberOfLines = 0;
             messageLabel.textAlignment = .Center
-            messageLabel.font = UIFont(name: "Palatino-Italic", size:20)
+            //messageLabel.font = UIFont(name: "Palatino-Italic", size:20)
             messageLabel.sizeToFit()
             
             self.tableView.backgroundView = messageLabel;
@@ -458,8 +460,6 @@ extension ShowCitiesViewController: UITableViewDataSource, UITableViewDelegate {
     
     
     func tableView(tableView: UITableView, accessoryButtonTappedForRowWithIndexPath indexPath: NSIndexPath) {
-        //TODO: REMOVEME
-        print ("accessory button tapped")
         self.performSegueWithIdentifier("showWiki", sender: self.fetchedResultsController.objectAtIndexPath(indexPath))
     }
     
@@ -570,7 +570,9 @@ extension ShowCitiesViewController: UISearchBarDelegate {
 }
 
 
+//TODO: REMOVEME
 //MARK: UIScrollViewDelegate
+/*
 extension ShowCitiesViewController: UIScrollViewDelegate {
     // MARK: Scroll view methods
     func scrollViewDidScroll(scrollView: UIScrollView) {
@@ -617,4 +619,5 @@ extension ShowCitiesViewController: UIScrollViewDelegate {
         */
     }
 }
+*/
 
