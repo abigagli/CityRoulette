@@ -14,7 +14,7 @@ class ShowCitiesViewController: UIViewController {
     
     //MARK:- Segues
     enum SegueFromHere: String {
-        case showWiki = "showKiki"
+        case showWiki = "showWiki"
         case saveAndReturnToInitialVC = "saveAndReturnToInitialVC"
         case exitToInitialVC = "exitToInitialVC"
     }
