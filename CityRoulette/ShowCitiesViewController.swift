@@ -77,6 +77,9 @@ class ShowCitiesViewController: UIViewController {
         return self.operatingMode == .browseArchivedCities
     }
     
+    //TODO: REMOVEME?
+    //private var refreshControl: UIRefreshControl!
+    //private var initialMapRegion: MKCoordinateRegion!
     
     //MARK:- UI
     private func showBottomToolbar(show: Bool) {
@@ -101,6 +104,14 @@ class ShowCitiesViewController: UIViewController {
         self.tableView.setEditing(editing, animated: animated)
         self.showBottomToolbar(self.editing)
     }
+    
+    //TODO: REMOVEME?
+    /*
+    func recenterMap(sender: AnyObject) {
+        self.mapView.setRegion(self.initialMapRegion, animated: true)
+        self.refreshControl.endRefreshing()
+    }
+    */
     
     private func updateUI() {
         var recordsToSave = false
@@ -245,6 +256,14 @@ class ShowCitiesViewController: UIViewController {
         self.tableView.tableHeaderView = self.searchController.searchBar
         self.searchController.searchBar.scopeButtonTitles = ["All", "Favorites", "Unfavorites"]
         self.searchController.searchBar.delegate = self
+        
+        //TODO: REMOVEME?
+        /*
+        self.refreshControl = UIRefreshControl()
+        self.refreshControl.attributedTitle = NSAttributedString(string:"Center map")
+        self.refreshControl.addTarget(self, action: "recenterMap:", forControlEvents: .ValueChanged)
+        self.tableView.addSubview(self.refreshControl)
+        */
     }
 
     override func viewWillAppear(animated: Bool) {
@@ -549,3 +568,53 @@ extension ShowCitiesViewController: UISearchBarDelegate {
         filterContentForSearchText(searchBar.text!, scope: searchBar.scopeButtonTitles![selectedScope])
     }
 }
+
+
+//MARK: UIScrollViewDelegate
+extension ShowCitiesViewController: UIScrollViewDelegate {
+    // MARK: Scroll view methods
+    func scrollViewDidScroll(scrollView: UIScrollView) {
+        print("Scrollview Offset: \(scrollView.contentOffset.y)")
+        /*
+        refresh.position.y = -scrollView.contentOffset.y/3
+        
+        if refresh.position.y > 40.0 {
+            refresh.strokeColor = UIColor.blueColor().CGColor
+        } else {
+            refresh.strokeColor = UIColor.blackColor().CGColor
+        }
+        */
+    }
+    
+    func scrollViewWillEndDragging(scrollView: UIScrollView, withVelocity velocity: CGPoint, targetContentOffset: UnsafeMutablePointer<CGPoint>) {
+        
+        if scrollView.contentOffset.y < -90 {
+            print ("Trigger refresh, current tableview frame: \(self.tableView.frame)")
+        }
+        /*
+        if refresh.position.y > 40.0 {
+            UIView.animateWithDuration(0.3, animations: {
+                scrollView.contentInset.top = 100
+            })
+            
+        }
+        
+        if refresh.animationForKey("spin") == nil {
+            let spin = CABasicAnimation(keyPath: "lineDashPhase")
+            spin.fromValue = 0
+            spin.toValue = 4
+            spin.duration = 0.1
+            spin.repeatCount = Float.infinity
+            refresh.addAnimation(spin, forKey: "spin")
+            
+            UIView.animateWithDuration(0.3, delay: 5.0, options: [], animations: {
+                scrollView.contentInset.top = 0
+                }, completion: {_ in
+                    self.refresh.removeAnimationForKey("spin")
+            })
+            
+        }
+        */
+    }
+}
+
