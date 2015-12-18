@@ -11,6 +11,13 @@ import MapKit
 import CoreData
 
 class ShowCitiesViewController: UIViewController {
+    
+    //MARK:- Segues
+    enum SegueFromHere: String {
+        case showWiki = "showKiki"
+        case saveAndReturnToInitialVC = "saveAndReturnToInitialVC"
+        case exitToInitialVC = "exitToInitialVC"
+    }
 
     //MARK:- Outlets
     @IBOutlet weak var mapView: MKMapView!
@@ -42,10 +49,10 @@ class ShowCitiesViewController: UIViewController {
     //This VC is (re-)used for three different purposes,
     //So we'd better be sure in which mode we're operating to adjust
     //some behaviours
-    //NOTE: The associated string values are exactly the segue identifiers
+    //NOTE: The associated string values are the segue identifiers
     //that lead here, and so it would probably make more sense to define this enum 
     //in the InitialViewController (i.e. in the VC the segues originate from)
-    //but see my other NOTE there.
+    //but see my other NOTE there at the top of the file
     //tl;dr doing in that way causes the swift compiler to crash
     enum Mode: String {
         case importFromCurrentLocation = "importFromCurrentLocation"
@@ -135,8 +142,9 @@ class ShowCitiesViewController: UIViewController {
         
         var destination: UIViewController? = segue.destinationViewController
 
-        if segue.identifier == "showWiki" {
-            
+        switch SegueFromHere (rawValue: segue.identifier!) {
+        
+        case .showWiki?:
             //Be nice and do the right thing regardless the destination being embedded in
             //a navigation controller or not
             if let navCon = destination as? UINavigationController {
@@ -146,8 +154,8 @@ class ShowCitiesViewController: UIViewController {
             if let wikiVC = destination as? WikiViewController {
                 wikiVC.city = dataForNextVC as! City
             }
-        }
-        else if segue.identifier == "saveAndReturnToInitialVC" {
+            
+        case .saveAndReturnToInitialVC?:
             
             if self.currentCoreDataContext.hasChanges {
                 do {
@@ -170,9 +178,12 @@ class ShowCitiesViewController: UIViewController {
             //TODO: REMOVEME
             print ("Scratch Context After: \(self.currentCoreDataContext.registeredObjects.count)")
             print ("Main Context: \(CoreDataStackManager.sharedInstance.managedObjectContext.registeredObjects.count)")
-        }
-        else if segue.identifier == "exitToInitialVC" {
+            
+        case .exitToInitialVC?:
            self.currentCoreDataContext.reset()
+            
+        case nil:
+            fatalError ("Unexpected segue identifier: \(segue.identifier)")
         }
     }
     
