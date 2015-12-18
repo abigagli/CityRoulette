@@ -61,17 +61,19 @@ class ShowCitiesViewController: UIViewController {
     }
     var operatingMode: Mode!
     
-    var isImportingFromCurrentLocation: Bool {
+    private var isImportingFromCurrentLocation: Bool {
         return self.operatingMode == .importFromCurrentLocation
     }
-    var isImportingFromRandomLocation: Bool {
+    
+    private var isImportingFromRandomLocation: Bool {
         return self.operatingMode == .importFromRandomLocation
     }
     
-    var isImporting: Bool {
+    private var isImporting: Bool {
         return self.isImportingFromCurrentLocation || self.isImportingFromRandomLocation
     }
-    var isBrowsing: Bool {
+    
+    private var isBrowsing: Bool {
         return self.operatingMode == .browseArchivedCities
     }
     
@@ -239,6 +241,7 @@ class ShowCitiesViewController: UIViewController {
         self.searchController.dimsBackgroundDuringPresentation = false
         self.searchController.hidesNavigationBarDuringPresentation = true
         self.definesPresentationContext = true
+        //self.searchController.searchBar.barStyle = .Black
         self.tableView.tableHeaderView = self.searchController.searchBar
         self.searchController.searchBar.scopeButtonTitles = ["All", "Favorites", "Unfavorites"]
         self.searchController.searchBar.delegate = self
@@ -365,7 +368,7 @@ extension ShowCitiesViewController: MKMapViewDelegate {
     }
     
     func mapView(mapView: MKMapView, didSelectAnnotationView view: MKAnnotationView) {
-        let city = view.annotation as! City
+        guard let city = view.annotation as? City else {return}
 
         let indexPath = self.fetchedResultsController.indexPathForObject(city)
         self.tableView.selectRowAtIndexPath(indexPath, animated: true, scrollPosition: .Middle)
@@ -393,7 +396,24 @@ extension ShowCitiesViewController: UITableViewDataSource, UITableViewDelegate {
     }
     
     func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return self.fetchedResultsController.sections![section].numberOfObjects
+        if self.fetchedResultsController.sections![section].numberOfObjects > 0 {
+            return self.fetchedResultsController.sections![section].numberOfObjects
+        }
+        else {
+            // Display a message when the table is empty
+            let messageLabel = UILabel(frame: CGRectMake(0, 0, self.view.bounds.size.width, self.view.bounds.size.height))
+            
+            messageLabel.text = "No archived cities. Please tap \"Cancel\" and import new ones"
+            messageLabel.textColor = UIColor.blackColor()
+            messageLabel.numberOfLines = 0;
+            messageLabel.textAlignment = .Center
+            messageLabel.font = UIFont(name: "Palatino-Italic", size:20)
+            messageLabel.sizeToFit()
+            
+            self.tableView.backgroundView = messageLabel;
+            self.tableView.separatorStyle = .None
+        }
+        return 0
     }
     
     func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
