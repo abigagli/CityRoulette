@@ -56,6 +56,7 @@ extension OpenWeatherClient {
         static let APIKey = "048ace6facfeeb0d5fac095a4d3fad8a"
         
         static let ForecastEndpoint = "http://api.openweathermap.org/data/2.5/weather"
+        static let IconImageBaseURL = "http://openweathermap.org/img/w"
     }
     
     //MARK: URL Keys
