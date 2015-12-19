@@ -151,10 +151,7 @@ class ShowCitiesViewController: UIViewController {
     
     private func configureCell (cell: CityTableViewCell, forCity city: City, atIndexPath indexPath: NSIndexPath) {
         cell.nameLabel.text = city.name
-        
-        if let countryCode = city.countryCode {
-            cell.nameLabel.text! += " (\(countryCode))"
-        }
+        cell.countryCodeLabel.text! = "Country: " + (city.countryCode ?? " na")
         
         cell.delegate = self
         cell.favoriteButton.isFavorite = city.favorite

@@ -140,23 +140,32 @@
                                                     </connections>
                                                 </button>
                                                 <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Name" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Cva-S6-Aqo">
-                                                    <rect key="frame" x="104" y="11" width="45" height="21"/>
+                                                    <rect key="frame" x="104" y="4" width="45" height="21"/>
                                                     <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                                     <color key="textColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
+                                                    <nil key="highlightedColor"/>
+                                                </label>
+                                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="CountryCode" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Abi-c6-MdZ">
+                                                    <rect key="frame" x="104" y="24" width="76" height="15"/>
+                                                    <fontDescription key="fontDescription" type="system" pointSize="12"/>
+                                                    <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
                                                     <nil key="highlightedColor"/>
                                                 </label>
                                             </subviews>
                                             <constraints>
                                                 <constraint firstItem="Cva-S6-Aqo" firstAttribute="leading" secondItem="mGV-yV-ZUU" secondAttribute="trailing" constant="8" symbolic="YES" id="2EY-dD-Cbt"/>
-                                                <constraint firstItem="Cva-S6-Aqo" firstAttribute="centerY" secondItem="GFK-TL-BkP" secondAttribute="centerY" id="2wE-NP-7zC"/>
                                                 <constraint firstAttribute="bottom" secondItem="yIH-Gz-KVg" secondAttribute="bottom" id="7TR-jR-LMG"/>
                                                 <constraint firstItem="mGV-yV-ZUU" firstAttribute="leading" secondItem="yIH-Gz-KVg" secondAttribute="trailing" constant="8" symbolic="YES" id="REy-Vb-rgx"/>
                                                 <constraint firstItem="yIH-Gz-KVg" firstAttribute="top" secondItem="GFK-TL-BkP" secondAttribute="top" id="X2O-uQ-Xo4"/>
+                                                <constraint firstItem="Cva-S6-Aqo" firstAttribute="top" secondItem="GFK-TL-BkP" secondAttribute="top" constant="4" id="fah-ne-2LA"/>
                                                 <constraint firstItem="mGV-yV-ZUU" firstAttribute="centerY" secondItem="GFK-TL-BkP" secondAttribute="centerY" id="iL6-wc-GfA"/>
+                                                <constraint firstAttribute="bottom" secondItem="Abi-c6-MdZ" secondAttribute="bottom" constant="4" id="jNS-bC-dyb"/>
+                                                <constraint firstItem="Cva-S6-Aqo" firstAttribute="leading" secondItem="Abi-c6-MdZ" secondAttribute="leading" id="jaU-Tz-n2O"/>
                                                 <constraint firstItem="yIH-Gz-KVg" firstAttribute="leading" secondItem="GFK-TL-BkP" secondAttribute="leading" id="prL-Xu-lIj"/>
                                             </constraints>
                                         </tableViewCellContentView>
                                         <connections>
+                                            <outlet property="countryCodeLabel" destination="Abi-c6-MdZ" id="KyU-tH-WJl"/>
                                             <outlet property="favoriteButton" destination="mGV-yV-ZUU" id="6fz-Op-Srm"/>
                                             <outlet property="nameLabel" destination="Cva-S6-Aqo" id="5Q8-Xv-q4d"/>
                                             <outlet property="weatherIcon" destination="yIH-Gz-KVg" id="W4m-eA-NSv"/>
