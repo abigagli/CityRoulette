@@ -435,6 +435,11 @@ extension InitialViewController: CLLocationManagerDelegate {
         self.hideButtons()
         self.busyStatusManager.setBusyStatus(true)
         
+        OpenWeatherClient.sharedInstance.getForecastForLocation(lastLocation.coordinate) {
+            success, error in
+            
+            print ("success: \(success), error: \(error)")
+        }
         
         let importingContext = self.scratchContext()
         
