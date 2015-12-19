@@ -19,7 +19,6 @@
 		8D64D31E1C07C25B00FBC661 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 8D64D31C1C07C25B00FBC661 /* LaunchScreen.storyboard */; };
 		8DB49FBE1C17654600BB7EF6 /* WikiViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8DB49FBD1C17654600BB7EF6 /* WikiViewController.swift */; };
 		8DCDEDFD1C2555D0003CF799 /* APIConsumer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8DCDEDFC1C2555D0003CF799 /* APIConsumer.swift */; };
-		8DCDEDFF1C25578A003CF799 /* OpenWeather.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8DCDEDFE1C25578A003CF799 /* OpenWeather.swift */; };
 		8DE3B7201C0B5A9900CE642A /* MapKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8DE3B71F1C0B5A9900CE642A /* MapKit.framework */; };
 		8DE3B7221C0B5BD800CE642A /* ShowCitiesViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8DE3B7211C0B5BD800CE642A /* ShowCitiesViewController.swift */; };
 		8DE3B7281C0B7DA300CE642A /* GeoNames.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8DE3B7271C0B7DA300CE642A /* GeoNames.swift */; };
@@ -46,7 +45,6 @@
 		8D64D31F1C07C25B00FBC661 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		8DB49FBD1C17654600BB7EF6 /* WikiViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = WikiViewController.swift; sourceTree = "<group>"; };
 		8DCDEDFC1C2555D0003CF799 /* APIConsumer.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = APIConsumer.swift; sourceTree = "<group>"; };
-		8DCDEDFE1C25578A003CF799 /* OpenWeather.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = OpenWeather.swift; sourceTree = "<group>"; };
 		8DE3B71F1C0B5A9900CE642A /* MapKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MapKit.framework; path = System/Library/Frameworks/MapKit.framework; sourceTree = SDKROOT; };
 		8DE3B7211C0B5BD800CE642A /* ShowCitiesViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ShowCitiesViewController.swift; sourceTree = "<group>"; };
 		8DE3B7271C0B7DA300CE642A /* GeoNames.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GeoNames.swift; sourceTree = "<group>"; };
@@ -141,7 +139,6 @@
 			isa = PBXGroup;
 			children = (
 				8DE3B7271C0B7DA300CE642A /* GeoNames.swift */,
-				8DCDEDFE1C25578A003CF799 /* OpenWeather.swift */,
 				8DE3B7291C0B7DE200CE642A /* Constants.swift */,
 				8DCDEDFC1C2555D0003CF799 /* APIConsumer.swift */,
 			);
@@ -249,7 +246,6 @@
 				8DE3B7221C0B5BD800CE642A /* ShowCitiesViewController.swift in Sources */,
 				8D0796261C1F6E6600E9AF32 /* Country.swift in Sources */,
 				8D2F9C781C1C9FA100DC2624 /* FavoritedUIButton.swift in Sources */,
-				8DCDEDFF1C25578A003CF799 /* OpenWeather.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
