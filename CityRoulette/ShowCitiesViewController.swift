@@ -147,6 +147,53 @@ class ShowCitiesViewController: UIViewController {
         self.setVCEditingMode(editing, animated: animated)
         updateUI()
     }
+    
+    
+    private func configureCell (cell: CityTableViewCell, forCity city: City, atIndexPath indexPath: NSIndexPath) {
+        cell.nameLabel.text = city.name
+        
+        if let countryCode = city.countryCode {
+            cell.nameLabel.text! += " (\(countryCode))"
+        }
+        
+        cell.delegate = self
+        cell.favoriteButton.isFavorite = city.favorite
+        
+        if let wikipedia = city.wikipedia where !wikipedia.isEmpty {
+            cell.accessoryType = .DetailButton
+        }
+        else {
+            cell.accessoryType = .None
+        }
+        
+        cell.weatherIcon.image = nil
+        
+        //If we already got a weather icon for this city...
+        if let weatherImage = city.weatherImage {
+            //... just reuse it
+            cell.weatherIcon.image = weatherImage
+        }
+        else { //Otherwise, get the appropriate (possibly cached) weather icon image throgh the OpenWeather API
+            let cityCoordinates = CLLocationCoordinate2D (latitude: city.latitude, longitude: city.longitude)
+            OpenWeatherClient.sharedInstance.getWeatherIconForLocation(cityCoordinates) {
+                iconImage, error in
+                
+                guard let weatherImage = iconImage else { return }
+                
+                //Use the model as a cache while we're looking at the same set of cities
+                city.weatherImage = weatherImage
+                
+                dispatch_async(dispatch_get_main_queue()) {
+                    //As we're asynchronos, ensure the cell hasn't been off-screen and reused
+                    if let cellToUpdate = self.tableView.cellForRowAtIndexPath(indexPath) as? CityTableViewCell {
+                        cellToUpdate.weatherIcon.image = weatherImage
+                        cellToUpdate.setNeedsLayout()
+                    }
+                }
+            }
+        }
+    }
+
 
     //MARK:- Lifetime
     override func prepareForSegue(segue: UIStoryboardSegue, sender dataForNextVC: AnyObject?) {
@@ -443,18 +490,8 @@ extension ShowCitiesViewController: UITableViewDataSource, UITableViewDelegate {
 
         let city = fetchedResultsController.objectAtIndexPath(indexPath) as! City
         
-        cell.nameLabel.text = city.name + "  " + (city.countryCode ?? "")
-        cell.delegate = self
-        cell.favoriteButton.isFavorite = city.favorite
+        self.configureCell (cell, forCity: city, atIndexPath: indexPath)
         
-        if let wikipedia = city.wikipedia where !wikipedia.isEmpty {
-            cell.accessoryType = .DetailButton
-        }
-        else {
-            cell.accessoryType = .None
-        }
-        
-
         return cell
     }
     
