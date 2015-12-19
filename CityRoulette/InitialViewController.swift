@@ -391,6 +391,12 @@ class InitialViewController: UIViewController {
     
     
     //MARK:- Core Data
+    
+    //When importing, we use a sort of "scratch" context which is a child of the main coredata
+    //context, so that we can be more flexible in case we just want to discard everything during
+    //the import phase.
+    //Only if the user decides to import, then the contents of this child scratch context are pushed
+    //up into the main one
     private func scratchContext() -> NSManagedObjectContext {
         //let context = NSManagedObjectContext(concurrencyType: .PrivateQueueConcurrencyType)
         let context = NSManagedObjectContext(concurrencyType: .MainQueueConcurrencyType)

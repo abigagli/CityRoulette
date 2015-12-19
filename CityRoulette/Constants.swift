@@ -12,7 +12,7 @@ extension GeoNamesClient {
     
     struct Constants {
         
-        static let Username = "abigagli"
+        static let Username = "abigagli" //Acts as an API Key for this API
         static let Language = "local"
         
         static let CitiesEndpoint = "http://api.geonames.org/citiesJSON"

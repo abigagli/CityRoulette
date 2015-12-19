@@ -6,7 +6,6 @@
 //  Copyright © 2015 Andrea Bigagli. All rights reserved.
 //
 
-import UIKit
 import CoreLocation
 import MapKit
 import CoreData
@@ -18,79 +17,12 @@ class GeoNamesClient {
     
     //private init enforces singleton usage
     private init() {
-        session = NSURLSession.sharedSession()
+        self.consumer = APIConsumer (withSession: NSURLSession.sharedSession())
     }
     
     //MARK:- State
-    var session: NSURLSession
+    let consumer: APIConsumer
     
-    //MARK:- Business Logic
-    private func getWithEndpoint (apiEndpoint: String, parameters: [String : AnyObject],
-        completionHandler: (result: AnyObject?, error: NSError?) -> Void) {
-            //Build the URL and URL request specific to the website required.
-            let urlString = apiEndpoint + GeoNamesClient.escapedParameters(parameters)
-            let request = NSMutableURLRequest(URL: NSURL(string: urlString)!)
-            
-            //Make the request.
-            let task = session.dataTaskWithRequest(request) {
-                data, _, downloadError in
-                
-                if let _ = downloadError {
-                    completionHandler(result: nil, error: downloadError)
-                }
-                else { //Parse the received data.
-                    GeoNamesClient.parseJSONWithCompletionHandler(data!, completionHandler: completionHandler)
-                }
-            }
-            
-            //Start the request task.
-            task.resume()
-    }
-
-
-    //MARK: Helpers
-    
-    
-    //Escape parameters and make them URL-friendly
-    private class func escapedParameters(parameters: [String : AnyObject]) -> String {
-        
-        var urlVars = [String]()
-        
-        for (key, value) in parameters {
-            
-            let stringValue = "\(value)"
-            let replaceSpaceValue = stringValue.stringByReplacingOccurrencesOfString(" ", withString: "+", options: .LiteralSearch, range: nil)
-            urlVars += [key + "=" + "\(replaceSpaceValue)"]
-        }
-        
-        return (!urlVars.isEmpty ? "?" : "") + urlVars.joinWithSeparator("&")
-    }
-    
-    //Parse the received JSON data and pass it to the completion handler.
-    private class func parseJSONWithCompletionHandler(data: NSData, completionHandler: (result: AnyObject?, error: NSError?) -> Void) {
-        
-        var parsingError: NSError?
-        let parsedResult: AnyObject?
-        do {
-            parsedResult = try NSJSONSerialization.JSONObjectWithData(data, options: .AllowFragments)
-        } catch let error as NSError {
-            parsingError = error
-            parsedResult = nil
-        }
-        
-        if let error = parsingError {
-            
-            completionHandler(result: nil, error: error)
-        } else {
-            
-            completionHandler(result: parsedResult, error: nil)
-        }
-    }
-
-}
-
-//MARK:- Convenience
-extension GeoNamesClient {
     func getCitiesAroundLocation (location: CLLocationCoordinate2D, withRadius radiusInMeters: Double, maxResults: Int = 10, andStoreIn context: NSManagedObjectContext, completionHandler: (acquireID: Int64, error: NSError?) -> Void) {
         
         let region = MKCoordinateRegionMakeWithDistance(location, radiusInMeters, radiusInMeters)
@@ -115,7 +47,7 @@ extension GeoNamesClient {
             URLKeys.Username    : Constants.Username
         ]
         
-        getWithEndpoint(Constants.CitiesEndpoint, parameters: parameters) /* And then, on another thread... */ {
+        consumer.getWithEndpoint(Constants.CitiesEndpoint, parameters: parameters) /* And then, on another thread... */ {
             result, error in
             
             if let error = error {
@@ -162,7 +94,7 @@ extension GeoNamesClient {
             URLKeys.Username    : Constants.Username
         ]
         
-        getWithEndpoint(Constants.CountryInfoEndpoint, parameters: parameters) /* And then, on another thread... */ {
+        consumer.getWithEndpoint(Constants.CountryInfoEndpoint, parameters: parameters) /* And then, on another thread... */ {
             result, error in
             
             if let error = error {
@@ -197,41 +129,4 @@ extension GeoNamesClient {
             }
         }
     }
-
-    
-    //MARK: Core Data
-    
-    //TODO: REMOVEME
-    /* 
-    private var sharedContext: NSManagedObjectContext  {
-        return (UIApplication.sharedApplication().delegate as! AppDelegate).managedObjectContext
-    }
-    private var persistentStoreCoordinator: NSPersistentStoreCoordinator  {
-        return (UIApplication.sharedApplication().delegate as! AppDelegate).persistentStoreCoordinator
-    }
-    
-    private func deleteCities() {
-        let coord = self.persistentStoreCoordinator
-        
-        let fetchRequest = NSFetchRequest(entityName: "City")
-        let deleteRequest = NSBatchDeleteRequest(fetchRequest: fetchRequest)
-        
-        do {
-            try coord.executeRequest(deleteRequest, withContext: self.sharedContext)
-        } catch let error as NSError {
-            debugPrint(error)
-        }
-    }
-
-    private func alreadyKnown (geonameID: Int64, inContext context: NSManagedObjectContext) -> Bool {
-        let fetchRequest = NSFetchRequest (entityName: "City")
-        fetchRequest.predicate = NSPredicate (format: "geonameID == %lld", geonameID)
-        
-        var error: NSError?
-        let n = context.countForFetchRequest(fetchRequest, error: &error)
-        
-        return error == nil && n > 0
-    }
-    
-    */
 }
