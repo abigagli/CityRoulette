@@ -84,7 +84,7 @@ class ShowCitiesViewController: UIViewController {
         return self.operatingMode == .browseArchivedCities
     }
     
-    private lazy var refreshControl: UIRefreshControl = {
+    private lazy var updateWeatherRefreshControl: UIRefreshControl = {
         let refreshControl = UIRefreshControl()
         refreshControl.attributedTitle = NSAttributedString(string:"Update Weather")
         refreshControl.addTarget(self, action: "updateWeather:", forControlEvents: .ValueChanged)
@@ -319,21 +319,7 @@ class ShowCitiesViewController: UIViewController {
         self.searchController.searchBar.scopeButtonTitles = ["All", "Favorites", "Unfavorites"]
         self.searchController.searchBar.delegate = self
         
-        
-        let tempTVC = UITableViewController()
-        tempTVC.tableView = self.tableView
-        
-        
-        tempTVC.refreshControl = self.refreshControl
-        
-        //NOTE: Tried the following, but it gave a lot of problems with the UIRefreshControl
-        //Appearing on top of the table view and jumping down when refreshing
-        /*
-        self.refreshControl = UIRefreshControl()
-        self.refreshControl.attributedTitle = NSAttributedString(string:"Update Weather")
-        self.refreshControl.addTarget(self, action: "updateWeather:", forControlEvents: .ValueChanged)
-        self.tableView.addSubview(self.refreshControl)
-        */
+        self.refreshControl = self.updateWeatherRefreshControl
     }
     
     override func viewWillAppear(animated: Bool) {
@@ -634,61 +620,37 @@ extension ShowCitiesViewController: UISearchBarDelegate {
     }
     
     func searchBarTextDidEndEditing(searchBar: UISearchBar) {
-        let tempTVC = UITableViewController()
-        tempTVC.tableView = self.tableView
-        tempTVC.refreshControl = self.refreshControl
+        self.refreshControl = self.updateWeatherRefreshControl
     }
 }
 
-
-//TODO: REMOVEME
-//MARK: UIScrollViewDelegate
+//MARK:- HACK 
+//Encapsulated in an extension a hack I used to make UIRefreshControl work
+//with a non-tableviwecontroller-based tableview.
+//Basically, I tried the following in viewDidLoad or viewDidAppear, but it gave
+//a lot of problems with the UIRefreshControl
+//Appearing on top of the table view and jumping down when refreshing
 /*
-extension ShowCitiesViewController: UIScrollViewDelegate {
-    // MARK: Scroll view methods
-    func scrollViewDidScroll(scrollView: UIScrollView) {
-        print("Scrollview Offset: \(scrollView.contentOffset.y)")
-        /*
-        refresh.position.y = -scrollView.contentOffset.y/3
-        
-        if refresh.position.y > 40.0 {
-            refresh.strokeColor = UIColor.blueColor().CGColor
-        } else {
-            refresh.strokeColor = UIColor.blackColor().CGColor
-        }
-        */
-    }
-    
-    func scrollViewWillEndDragging(scrollView: UIScrollView, withVelocity velocity: CGPoint, targetContentOffset: UnsafeMutablePointer<CGPoint>) {
-        
-        if scrollView.contentOffset.y < -90 {
-            print ("Trigger refresh, current tableview frame: \(self.tableView.frame)")
-        }
-        /*
-        if refresh.position.y > 40.0 {
-            UIView.animateWithDuration(0.3, animations: {
-                scrollView.contentInset.top = 100
-            })
-            
+self.refreshControl = UIRefreshControl()
+self.refreshControl.attributedTitle = NSAttributedString(string:"Update Weather")
+self.refreshControl.addTarget(self, action: "updateWeather:", forControlEvents: .ValueChanged)
+self.tableView.addSubview(self.refreshControl)
+*/
+//So I looked around and found inspiration on 
+//http://stackoverflow.com/questions/12497940/uirefreshcontrol-without-uitableviewcontroller/12502450#12502450
+
+extension ShowCitiesViewController /* Hacking a bit for UIRefreshControl to work */{ 
+    private var refreshControl: UIRefreshControl {
+        get {
+            return self.updateWeatherRefreshControl
         }
         
-        if refresh.animationForKey("spin") == nil {
-            let spin = CABasicAnimation(keyPath: "lineDashPhase")
-            spin.fromValue = 0
-            spin.toValue = 4
-            spin.duration = 0.1
-            spin.repeatCount = Float.infinity
-            refresh.addAnimation(spin, forKey: "spin")
+        set {
+            let tempTVC = UITableViewController()
+            tempTVC.tableView = self.tableView
             
-            UIView.animateWithDuration(0.3, delay: 5.0, options: [], animations: {
-                scrollView.contentInset.top = 0
-                }, completion: {_ in
-                    self.refresh.removeAnimationForKey("spin")
-            })
             
+            tempTVC.refreshControl = newValue
         }
-        */
     }
 }
-*/
-
