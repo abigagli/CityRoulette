@@ -28,7 +28,9 @@ class InitialViewController: UIViewController {
     let k_randomCountryNoRepeatHistory = 10
     
     
-    //TODO: MAKE THESE CONFIGURABLE?
+    //NOTE: These would be ideally configurable, but lacked time to implement
+    //a proper UI that would allow the user to drag a circle around current location on
+    //a map. So decided to leave as hard-coded defaults for now
     let k_radius = 10000.0
     let k_maxImportAtOnce = 30
     
@@ -269,9 +271,8 @@ class InitialViewController: UIViewController {
             citiesInfoVC.operatingMode = ShowCitiesMode(rawValue: segue.identifier!)!
             
             
-            //TODO: REMOVEME
-            print ("Scratch Context: \(citiesInfoVC.currentCoreDataContext.registeredObjects.count)")
-            print ("Main Context: \(CoreDataStackManager.sharedInstance.managedObjectContext.registeredObjects.count)")
+            //print ("Scratch Context: \(citiesInfoVC.currentCoreDataContext.registeredObjects.count)")
+            //print ("Main Context: \(CoreDataStackManager.sharedInstance.managedObjectContext.registeredObjects.count)")
         }
     }
     

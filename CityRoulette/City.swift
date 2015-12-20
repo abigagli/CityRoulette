@@ -47,14 +47,6 @@ extension City: MKAnnotation {
         get {
             return CLLocationCoordinate2D (latitude: self.latitude, longitude: self.longitude)
         }
-        
-        //TODO: REMOVEME if not dragging
-        /*
-        set {
-            self.latitude = newValue.latitude
-            self.longitude = newValue.longitude
-        }
-        */
     }
     
     var title: String? {

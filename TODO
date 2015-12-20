@@ -1,8 +1,1 @@
 - Implement busystatus functionality (from OnTheMap) possibly as a protocol extension
-- Pull to refresh centers map view
-? Show busy status while deleting all unfavorites
-
-? Select radius
-? Weather
-
-- CLEAN ALL //TODO: 

@@ -116,7 +116,6 @@ class ShowCitiesViewController: UIViewController {
         self.showBottomToolbar(self.editing)
     }
     
-    //TODO: REMOVEME?
     func updateWeather (sender: AnyObject) {
         //Invalidate the cached images for weather icons, so that the openweather API will
         //be used again to refresh weather conditions
@@ -251,9 +250,9 @@ class ShowCitiesViewController: UIViewController {
 
                 }
             }
-            //TODO: REMOVEME
-            print ("Scratch Context After: \(self.currentCoreDataContext.registeredObjects.count)")
-            print ("Main Context: \(CoreDataStackManager.sharedInstance.managedObjectContext.registeredObjects.count)")
+            
+            //print ("Scratch Context After: \(self.currentCoreDataContext.registeredObjects.count)")
+            //print ("Main Context: \(CoreDataStackManager.sharedInstance.managedObjectContext.registeredObjects.count)")
             
         case .exitToInitialVC?:
            self.currentCoreDataContext.reset()
