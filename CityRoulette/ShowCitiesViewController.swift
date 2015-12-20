@@ -78,7 +78,7 @@ class ShowCitiesViewController: UIViewController {
     }
     
     //TODO: REMOVEME?
-    //private var refreshControl: UIRefreshControl!
+    private var refreshControl: UIRefreshControl!
     //private var initialMapRegion: MKCoordinateRegion!
     
     //MARK:- UI
@@ -106,12 +106,19 @@ class ShowCitiesViewController: UIViewController {
     }
     
     //TODO: REMOVEME?
-    /*
-    func recenterMap(sender: AnyObject) {
-        self.mapView.setRegion(self.initialMapRegion, animated: true)
+    func updateWeather (sender: AnyObject) {
+        //Invalidate the cached images for weather icons, so that the openweather API will
+        //be used again to refresh weather conditions
+        for city in self.fetchedResultsController.fetchedObjects as! [City] {
+            city.weatherImage = nil
+        }
+        
+        //Just reload what's visible, the rest will be handled as usual while scrolling
+        if let visibleIndexPaths = self.tableView.indexPathsForVisibleRows {
+            self.tableView.reloadRowsAtIndexPaths(visibleIndexPaths, withRowAnimation: .Fade)
+        }
         self.refreshControl.endRefreshing()
     }
-    */
     
     private func updateUI() {
         var recordsToSave = false
@@ -302,12 +309,10 @@ class ShowCitiesViewController: UIViewController {
         self.searchController.searchBar.delegate = self
         
         //TODO: REMOVEME?
-        /*
         self.refreshControl = UIRefreshControl()
-        self.refreshControl.attributedTitle = NSAttributedString(string:"Center map")
-        self.refreshControl.addTarget(self, action: "recenterMap:", forControlEvents: .ValueChanged)
+        self.refreshControl.attributedTitle = NSAttributedString(string:"Update Weather")
+        self.refreshControl.addTarget(self, action: "updateWeather:", forControlEvents: .ValueChanged)
         self.tableView.addSubview(self.refreshControl)
-        */
     }
 
     override func viewWillAppear(animated: Bool) {
@@ -600,6 +605,15 @@ extension ShowCitiesViewController: UISearchResultsUpdating {
 extension ShowCitiesViewController: UISearchBarDelegate {
     func searchBar(searchBar: UISearchBar, selectedScopeButtonIndexDidChange selectedScope: Int) {
         filterContentForSearchText(searchBar.text!, scope: searchBar.scopeButtonTitles![selectedScope])
+    }
+    
+    func searchBarShouldBeginEditing(searchBar: UISearchBar) -> Bool {
+        self.refreshControl.removeFromSuperview()
+        return true
+    }
+    
+    func searchBarTextDidEndEditing(searchBar: UISearchBar) {
+        self.tableView.addSubview(self.refreshControl)
     }
 }
 
