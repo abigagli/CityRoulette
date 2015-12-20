@@ -128,7 +128,8 @@ class ShowCitiesViewController: UIViewController {
         if let visibleIndexPaths = self.tableView.indexPathsForVisibleRows {
             self.tableView.reloadRowsAtIndexPaths(visibleIndexPaths, withRowAnimation: .Fade)
         }
-        self.refreshControl.endRefreshing()
+        
+        (sender as? UIRefreshControl)?.endRefreshing()
     }
     
     private func updateUI() {
@@ -615,7 +616,7 @@ extension ShowCitiesViewController: UISearchBarDelegate {
     }
     
     func searchBarShouldBeginEditing(searchBar: UISearchBar) -> Bool {
-        self.refreshControl.removeFromSuperview()
+        self.refreshControl = nil
         return true
     }
     
@@ -640,7 +641,7 @@ self.tableView.addSubview(self.refreshControl)
 //http://stackoverflow.com/questions/12497940/uirefreshcontrol-without-uitableviewcontroller/12502450#12502450
 
 extension ShowCitiesViewController /* Hacking a bit for UIRefreshControl to work */{ 
-    private var refreshControl: UIRefreshControl {
+    private var refreshControl: UIRefreshControl? {
         get {
             return self.updateWeatherRefreshControl
         }
