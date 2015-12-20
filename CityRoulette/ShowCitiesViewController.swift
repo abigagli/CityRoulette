@@ -78,7 +78,7 @@ class ShowCitiesViewController: UIViewController {
     }
     
     //TODO: REMOVEME?
-    //private var refreshControl: UIRefreshControl!
+    private var refreshControl: UIRefreshControl!
     //private var initialMapRegion: MKCoordinateRegion!
     
     //MARK:- UI
@@ -106,12 +106,19 @@ class ShowCitiesViewController: UIViewController {
     }
     
     //TODO: REMOVEME?
-    /*
-    func recenterMap(sender: AnyObject) {
-        self.mapView.setRegion(self.initialMapRegion, animated: true)
+    func updateWeather (sender: AnyObject) {
+        //Invalidate the cached images for weather icons, so that the openweather API will
+        //be used again to refresh weather conditions
+        for city in self.fetchedResultsController.fetchedObjects as! [City] {
+            city.weatherImage = nil
+        }
+        
+        //Just reload what's visible, the rest will be handled as usual while scrolling
+        if let visibleIndexPaths = self.tableView.indexPathsForVisibleRows {
+            self.tableView.reloadRowsAtIndexPaths(visibleIndexPaths, withRowAnimation: .Fade)
+        }
         self.refreshControl.endRefreshing()
     }
-    */
     
     private func updateUI() {
         var recordsToSave = false
@@ -147,6 +154,50 @@ class ShowCitiesViewController: UIViewController {
         self.setVCEditingMode(editing, animated: animated)
         updateUI()
     }
+    
+    
+    private func configureCell (cell: CityTableViewCell, forCity city: City, atIndexPath indexPath: NSIndexPath) {
+        cell.nameLabel.text = city.name
+        cell.countryCodeLabel.text! = "Country: " + (city.countryCode ?? " na")
+        
+        cell.delegate = self
+        cell.favoriteButton.isFavorite = city.favorite
+        
+        if let wikipedia = city.wikipedia where !wikipedia.isEmpty {
+            cell.accessoryType = .DetailButton
+        }
+        else {
+            cell.accessoryType = .None
+        }
+        
+        cell.weatherIcon.image = nil
+        
+        //If we already got a weather icon for this city...
+        if let weatherImage = city.weatherImage {
+            //... just reuse it
+            cell.weatherIcon.image = weatherImage
+        }
+        else { //Otherwise, get the appropriate (possibly cached) weather icon image throgh the OpenWeather API
+            let cityCoordinates = CLLocationCoordinate2D (latitude: city.latitude, longitude: city.longitude)
+            OpenWeatherClient.sharedInstance.getWeatherIconForLocation(cityCoordinates) {
+                iconImage, error in
+                
+                guard let weatherImage = iconImage else { return }
+                
+                //Use the model as a cache while we're looking at the same set of cities
+                city.weatherImage = weatherImage
+                
+                dispatch_async(dispatch_get_main_queue()) {
+                    //As we're asynchronos, ensure the cell hasn't been off-screen and reused
+                    if let cellToUpdate = self.tableView.cellForRowAtIndexPath(indexPath) as? CityTableViewCell {
+                        cellToUpdate.weatherIcon.image = weatherImage
+                        cellToUpdate.setNeedsLayout()
+                    }
+                }
+            }
+        }
+    }
+
 
     //MARK:- Lifetime
     override func prepareForSegue(segue: UIStoryboardSegue, sender dataForNextVC: AnyObject?) {
@@ -258,12 +309,10 @@ class ShowCitiesViewController: UIViewController {
         self.searchController.searchBar.delegate = self
         
         //TODO: REMOVEME?
-        /*
         self.refreshControl = UIRefreshControl()
-        self.refreshControl.attributedTitle = NSAttributedString(string:"Center map")
-        self.refreshControl.addTarget(self, action: "recenterMap:", forControlEvents: .ValueChanged)
+        self.refreshControl.attributedTitle = NSAttributedString(string:"Update Weather")
+        self.refreshControl.addTarget(self, action: "updateWeather:", forControlEvents: .ValueChanged)
         self.tableView.addSubview(self.refreshControl)
-        */
     }
 
     override func viewWillAppear(animated: Bool) {
@@ -443,18 +492,8 @@ extension ShowCitiesViewController: UITableViewDataSource, UITableViewDelegate {
 
         let city = fetchedResultsController.objectAtIndexPath(indexPath) as! City
         
-        cell.nameLabel.text = city.name + "  " + (city.countryCode ?? "")
-        cell.delegate = self
-        cell.favoriteButton.isFavorite = city.favorite
+        self.configureCell (cell, forCity: city, atIndexPath: indexPath)
         
-        if let wikipedia = city.wikipedia where !wikipedia.isEmpty {
-            cell.accessoryType = .DetailButton
-        }
-        else {
-            cell.accessoryType = .None
-        }
-        
-
         return cell
     }
     
@@ -566,6 +605,15 @@ extension ShowCitiesViewController: UISearchResultsUpdating {
 extension ShowCitiesViewController: UISearchBarDelegate {
     func searchBar(searchBar: UISearchBar, selectedScopeButtonIndexDidChange selectedScope: Int) {
         filterContentForSearchText(searchBar.text!, scope: searchBar.scopeButtonTitles![selectedScope])
+    }
+    
+    func searchBarShouldBeginEditing(searchBar: UISearchBar) -> Bool {
+        self.refreshControl.removeFromSuperview()
+        return true
+    }
+    
+    func searchBarTextDidEndEditing(searchBar: UISearchBar) {
+        self.tableView.addSubview(self.refreshControl)
     }
 }
 

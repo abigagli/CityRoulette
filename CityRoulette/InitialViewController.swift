@@ -435,7 +435,7 @@ extension InitialViewController: CLLocationManagerDelegate {
         self.hideButtons()
         self.busyStatusManager.setBusyStatus(true)
         
-        
+       
         let importingContext = self.scratchContext()
         
         self.importCitiesAroundLocation(lastLocation, intoContext: importingContext, randomAttempts: nil)

@@ -10,7 +10,7 @@ import Foundation
 
 class APIConsumer {
     
-    private let session: NSURLSession
+    let session: NSURLSession
     init (withSession: NSURLSession) {
        self.session = withSession
     }

@@ -46,3 +46,34 @@ extension GeoNamesClient {
     }
     
 }
+
+extension OpenWeatherClient {
+    
+    //MARK: Constants
+    
+    struct Constants {
+        
+        static let APIKey = "048ace6facfeeb0d5fac095a4d3fad8a"
+        
+        static let ForecastEndpoint = "http://api.openweathermap.org/data/2.5/weather"
+        static let IconImageBaseURL = "http://openweathermap.org/img/w"
+    }
+    
+    //MARK: URL Keys
+    
+    struct URLKeys {
+        static let Lat          = "lat"
+        static let Lon          = "lon"
+        static let AppID        = "appid"
+    }
+    
+    //MARK: JSON Response Keys
+    
+    struct JSONResponseKeys {
+        
+        static let Status   = "status"
+        static let Geonames = "geonames"
+        static let GeonameID = "geonameId"
+    }
+
+}

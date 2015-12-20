@@ -20,7 +20,9 @@ class CityTableViewCell: UITableViewCell {
 
     @IBOutlet weak var favoriteButton: FavoritedUIButton!
     
+    @IBOutlet weak var weatherIcon: UIImageView!
     @IBOutlet weak var nameLabel: UILabel!
+    @IBOutlet weak var countryCodeLabel: UILabel!
     
     @IBAction func favoriteButtonTapped(sender: FavoritedUIButton) {
         

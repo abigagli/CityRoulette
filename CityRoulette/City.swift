@@ -6,16 +6,25 @@
 //  Copyright © 2015 Andrea Bigagli. All rights reserved.
 //
 
+import UIKit
 import Foundation
 import CoreData
 import MapKit
 
 class City: NSManagedObject {
     
+    //A non-persisted property used to cache weather icons while displaying cities
+    //on a table view
+    var weatherImage: UIImage?
+    
+    
     convenience init (json: NSDictionary, acquireID: Int64, context: NSManagedObjectContext) {
         
         let entity = NSEntityDescription.entityForName("City", inManagedObjectContext: context)
         
+        //Superclass' init(entity:insertIntoManagedObjectContext) designated initializer is inherited
+        //because we don't define ourselves any designated initializer, so we can call such inherited designated initializer
+        //by simple self.init delegation here
         self.init(entity: entity!, insertIntoManagedObjectContext: context)
         
         //@NSManaged properties acts as inherited properties and must be initialized in phase2
