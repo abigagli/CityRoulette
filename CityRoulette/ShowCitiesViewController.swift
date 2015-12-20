@@ -38,19 +38,19 @@ class ShowCitiesViewController: UIViewController {
     }
     
     //MARK:- State
-    //TODO: Remove if using dynamic radius
+    
+    
+    /*** The following constitute the "configurables" for this VC to be set by the presenting VC
+    e.g. during prepare for segue ***/
     var radius: Double!
     var currentCoreDataContext: NSManagedObjectContext!
     var acquireID: Int64 = 0
-    private var numUnfavorites: Int = 0
-    private let searchController = UISearchController(searchResultsController: nil)
-    
     //MARK: Operating mode
     //This VC is (re-)used for three different purposes,
     //So we'd better be sure in which mode we're operating to adjust
     //some behaviours
     //NOTE: The associated string values are the segue identifiers
-    //that lead here, and so it would probably make more sense to define this enum 
+    //that lead here, and so it would probably make more sense to define this enum
     //in the InitialViewController (i.e. in the VC the segues originate from)
     //but see my other NOTE there at the top of the file
     //tl;dr doing in that way causes the swift compiler to crash
@@ -60,6 +60,13 @@ class ShowCitiesViewController: UIViewController {
         case browseArchivedCities = "browseArchivedCities"
     }
     var operatingMode: Mode!
+    /***************************************************************************/
+
+    
+    
+    private var numUnfavorites: Int = 0
+    private let searchController = UISearchController(searchResultsController: nil)
+    
     
     private var isImportingFromCurrentLocation: Bool {
         return self.operatingMode == .importFromCurrentLocation
@@ -77,10 +84,14 @@ class ShowCitiesViewController: UIViewController {
         return self.operatingMode == .browseArchivedCities
     }
     
-    //TODO: REMOVEME?
-    private var refreshControl: UIRefreshControl!
-    //private var initialMapRegion: MKCoordinateRegion!
-    
+    private lazy var refreshControl: UIRefreshControl = {
+        let refreshControl = UIRefreshControl()
+        refreshControl.attributedTitle = NSAttributedString(string:"Update Weather")
+        refreshControl.addTarget(self, action: "updateWeather:", forControlEvents: .ValueChanged)
+        
+        return refreshControl
+    }()
+
     //MARK:- UI
     private func showBottomToolbar(show: Bool) {
     
@@ -308,13 +319,23 @@ class ShowCitiesViewController: UIViewController {
         self.searchController.searchBar.scopeButtonTitles = ["All", "Favorites", "Unfavorites"]
         self.searchController.searchBar.delegate = self
         
-        //TODO: REMOVEME?
+        
+        let tempTVC = UITableViewController()
+        tempTVC.tableView = self.tableView
+        
+        
+        tempTVC.refreshControl = self.refreshControl
+        
+        //NOTE: Tried the following, but it gave a lot of problems with the UIRefreshControl
+        //Appearing on top of the table view and jumping down when refreshing
+        /*
         self.refreshControl = UIRefreshControl()
         self.refreshControl.attributedTitle = NSAttributedString(string:"Update Weather")
         self.refreshControl.addTarget(self, action: "updateWeather:", forControlEvents: .ValueChanged)
         self.tableView.addSubview(self.refreshControl)
+        */
     }
-
+    
     override func viewWillAppear(animated: Bool) {
         super.viewWillAppear(animated)
         self.toolbarBottomConstraint.constant = -self.toolbar.frame.height
@@ -613,7 +634,9 @@ extension ShowCitiesViewController: UISearchBarDelegate {
     }
     
     func searchBarTextDidEndEditing(searchBar: UISearchBar) {
-        self.tableView.addSubview(self.refreshControl)
+        let tempTVC = UITableViewController()
+        tempTVC.tableView = self.tableView
+        tempTVC.refreshControl = self.refreshControl
     }
 }
 
