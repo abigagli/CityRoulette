@@ -20,7 +20,7 @@ The interface consists of:
 A more detailed description of the various scenes follows:
 
 1. The initial scene presents 2 buttons for adding new cities and 1 button (**which dynamically appears only when there is at least one archived city**) for browsing already collected cities.
-The first two buttons give access to the "import" functionality, i.e. they allow the user to add new cities to its persisten collection and in particular:
+The first two buttons give access to the *"importing"* functionality, i.e. they allow the user to add *new* cities to its persisten collection and in particular:
 
   * The *"Around Me"* button takes the current user location as the starting point to query the geonames API for a maximum of 30 nearby cities in a 10Km radius area
   
@@ -28,7 +28,7 @@ The first two buttons give access to the "import" functionality, i.e. they allow
     After that, it randomly chooses one country and generates a random coordinate pair inside its bounding box which is then used as the starting point to again find at most 30 nearby cities.
     The algorithm is such that it tries to avoid obtaining the same results by storing the history of the previous 10 searches, and if it cannot find anything it automatically picks up a new country and tries again for a maximum of 4 times after which alerts the user.
   
-  The third button gives access to the "browsing" functionality, where the user can browse through the archived cities and favorite/unfavorite/delete them, with all changes being persisted should the user choose to do so
+  The third button gives access to the *"browsing"* functionality, where the user can browse through the archived cities and favorite/unfavorite/delete them, with all changes being persisted should the user choose to do so
   * The *"Browse <N> archived cities"* button is dynamically displayed when there are some archived cities that can be browsed/edited.
 
 2. The importing/browsing scene is realized through the same interface but serves 2 different purposes:
@@ -51,7 +51,7 @@ The first two buttons give access to the "import" functionality, i.e. they allow
     
       Once the user is happy with the list of cities and their favorite/unfavorite state, it can tap the "import" top left button and have them persisted in the local store
 
-  * From the *"Browse <N> archived cities"* button, the user is presented with the same map/table view combined interface. All the functionality is pretty much the same, but this time it offers a view on the already imported entries and any edit will be applied to them. This is reflected by the top left button being now named "save" instead of "import".
+  * From the *"Browse <N> archived cities"* button, the user is presented with the same map/table view combined interface. All the functionality is pretty much the same, but this time it offers a view on the already imported entries and any edit will be applied to them. This is reflected by the top left button being now named **Save** instead of **Import**.
 
 3. The wikipedia browsing scene is accessed by tapping on the detail/accessory button displayed on table view cells for cities that have an official wikipedia article linked to them.
        This is a webview that starts from the linked wikipedia article, but then allows full browsing, with support for backward/forward navigation
@@ -93,3 +93,16 @@ When using the "Around Me" functionality for the first time, the application wil
   It mostly works, but there's a glitch that I wasn't able to remove that causes the view of the refresh control to sometimes "jump" a bit vertically when the action has been triggered just before releasing the drag on the table view.
 
   I'm now aware that the proper solution might be to encapsulated a UITableViewController in a container view, but that would require some heavy refactoring of both the UI and the ViewController code
+
+#CLARIFICATIONS:
+- The favorite button sets a flag on a city with the following purposes:
+  * Move the city towards the top of the list
+  * Exclude the city from the *"Delete unfavorites"* action that you can trigger while in Edit mode
+  * Get filtered by the scoped search that you can activate when clicking in the UISearchBar and then select "Favorites"
+- The **Import** button imports/adds the current list of freshly downloaded cities with their favorite state in the "pool" of the archived cities, potentially replacing already archived cities (i.e. no duplicates are allowed). In other words, whatever the user is looking at while in an import scene (either coming from *Around Me* or *Surprise Me*) will get added to the persisted archive of cities when pressing import, and if some cities were already in the archive, they'll be replaced with whatever the current state is. For example if you have London already in your archive from a previous import and it is not favorited, and now you somehow got London again on your import scene (it can happen if you are importing through *Around Me* while being in the same location), you favorite it and import again, the previous unfavorite entry for London in your archive will be replaced with the current favorite one.
+- The **Save** button is specific of a **browsing** (opposed to **importing**) scene. A browsing scene is a view on the current pool of archived cities, think like a "select all" on the underlying sql table, and the **Save** button becomes enabled as soon as you make some changes to such a view (i.e. you favorite/unfavorite some cities, and/or you delete some of them by swiping on cells or entering edit mode and deleting all unfavorites). **Save** causes whatever the current state of the scene is, to be saved to the persistent store bringing it in sync with the current view. For example: you start browsing your collection of 50 cities (40 normal + 10 favorites). In the browsing scene you unfavorite 3 of the 10 favorites and then delete 13 unfavorites and save. Your "pool" of archived cities is now 40 + 3 - 13 = *30 unfavorites* and 10 - 3 = *7 favorites*
+- The **Save** button is only enabled in the "browsing" scene after some changes have made the current "view" of the data inconsistent with the underlying persisted pool of cities, and its semantic is to save the changes made in the current "view" of the data to the persisted pool. When in an "importing" scene (either from *Around Me* or *Surprise Me*) the same button is named **Import**, it is always active and its semantic is to *add/replace* (as opposed to *update*) things to the persisted pool, as what you see in the scene is something *new* not coming from the pool itself.
+- Once the **Save** button has been enabled as a consequence of some change, it will never be disabled again, even if the change was reversed (e.g. favorite a city and then unfavorite it again)
+- TL;DR: 
+  * *Around Me* and *Surprise Me* involve invoking the geonames API, they get **new** cities and let the user play with them (removing, favoriting) before **importing** them (with replace semantics) to the pool.
+  * *Browse <N> archived cities* does not invoke the geonames API, doesn't get any new cities, just offers you a view on the pool of archived cities, and lets you make some changes that you can **Save** to the pool.
