@@ -150,17 +150,28 @@ class ShowCitiesViewController: UIViewController {
     }
     
     func updateWeather (sender: AnyObject) {
-        //Invalidate the cached images for weather icons, so that the openweather API will
-        //be used again to refresh weather conditions
-        for city in self.fetchedResultsController.fetchedObjects as! [City] {
-            city.weatherImage = nil
-        }
         
-        //Just reload what's visible, the rest will be handled as usual while scrolling
-        if let visibleIndexPaths = self.tableView.indexPathsForVisibleRows {
-            self.tableView.reloadRowsAtIndexPaths(visibleIndexPaths, withRowAnimation: .Fade)
-        }
+        //We can't easily alert the user directly upon failure to retrieve weather conditions
+        //because we might have many failures due to API requests being made while configuring cells,
+        //and so some complex stateful logic would be necessary.
+        //To keep things simple, just prevent the whole update to start if no connection is available
+        if isConnectedToNetwork() {
+            
+            //Invalidate the cached images for weather icons, so that the openweather API will
+            //be used again to refresh weather conditions
+            for city in self.fetchedResultsController.fetchedObjects as! [City] {
+                city.weatherImage = nil
+            }
+            
+            //Just reload what's visible, the rest will be handled as usual while scrolling
+            if let visibleIndexPaths = self.tableView.indexPathsForVisibleRows {
+                self.tableView.reloadRowsAtIndexPaths(visibleIndexPaths, withRowAnimation: .Fade)
+            }
         
+        }
+        else {
+            self.alertUserWithTitle("Error", message: "Weather Update requires internet connection", retryHandler: nil)
+        }
         (sender as? UIRefreshControl)?.endRefreshing()
     }
     

@@ -6,6 +6,7 @@
 //  Copyright © 2015 Andrea Bigagli. All rights reserved.
 //
 import UIKit
+import SystemConfiguration
 
 func delay(seconds seconds: Double, completion:()->()) {
     let popTime = dispatch_time(DISPATCH_TIME_NOW, Int64( Double(NSEC_PER_SEC) * seconds ))
@@ -14,6 +15,32 @@ func delay(seconds seconds: Double, completion:()->()) {
         completion()
     }
 }
+
+
+//As found on SO: http://stackoverflow.com/questions/25623272/how-to-use-scnetworkreachability-in-swift/25623647#25623647
+func isConnectedToNetwork() -> Bool {
+    
+    var zeroAddress = sockaddr_in()
+    zeroAddress.sin_len = UInt8(sizeofValue(zeroAddress))
+    zeroAddress.sin_family = sa_family_t(AF_INET)
+    
+    guard let defaultRouteReachability = withUnsafePointer(&zeroAddress, {
+        SCNetworkReachabilityCreateWithAddress(nil, UnsafePointer($0))
+    }) else {
+        return false
+    }
+    
+    var flags: SCNetworkReachabilityFlags = []
+    if !SCNetworkReachabilityGetFlags(defaultRouteReachability, &flags) {
+        return false
+    }
+    
+    let isReachable = flags.contains(.Reachable)
+    let needsConnection = flags.contains(.ConnectionRequired)
+    
+    return isReachable && !needsConnection
+}
+
 class BusyStatusManager {
     
     private var interactionDisabled = false

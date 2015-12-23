@@ -12,6 +12,7 @@ class WikiViewController: UIViewController {
     @IBOutlet var webView: UIWebView!
     @IBOutlet weak var goBackwardButton: UIBarButtonItem!
     @IBOutlet weak var goForwardButton: UIBarButtonItem!
+    @IBOutlet weak var refreshButton: UIBarButtonItem!
     
     //MARK:- Actions
     @IBAction func goForward(sender: UIBarButtonItem) {
@@ -21,9 +22,14 @@ class WikiViewController: UIViewController {
         self.webView.goBack()
     }
     
+    @IBAction func refresh(sender: UIBarButtonItem) {
+        self.reloadCurrentOrInitialRequest()
+    }
     
     //MARK:- State
     var city: City!
+    
+    private var initialRequest: NSURLRequest!
     
     //MARK:- Lifetime
     override func viewDidLoad() {
@@ -42,23 +48,38 @@ class WikiViewController: UIViewController {
             url = NSURL(string:"http://en.wikipedia.org/w/index.php?search=\(noSpaceName)")!
         }
         
-        let request = NSURLRequest(URL: url)
-        self.webView.loadRequest(request)
+        self.initialRequest = NSURLRequest(URL: url)
+        self.webView.loadRequest(self.initialRequest)
     }
     
     override func viewWillDisappear(animated: Bool) {
         super.viewWillDisappear(animated)
         UIApplication.sharedApplication().networkActivityIndicatorVisible = false
     }
+    
+    //MARK:- Business Logic
+    func reloadCurrentOrInitialRequest() {
+        if let currentURLString = self.webView.request?.URL?.absoluteString where currentURLString != "" {
+            self.webView.reload()
+        }
+        else {
+            self.webView.loadRequest(self.initialRequest)
+        }
+        
+    }
 }
 
 
 extension WikiViewController: UIWebViewDelegate {
     
-    func webView(webView: UIWebView, shouldStartLoadWithRequest request: NSURLRequest, navigationType: UIWebViewNavigationType) -> Bool {
-        
-        
-        return true
+    func webView(webView: UIWebView, didFailLoadWithError error: NSError?) {
+        self.alertUserWithTitle("Error loading webpage"
+            , message: error?.localizedDescription ?? "unspecified error"
+            , retryHandler: {_ in
+                self.reloadCurrentOrInitialRequest()})
+
+        UIApplication.sharedApplication().networkActivityIndicatorVisible = false
+        self.refreshButton.enabled = true
     }
     
     func webViewDidFinishLoad(webView: UIWebView) {
@@ -76,8 +97,11 @@ extension WikiViewController: UIWebViewDelegate {
             self.goForwardButton.enabled = false
         }
         UIApplication.sharedApplication().networkActivityIndicatorVisible = false
+        self.refreshButton.enabled = true
     }
+    
     func webViewDidStartLoad(webView: UIWebView) {
+        self.refreshButton.enabled = false
         UIApplication.sharedApplication().networkActivityIndicatorVisible = true
     }
 }

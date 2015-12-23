@@ -270,11 +270,17 @@
                                     <action selector="goBackward:" destination="MPO-H7-Q0N" id="Hgk-Dg-Rn6"/>
                                 </connections>
                             </barButtonItem>
+                            <barButtonItem enabled="NO" systemItem="refresh" id="9dX-jz-YS2">
+                                <connections>
+                                    <action selector="refresh:" destination="MPO-H7-Q0N" id="7KY-zd-Vx3"/>
+                                </connections>
+                            </barButtonItem>
                         </rightBarButtonItems>
                     </navigationItem>
                     <connections>
                         <outlet property="goBackwardButton" destination="fd1-Cb-gaE" id="EYe-aI-2S0"/>
                         <outlet property="goForwardButton" destination="nhL-17-Bd6" id="BsO-S7-ohz"/>
+                        <outlet property="refreshButton" destination="9dX-jz-YS2" id="n8f-Mk-LUr"/>
                         <outlet property="webView" destination="iOv-Eu-KJA" id="vbw-vs-sFn"/>
                     </connections>
                 </viewController>
