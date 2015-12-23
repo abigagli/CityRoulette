@@ -205,7 +205,7 @@
                         <leftBarButtonItems>
                             <barButtonItem systemItem="cancel" id="46k-kA-73b">
                                 <connections>
-                                    <segue destination="qif-zh-x0q" kind="unwind" identifier="exitToInitialVC" unwindAction="unwindFromCancel:" id="PB9-pw-GI9"/>
+                                    <action selector="cancelTapped:" destination="1PL-0Z-j2S" id="jq2-Ta-R0T"/>
                                 </connections>
                             </barButtonItem>
                             <barButtonItem title="Save/Import" id="bUC-9x-Gb2">
@@ -224,6 +224,7 @@
                         <outlet property="toolbar" destination="3gi-dJ-sI0" id="KgZ-7F-Ii2"/>
                         <outlet property="toolbarBottomConstraint" destination="DJx-Fi-hS4" id="k2X-DJ-WPq"/>
                         <segue destination="MPO-H7-Q0N" kind="show" identifier="showWiki" id="JWR-Gb-IeS"/>
+                        <segue destination="qif-zh-x0q" kind="unwind" identifier="exitToInitialVC" unwindAction="unwindFromCancel:" id="L9l-bk-U2v"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="E2c-v0-ZcJ" userLabel="First Responder" sceneMemberID="firstResponder"/>

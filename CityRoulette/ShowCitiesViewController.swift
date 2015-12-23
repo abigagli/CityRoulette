@@ -37,6 +37,39 @@ class ShowCitiesViewController: UIViewController {
         }
     }
     
+    @IBAction func cancelTapped(sender: AnyObject) {
+        //If Cancel-ing out might cause some loss of data, then
+        //give the user one opportunity to think again
+        
+        let recordsToSave = (self.fetchedResultsController.fetchedObjects?.count ?? 0) > 0
+        let userCanLoseData = self.isBrowsing && self.currentCoreDataContext.hasChanges ||
+                              self.isImporting && recordsToSave
+        
+        if userCanLoseData {
+            let alert = UIAlertController(title: "Warning",
+                message: "You have new data or unsaved modifications, are you sure?",
+                preferredStyle: .Alert)
+            
+            let alertOkAction = UIAlertAction(title: "OK",
+                style: .Destructive,
+                handler: {_ in
+                    self.performSegueWithIdentifier("exitToInitialVC", sender: self)
+            })
+            
+            let alertCancelAction = UIAlertAction(title: "Cancel",
+                style: .Cancel,
+                handler: {_ in return false})
+            
+            alert.addAction(alertOkAction)
+            alert.addAction(alertCancelAction)
+            
+            self.presentViewController(alert, animated: true, completion: nil)
+        }
+        else {
+            self.performSegueWithIdentifier("exitToInitialVC", sender: self)
+        }
+    }
+    
     //MARK:- State
     
     
@@ -130,6 +163,7 @@ class ShowCitiesViewController: UIViewController {
         
         (sender as? UIRefreshControl)?.endRefreshing()
     }
+    
     
     private func updateUI() {
         var recordsToSave = false
@@ -261,6 +295,8 @@ class ShowCitiesViewController: UIViewController {
             fatalError ("Unexpected segue identifier: \(segue.identifier)")
         }
     }
+    
+    
     
     override func viewDidLoad() {
         super.viewDidLoad()
