@@ -523,6 +523,8 @@ extension ShowCitiesViewController: UITableViewDataSource, UITableViewDelegate {
         if self.fetchedResultsController.sections![section].numberOfObjects > 0 {
             self.tableView.backgroundView = nil
             self.tableView.separatorStyle = .SingleLine
+            self.tableView.scrollEnabled = true
+            
             return self.fetchedResultsController.sections![section].numberOfObjects
         }
         else {
@@ -533,11 +535,11 @@ extension ShowCitiesViewController: UITableViewDataSource, UITableViewDelegate {
             messageLabel.textColor = UIColor.blackColor()
             messageLabel.numberOfLines = 0;
             messageLabel.textAlignment = .Center
-            //messageLabel.font = UIFont(name: "Palatino-Italic", size:20)
             messageLabel.sizeToFit()
             
             self.tableView.backgroundView = messageLabel;
             self.tableView.separatorStyle = .None
+            self.tableView.scrollEnabled = false
         }
         return 0
     }
@@ -619,6 +621,13 @@ extension ShowCitiesViewController: NSFetchedResultsControllerDelegate {
     func controllerDidChangeContent(controller: NSFetchedResultsController) {
         self.tableView.endUpdates()
         self.updateUI()
+        
+        //If the tableview is empty we cannot scroll anymore, so ensure
+        //the tableView's header (i.e. the UISearchBar in this case) is visible
+        if !self.tableView.scrollEnabled {
+            let headerFrame = self.tableView.tableHeaderView!.frame
+            self.tableView.scrollRectToVisible(headerFrame, animated: true)
+        }
     }
     
     
