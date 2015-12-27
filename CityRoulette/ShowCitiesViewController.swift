@@ -367,7 +367,7 @@ class ShowCitiesViewController: UIViewController {
         self.searchController.hidesNavigationBarDuringPresentation = true
         self.definesPresentationContext = true
         self.tableView.tableHeaderView = self.searchController.searchBar
-        self.searchController.searchBar.scopeButtonTitles = ["All", "Favorites", "Unfavorites"]
+        self.searchController.searchBar.scopeButtonTitles = ["All", "Favorites", "Unfavorites", "WithWiki"]
         self.searchController.searchBar.delegate = self
     }
     
@@ -435,6 +435,9 @@ class ShowCitiesViewController: UIViewController {
         }
         else if scope == "Unfavorites" {
             predicateFormatString += (predicateFormatString != "" ? " AND " : "") + "favorite==false"
+        }
+        else if scope == "WithWiki" {
+            predicateFormatString += (predicateFormatString != "" ? " AND " : "") + "wikipedia!=\"\""
         }
 
         var predicateToUse: NSPredicate?
