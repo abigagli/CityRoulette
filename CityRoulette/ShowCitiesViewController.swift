@@ -17,11 +17,11 @@ class ShowCitiesViewController: UIViewController {
         case showWiki = "showWiki"
         case saveAndReturnToInitialVC = "saveAndReturnToInitialVC"
         case exitToInitialVC = "exitToInitialVC"
+        case embedTVC = "embedTVC"
     }
 
     //MARK:- Outlets
     @IBOutlet weak var mapView: MKMapView!
-    @IBOutlet weak var tableView: UITableView!
     @IBOutlet weak var deleteUnfavoritesButton: UIBarButtonItem!
     @IBOutlet weak var toolbarBottomConstraint: NSLayoutConstraint!
     @IBOutlet weak var toolbar: UIToolbar!
@@ -117,13 +117,14 @@ class ShowCitiesViewController: UIViewController {
         return self.operatingMode == .browseArchivedCities
     }
     
-    private lazy var updateWeatherRefreshControl: UIRefreshControl = {
-        let refreshControl = UIRefreshControl()
-        refreshControl.attributedTitle = NSAttributedString(string:"Update Weather")
-        refreshControl.addTarget(self, action: "updateWeather:", forControlEvents: .ValueChanged)
-        
-        return refreshControl
-    }()
+    private var embeddedTVC: UITableViewController!
+    
+    //embeddedTVC is set while preparing for the embed segue, which is guaranteed to
+    //be called before viewDidLoad, so accessing it here to "proxy" its tableView
+    //is safe as any access to self.tableView won't be done until viewDidLoad
+    private var tableView: UITableView {
+        return embeddedTVC.tableView
+    }
 
     //MARK:- UI
     private func showBottomToolbar(show: Bool) {
@@ -149,7 +150,7 @@ class ShowCitiesViewController: UIViewController {
         self.showBottomToolbar(self.editing)
     }
     
-    func updateWeather (sender: AnyObject) {
+    func updateWeather (sender: UIRefreshControl) {
         
         //We can't easily alert the user directly upon failure to retrieve weather conditions
         //because we might have many failures due to API requests being made while configuring cells,
@@ -172,7 +173,8 @@ class ShowCitiesViewController: UIViewController {
         else {
             self.alertUserWithTitle("Error", message: "Weather Update requires internet connection", retryHandler: nil)
         }
-        (sender as? UIRefreshControl)?.endRefreshing()
+        
+        sender.endRefreshing()
     }
     
     
@@ -302,6 +304,9 @@ class ShowCitiesViewController: UIViewController {
         case .exitToInitialVC?:
            self.currentCoreDataContext.reset()
             
+        case .embedTVC?:
+            self.embeddedTVC = destination as! UITableViewController
+            
         case nil:
             fatalError ("Unexpected segue identifier: \(segue.identifier)")
         }
@@ -361,12 +366,9 @@ class ShowCitiesViewController: UIViewController {
         self.searchController.dimsBackgroundDuringPresentation = false
         self.searchController.hidesNavigationBarDuringPresentation = true
         self.definesPresentationContext = true
-        //self.searchController.searchBar.barStyle = .Black
         self.tableView.tableHeaderView = self.searchController.searchBar
         self.searchController.searchBar.scopeButtonTitles = ["All", "Favorites", "Unfavorites"]
         self.searchController.searchBar.delegate = self
-        
-        self.refreshControl = self.updateWeatherRefreshControl
     }
     
     override func viewWillAppear(animated: Bool) {
@@ -566,13 +568,6 @@ extension ShowCitiesViewController: UITableViewDataSource, UITableViewDelegate {
         }
     }
     
-    /*
-    func tableView(tableView: UITableView, didDeselectRowAtIndexPath indexPath: NSIndexPath) {
-        let city = fetchedResultsController.objectAtIndexPath(indexPath) as! City
-        self.mapView.deselectAnnotation(city, animated: false)
-    }
-    */
-    
     func tableView(tableView: UITableView, commitEditingStyle editingStyle: UITableViewCellEditingStyle, forRowAtIndexPath indexPath: NSIndexPath) {
         if editingStyle == .Delete {
             self.currentCoreDataContext.deleteObject(self.fetchedResultsController.objectAtIndexPath(indexPath) as! NSManagedObject)
@@ -662,12 +657,12 @@ extension ShowCitiesViewController: UISearchBarDelegate {
     }
     
     func searchBarShouldBeginEditing(searchBar: UISearchBar) -> Bool {
-        self.refreshControl = nil
+        self.embeddedTVC.refreshControl = nil
         return true
     }
     
-    func searchBarTextDidEndEditing(searchBar: UISearchBar) {
-        self.refreshControl = self.updateWeatherRefreshControl
+    func searchBarCancelButtonClicked(searchBar: UISearchBar) {
+        self.embeddedTVC.refreshControl = (self.embeddedTVC as! CitiesTableViewController).updateWeatherRefreshControl
     }
 }
 
@@ -686,6 +681,7 @@ self.tableView.addSubview(self.refreshControl)
 //So I looked around and found inspiration on 
 //http://stackoverflow.com/questions/12497940/uirefreshcontrol-without-uitableviewcontroller/12502450#12502450
 
+/*
 extension ShowCitiesViewController /* Hacking a bit for UIRefreshControl to work */{ 
     private var refreshControl: UIRefreshControl? {
         get {
@@ -701,3 +697,4 @@ extension ShowCitiesViewController /* Hacking a bit for UIRefreshControl to work
         }
     }
 }
+*/

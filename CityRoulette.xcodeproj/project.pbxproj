@@ -18,6 +18,7 @@
 		8D64D3191C07C25B00FBC661 /* CityRoulette.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 8D64D3171C07C25B00FBC661 /* CityRoulette.xcdatamodeld */; };
 		8D64D31B1C07C25B00FBC661 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 8D64D31A1C07C25B00FBC661 /* Assets.xcassets */; };
 		8D64D31E1C07C25B00FBC661 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 8D64D31C1C07C25B00FBC661 /* LaunchScreen.storyboard */; };
+		8DB038D21C2FFEA5001E6E66 /* CitiesTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8DB038D11C2FFEA5001E6E66 /* CitiesTableViewController.swift */; };
 		8DB49FBE1C17654600BB7EF6 /* WikiViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8DB49FBD1C17654600BB7EF6 /* WikiViewController.swift */; };
 		8DCDEDFD1C2555D0003CF799 /* APIConsumer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8DCDEDFC1C2555D0003CF799 /* APIConsumer.swift */; };
 		8DE3B7201C0B5A9900CE642A /* MapKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8DE3B71F1C0B5A9900CE642A /* MapKit.framework */; };
@@ -44,6 +45,7 @@
 		8D64D31A1C07C25B00FBC661 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		8D64D31D1C07C25B00FBC661 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		8D64D31F1C07C25B00FBC661 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		8DB038D11C2FFEA5001E6E66 /* CitiesTableViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CitiesTableViewController.swift; sourceTree = "<group>"; };
 		8DB49FBD1C17654600BB7EF6 /* WikiViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = WikiViewController.swift; sourceTree = "<group>"; };
 		8DCDEDFC1C2555D0003CF799 /* APIConsumer.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = APIConsumer.swift; sourceTree = "<group>"; };
 		8DE3B71F1C0B5A9900CE642A /* MapKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MapKit.framework; path = System/Library/Frameworks/MapKit.framework; sourceTree = SDKROOT; };
@@ -103,6 +105,7 @@
 		8DE3B7231C0B65AE00CE642A /* Controller */ = {
 			isa = PBXGroup;
 			children = (
+				8DB038D11C2FFEA5001E6E66 /* CitiesTableViewController.swift */,
 				8D64D3121C07C25B00FBC661 /* InitialViewController.swift */,
 				8DE3B7211C0B5BD800CE642A /* ShowCitiesViewController.swift */,
 				8DB49FBD1C17654600BB7EF6 /* WikiViewController.swift */,
@@ -231,6 +234,7 @@
 			files = (
 				8D64D3191C07C25B00FBC661 /* CityRoulette.xcdatamodeld in Sources */,
 				8D64D3131C07C25B00FBC661 /* InitialViewController.swift in Sources */,
+				8DB038D21C2FFEA5001E6E66 /* CitiesTableViewController.swift in Sources */,
 				8DCDEDFD1C2555D0003CF799 /* APIConsumer.swift in Sources */,
 				8D0796251C1F6E6600E9AF32 /* Country+CoreDataProperties.swift in Sources */,
 				8DF13DB51C19A5F200527F24 /* CoreDataStackManager.swift in Sources */,
