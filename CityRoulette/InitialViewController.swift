@@ -38,6 +38,7 @@ class InitialViewController: UIViewController {
     
     //MARK:- Outlets
     
+    @IBOutlet weak var authorView: UIView!
     @IBOutlet weak var backgroundImage: UIImageView!
     
     @IBOutlet weak var surpriseMeButton: UIButton!
@@ -314,6 +315,7 @@ class InitialViewController: UIViewController {
             self.fadeColorImage(andThen: {_ in
                 self.colorImage!.removeFromSuperview()
                 self.colorImage = nil
+                self.authorView.hidden = true
                 self.showButtons()
             })
         }

@@ -24,6 +24,23 @@
                                 <rect key="frame" x="0.0" y="0.0" width="600" height="630"/>
                                 <edgeInsets key="layoutMargins" top="0.0" left="0.0" bottom="0.0" right="0.0"/>
                             </imageView>
+                            <view opaque="NO" alpha="0.69999998807907104" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="z65-9i-79z">
+                                <rect key="frame" x="0.0" y="556" width="600" height="44"/>
+                                <subviews>
+                                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Andrea Bigagli 2015" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="LDm-tM-FQ6">
+                                        <rect key="frame" x="210" y="10" width="180" height="24"/>
+                                        <fontDescription key="fontDescription" type="system" pointSize="20"/>
+                                        <color key="textColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
+                                        <nil key="highlightedColor"/>
+                                    </label>
+                                </subviews>
+                                <color key="backgroundColor" white="0.66666666666666663" alpha="1" colorSpace="calibratedWhite"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="44" id="AxG-yv-cw7"/>
+                                    <constraint firstItem="LDm-tM-FQ6" firstAttribute="centerY" secondItem="z65-9i-79z" secondAttribute="centerY" id="EL7-yf-Uii"/>
+                                    <constraint firstItem="LDm-tM-FQ6" firstAttribute="centerX" secondItem="z65-9i-79z" secondAttribute="centerX" id="olV-v4-DLp"/>
+                                </constraints>
+                            </view>
                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="0St-Y8-OTj">
                                 <rect key="frame" x="190" y="78" width="220" height="22"/>
                                 <constraints>
@@ -69,7 +86,9 @@
                         <constraints>
                             <constraint firstItem="0St-Y8-OTj" firstAttribute="width" secondItem="ZH7-6j-8Cc" secondAttribute="width" id="3eY-KV-n6H"/>
                             <constraint firstItem="0St-Y8-OTj" firstAttribute="centerX" secondItem="8bC-Xf-vdC" secondAttribute="centerX" id="91M-oe-SM6"/>
+                            <constraint firstItem="z65-9i-79z" firstAttribute="leading" secondItem="8bC-Xf-vdC" secondAttribute="leading" id="GfT-ar-QvJ"/>
                             <constraint firstItem="ZH7-6j-8Cc" firstAttribute="centerY" secondItem="8bC-Xf-vdC" secondAttribute="centerY" id="Kbe-FD-ddH"/>
+                            <constraint firstItem="wfy-db-euE" firstAttribute="top" secondItem="z65-9i-79z" secondAttribute="bottom" id="LFq-VA-1cd"/>
                             <constraint firstItem="Paf-vl-EmA" firstAttribute="centerX" secondItem="8bC-Xf-vdC" secondAttribute="centerX" id="NcV-Lm-8FX"/>
                             <constraint firstAttribute="bottom" secondItem="47P-lf-6FF" secondAttribute="bottom" constant="-30" id="ZEl-hE-via"/>
                             <constraint firstItem="Paf-vl-EmA" firstAttribute="width" secondItem="0St-Y8-OTj" secondAttribute="width" id="ape-bj-Ahw"/>
@@ -77,6 +96,7 @@
                             <constraint firstItem="47P-lf-6FF" firstAttribute="leading" secondItem="8bC-Xf-vdC" secondAttribute="leading" id="hgL-Bs-xxY"/>
                             <constraint firstItem="ZH7-6j-8Cc" firstAttribute="leading" secondItem="0St-Y8-OTj" secondAttribute="leading" id="kcU-3B-99Z"/>
                             <constraint firstAttribute="bottom" secondItem="Paf-vl-EmA" secondAttribute="top" constant="100" id="pDf-J3-OWO"/>
+                            <constraint firstAttribute="trailing" secondItem="z65-9i-79z" secondAttribute="trailing" id="v8P-1M-T1Z"/>
                             <constraint firstItem="47P-lf-6FF" firstAttribute="top" secondItem="8bC-Xf-vdC" secondAttribute="top" id="yiu-WD-mNT"/>
                             <constraint firstAttribute="trailing" secondItem="47P-lf-6FF" secondAttribute="trailing" id="zcR-nF-62u"/>
                         </constraints>
@@ -84,6 +104,7 @@
                     <connections>
                         <outlet property="aroundMeButton" destination="0St-Y8-OTj" id="5LU-rB-Kb2"/>
                         <outlet property="aroundMeTopSpace" destination="c32-P4-Rhc" id="Kbk-gN-zvd"/>
+                        <outlet property="authorView" destination="z65-9i-79z" id="hw8-wg-Smw"/>
                         <outlet property="backgroundImage" destination="47P-lf-6FF" id="c8J-ya-HT4"/>
                         <outlet property="browseBottomSpace" destination="pDf-J3-OWO" id="NkU-xk-nPy"/>
                         <outlet property="browseButton" destination="Paf-vl-EmA" id="tRx-a6-3fj"/>
@@ -343,6 +364,6 @@
         <image name="Florence-desat" width="375" height="667"/>
     </resources>
     <inferredMetricsTieBreakers>
-        <segue reference="Jzj-8e-8Eo"/>
+        <segue reference="Hxp-kn-oSc"/>
     </inferredMetricsTieBreakers>
 </document>
