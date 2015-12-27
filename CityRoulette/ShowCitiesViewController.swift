@@ -286,6 +286,19 @@ class ShowCitiesViewController: UIViewController {
                     //as we are segue-ing away
                     self.fetchedResultsController.delegate = nil
                     
+                    //When importing, we want "Import" to apply to the currently visualized search result
+                    //if any, so we perform a sort of manual removal of the complement of the current
+                    //fetchedResultsController objects set from the working managedObjectContext
+                    //NOTE: Would probably be better to build a complement predicate and then perform a NSBatchDeleteRequest
+                    //on the persistentStoreCoordinator...
+                    if self.isImporting, let currentPredicate = self.fetchedResultsController.fetchRequest.predicate {
+                        
+                        for obj in self.currentCoreDataContext.registeredObjects {
+                            if !currentPredicate.evaluateWithObject(obj) {
+                                self.currentCoreDataContext.deleteObject(obj)
+                            }
+                        }
+                    }
                     try self.currentCoreDataContext.save()
                     
                 } catch {
