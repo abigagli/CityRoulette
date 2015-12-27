@@ -41,7 +41,7 @@ class ShowCitiesViewController: UIViewController {
         //If Cancel-ing out might cause some loss of data, then
         //give the user one opportunity to think again
         
-        let recordsToSave = (self.fetchedResultsController.fetchedObjects?.count ?? 0) > 0
+        let recordsToSave = self.currentCoreDataContext.registeredObjects.count > 0
         let userCanLoseData = self.isBrowsing && self.currentCoreDataContext.hasChanges ||
                               self.isImporting && recordsToSave
         
