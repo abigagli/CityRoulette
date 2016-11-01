@@ -18,14 +18,16 @@ func delay(seconds: Double, completion:@escaping ()->()) {
 
 
 //As found on SO: http://stackoverflow.com/questions/25623272/how-to-use-scnetworkreachability-in-swift/25623647#25623647
-func isConnectedToNetwork() -> Bool {
+func connectedToNetwork() -> Bool {
     
     var zeroAddress = sockaddr_in()
-    zeroAddress.sin_len = UInt8(MemoryLayout.size(ofValue: zeroAddress))
+    zeroAddress.sin_len = UInt8(MemoryLayout<sockaddr_in>.size)
     zeroAddress.sin_family = sa_family_t(AF_INET)
     
     guard let defaultRouteReachability = withUnsafePointer(to: &zeroAddress, {
-        SCNetworkReachabilityCreateWithAddress(nil, UnsafePointer($0))
+        $0.withMemoryRebound(to: sockaddr.self, capacity: 1) {
+            SCNetworkReachabilityCreateWithAddress(nil, $0)
+        }
     }) else {
         return false
     }
@@ -38,9 +40,8 @@ func isConnectedToNetwork() -> Bool {
     let isReachable = flags.contains(.reachable)
     let needsConnection = flags.contains(.connectionRequired)
     
-    return isReachable && !needsConnection
+    return (isReachable && !needsConnection)
 }
-
 class BusyStatusManager {
     
     fileprivate var interactionDisabled = false

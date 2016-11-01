@@ -141,7 +141,7 @@ class InitialViewController: UIViewController {
     
     fileprivate lazy var countryHistoryFilePath: String = {
         let url = CoreDataStackManager.sharedInstance.applicationDocumentsDirectory
-        return url.appendingPathComponent("countryHistory")!.path
+        return url.appendingPathComponent("countryHistory").path
     }()
 
     fileprivate var randomCountriesHistory = [String]()
@@ -298,11 +298,10 @@ class InitialViewController: UIViewController {
         
         let fetchRequest = NSFetchRequest<NSFetchRequestResult> (entityName: "City")
         
-        var error: NSError?
-        let n = CoreDataStackManager.sharedInstance.managedObjectContext.count(for: fetchRequest, error: &error)
+        let n = try? CoreDataStackManager.sharedInstance.managedObjectContext.count(for: fetchRequest)
         
         self.browseButton.setTitle("Browse \(n) archived cities", for: UIControlState())
-        self.browseButton.isHidden = (error != nil) || (n == 0)
+        self.browseButton.isHidden = n == nil
         
         self.hideButtons()
         self.busyStatusManager.setBusyStatus(false)

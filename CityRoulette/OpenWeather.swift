@@ -28,14 +28,14 @@ class OpenWeatherClient {
             
             let URLString = Constants.IconImageBaseURL + "/" + fileName
             //Create request with urlString.
-            let request = NSMutableURLRequest(url: URL(string: URLString)!)
+            let request = URLRequest(url: URL(string: URLString)!)
             
             //Make the request.
             let task = consumer.session.dataTask(with: request, completionHandler: {
                 data, response, downloadError in
                 
                 if let imageData = data {
-                    let filePath = CoreDataStackManager.sharedInstance.applicationDocumentsDirectory.appendingPathComponent(fileName).path!
+                    let filePath = CoreDataStackManager.sharedInstance.applicationDocumentsDirectory.appendingPathComponent(fileName).path
                     
                     FileManager.default.createFile(atPath: filePath, contents: imageData, attributes: nil)
                     
@@ -43,7 +43,7 @@ class OpenWeatherClient {
                     
         
                     
-                    completionHandler(icon: image, error: nil)
+                    completionHandler(image, nil)
                     
                 }
             }) 
@@ -54,9 +54,9 @@ class OpenWeatherClient {
     
     fileprivate func storedImageForIconFile (_ fileName: String) -> UIImage? {
         
-        let filePath = CoreDataStackManager.sharedInstance.applicationDocumentsDirectory.appendingPathComponent(fileName)?.path
+        let filePath = CoreDataStackManager.sharedInstance.applicationDocumentsDirectory.appendingPathComponent(fileName).path
         
-        if let imageData = try? Data(contentsOf: URL(fileURLWithPath: filePath!)) {
+        if let imageData = try? Data(contentsOf: URL(fileURLWithPath: filePath)) {
             return UIImage (data: imageData)
         }
         else {
@@ -76,7 +76,7 @@ class OpenWeatherClient {
             result, error in
             
             if let error = error {
-                completionHandler (icon: nil, error: error)
+                completionHandler (nil, error)
             }
             else {
                 let resultDictionary = result as! [String: AnyObject]
@@ -89,7 +89,7 @@ class OpenWeatherClient {
                             let fileName = icon + ".png"
                             
                             if let image = self.storedImageForIconFile (fileName) {
-                                completionHandler(icon: image, error: nil)
+                                completionHandler(image, nil)
                             }
                             else {
                                 self.getIconNamed(fileName, completionHandler: completionHandler)

@@ -51,7 +51,7 @@ class GeoNamesClient {
             result, error in
             
             if let error = error {
-                completionHandler (acquireID: 0, error: error)
+                completionHandler (0, error)
             }
             else {
                 let resultDictionary = result as! [String: AnyObject]
@@ -60,11 +60,11 @@ class GeoNamesClient {
                     let message = status["message"] as! String
                     let value = status["value"] as? Int ?? 0
                     let userInfo = [NSLocalizedDescriptionKey: message]
-                    completionHandler(acquireID: 0, error: NSError (domain: "GeoNames \"cities\" endpoint", code: value, userInfo: userInfo))
+                    completionHandler(0, NSError (domain: "GeoNames \"cities\" endpoint", code: value, userInfo: userInfo))
                 }
                 else {
                     guard let cities = resultDictionary[JSONResponseKeys.Geonames] as? [[String: AnyObject]], cities.count >= 1 else {
-                        completionHandler (acquireID: 0, error: NSError(domain: "GeoNames \"cities\" endpoint", code: 1, userInfo: [NSLocalizedDescriptionKey: "City information not found"]))
+                        completionHandler (0, NSError(domain: "GeoNames \"cities\" endpoint", code: 1, userInfo: [NSLocalizedDescriptionKey: "City information not found"]))
                         
                         return
                     }
@@ -75,11 +75,11 @@ class GeoNamesClient {
                     context.perform() {
 
                         for cityJSON in cities {
-                            let _ = City(json: cityJSON, acquireID: id, context: context)
+                            let _ = City(json: cityJSON as NSDictionary, acquireID: id, context: context)
                         }
                     }
                     
-                    completionHandler(acquireID: id, error: nil)
+                    completionHandler(id, nil)
                 }
             }
         }
@@ -98,7 +98,7 @@ class GeoNamesClient {
             result, error in
             
             if let error = error {
-                completionHandler (success: false, error: error)
+                completionHandler (false, error)
             }
             else {
                 let resultDictionary = result as! [String: AnyObject]
@@ -107,11 +107,11 @@ class GeoNamesClient {
                     let message = status["message"] as! String
                     let value = status["value"] as? Int ?? 0
                     let userInfo = [NSLocalizedDescriptionKey: message]
-                    completionHandler(success: false, error: NSError (domain: "GeoNames \"countryInfo\" endpoint", code: value, userInfo: userInfo))
+                    completionHandler(false, NSError (domain: "GeoNames \"countryInfo\" endpoint", code: value, userInfo: userInfo))
                 }
                 else {
                     guard let countries = resultDictionary[JSONResponseKeys.Geonames] as? [[String: AnyObject]], countries.count >= 1 else {
-                        completionHandler (success: false, error: NSError(domain: "GeoNames \"countryInfo\" endpoint", code: 2, userInfo: [NSLocalizedDescriptionKey: "Country information not found"]))
+                        completionHandler (false, NSError(domain: "GeoNames \"countryInfo\" endpoint", code: 2, userInfo: [NSLocalizedDescriptionKey: "Country information not found"]))
                         
                         return
                     }
@@ -120,11 +120,11 @@ class GeoNamesClient {
                     context.perform() {
                         
                         for countryJSON in countries {
-                            let _ = Country(json: countryJSON, context: context)
+                            let _ = Country(json: countryJSON as NSDictionary, context: context)
                         }
                     }
                     
-                    completionHandler(success: true, error: nil)
+                    completionHandler(true, nil)
                 }
             }
         }

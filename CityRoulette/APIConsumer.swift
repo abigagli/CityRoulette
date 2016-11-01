@@ -20,14 +20,14 @@ class APIConsumer {
         completionHandler: @escaping (_ result: AnyObject?, _ error: NSError?) -> Void) {
             //Build the URL and URL request specific to the website required.
             let urlString = apiEndpoint + APIConsumer.escapedParameters(parameters)
-            let request = NSMutableURLRequest(url: URL(string: urlString)!)
+            let request = URLRequest(url: URL(string: urlString)!)
             
             //Make the request.
             let task = session.dataTask(with: request, completionHandler: {
                 data, _, downloadError in
                 
                 if let _ = downloadError {
-                    completionHandler(result: nil, error: downloadError)
+                    completionHandler(nil, downloadError as NSError?)
                 }
                 else { //Parse the received data.
                     APIConsumer.parseJSONWithCompletionHandler(data!, completionHandler: completionHandler)
@@ -61,7 +61,7 @@ class APIConsumer {
     fileprivate class func parseJSONWithCompletionHandler(_ data: Data, completionHandler: (_ result: AnyObject?, _ error: NSError?) -> Void) {
         
         var parsingError: NSError?
-        let parsedResult: AnyObject?
+        let parsedResult: Any?
         do {
             parsedResult = try JSONSerialization.jsonObject(with: data, options: .allowFragments)
         } catch let error as NSError {
@@ -74,7 +74,7 @@ class APIConsumer {
             completionHandler(nil, error)
         } else {
             
-            completionHandler(parsedResult, nil)
+            completionHandler(parsedResult as AnyObject?, nil)
         }
     }
     

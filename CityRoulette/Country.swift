@@ -26,7 +26,7 @@ class Country: NSManagedObject {
         self.continent = json["continent"] as! String
         self.continentName = json["continentName"] as! String
         self.population = Int32(((json["population"] as AnyObject).intValue) ?? 0)
-        self.geonameID = Int64((json["geonameId"]! as AnyObject).intValue)
+        self.geonameID = Int64((json["geonameId"]! as! NSNumber).intValue)
         self.north = json["north"] as! Double
         self.east = json["east"] as! Double
         self.south = json["south"] as! Double

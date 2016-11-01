@@ -188,6 +188,7 @@
 				TargetAttributes = {
 					8D64D30C1C07C25B00FBC661 = {
 						CreatedOnToolsVersion = 7.1.1;
+						DevelopmentTeam = 8TJ26QYJ4X;
 						LastSwiftMigration = 0810;
 						SystemCapabilities = {
 							com.apple.Maps.iOS = {
@@ -366,6 +367,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				DEVELOPMENT_TEAM = 8TJ26QYJ4X;
 				INFOPLIST_FILE = CityRoulette/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = com.abigagli.CityRoulette;
@@ -378,6 +380,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				DEVELOPMENT_TEAM = 8TJ26QYJ4X;
 				INFOPLIST_FILE = CityRoulette/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = com.abigagli.CityRoulette;

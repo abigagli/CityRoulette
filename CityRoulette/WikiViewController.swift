@@ -74,7 +74,7 @@ extension WikiViewController: UIWebViewDelegate {
     
     func webView(_ webView: UIWebView, didFailLoadWithError error: Error) {
         self.alertUserWithTitle("Error loading webpage"
-            , message: error?.localizedDescription ?? "unspecified error"
+            , message: error.localizedDescription
             , retryHandler: {_ in
                 self.reloadCurrentOrInitialRequest()})
 

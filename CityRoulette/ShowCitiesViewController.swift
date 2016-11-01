@@ -57,8 +57,7 @@ class ShowCitiesViewController: UIViewController {
             })
             
             let alertCancelAction = UIAlertAction(title: "Cancel",
-                style: .cancel,
-                handler: {_ in return false})
+                style: .cancel)
             
             alert.addAction(alertOkAction)
             alert.addAction(alertCancelAction)
@@ -156,7 +155,7 @@ class ShowCitiesViewController: UIViewController {
         //because we might have many failures due to API requests being made while configuring cells,
         //and so some complex stateful logic would be necessary.
         //To keep things simple, just prevent the whole update to start if no connection is available
-        if isConnectedToNetwork() {
+        if connectedToNetwork() {
             
             //Invalidate the cached images for weather icons, so that the openweather API will
             //be used again to refresh weather conditions
@@ -357,7 +356,7 @@ class ShowCitiesViewController: UIViewController {
                 self.mapView.addAnnotation(city)
                 
                 if !city.favorite {
-                    self.numUnfavorites++
+                    self.numUnfavorites += 1
                 }
                 
                 //Just set the map to show the first city in the center
@@ -407,7 +406,7 @@ class ShowCitiesViewController: UIViewController {
     }
     
     //MARK:- Core Data
-    fileprivate lazy var fetchedResultsController: NSFetchedResultsController = { () -> <<error type>> in 
+     fileprivate lazy var fetchedResultsController: NSFetchedResultsController<NSFetchRequestResult> = {() -> NSFetchedResultsController<NSFetchRequestResult> in
         
         //create fetch request with sort descriptor
         let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "City")

@@ -35,7 +35,7 @@ class City: NSManagedObject {
         self.wikipedia = json["wikipedia"] as? String
         self.latitude = json["lat"] as! Double
         self.longitude = json["lng"] as! Double
-        self.geonameID = Int64((json["geonameId"]! as AnyObject).intValue)
+        self.geonameID = Int64((json["geonameId"]! as! NSNumber).intValue)
         self.acquireID = acquireID
         self.favorite = false
     }
