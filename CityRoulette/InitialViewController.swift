@@ -298,11 +298,14 @@ class InitialViewController: UIViewController {
         
         let fetchRequest = NSFetchRequest<NSFetchRequestResult> (entityName: "City")
         
-        let n = try? CoreDataStackManager.sharedInstance.managedObjectContext.count(for: fetchRequest)
+        if let n = try? CoreDataStackManager.sharedInstance.managedObjectContext.count(for: fetchRequest), n > 0 {
         
         self.browseButton.setTitle("Browse \(n) archived cities", for: UIControlState())
-        self.browseButton.isHidden = n == nil
-        
+        self.browseButton.isHidden = false
+        }
+        else {
+            self.browseButton.isHidden = true
+        }
         self.hideButtons()
         self.busyStatusManager.setBusyStatus(false)
     }
