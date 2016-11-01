@@ -8,10 +8,10 @@
 import UIKit
 import SystemConfiguration
 
-func delay(seconds seconds: Double, completion:()->()) {
-    let popTime = dispatch_time(DISPATCH_TIME_NOW, Int64( Double(NSEC_PER_SEC) * seconds ))
+func delay(seconds: Double, completion:@escaping ()->()) {
+    let popTime = DispatchTime.now() + Double(Int64( Double(NSEC_PER_SEC) * seconds )) / Double(NSEC_PER_SEC)
     
-    dispatch_after(popTime, dispatch_get_main_queue()) {
+    DispatchQueue.main.asyncAfter(deadline: popTime) {
         completion()
     }
 }
@@ -21,10 +21,10 @@ func delay(seconds seconds: Double, completion:()->()) {
 func isConnectedToNetwork() -> Bool {
     
     var zeroAddress = sockaddr_in()
-    zeroAddress.sin_len = UInt8(sizeofValue(zeroAddress))
+    zeroAddress.sin_len = UInt8(MemoryLayout.size(ofValue: zeroAddress))
     zeroAddress.sin_family = sa_family_t(AF_INET)
     
-    guard let defaultRouteReachability = withUnsafePointer(&zeroAddress, {
+    guard let defaultRouteReachability = withUnsafePointer(to: &zeroAddress, {
         SCNetworkReachabilityCreateWithAddress(nil, UnsafePointer($0))
     }) else {
         return false
@@ -35,18 +35,18 @@ func isConnectedToNetwork() -> Bool {
         return false
     }
     
-    let isReachable = flags.contains(.Reachable)
-    let needsConnection = flags.contains(.ConnectionRequired)
+    let isReachable = flags.contains(.reachable)
+    let needsConnection = flags.contains(.connectionRequired)
     
     return isReachable && !needsConnection
 }
 
 class BusyStatusManager {
     
-    private var interactionDisabled = false
-    private var activityIndicatorEnhancer: UIView!
-    private var activityIndicator: UIActivityIndicatorView!
-    private unowned var managedView: UIView
+    fileprivate var interactionDisabled = false
+    fileprivate var activityIndicatorEnhancer: UIView!
+    fileprivate var activityIndicator: UIActivityIndicatorView!
+    fileprivate unowned var managedView: UIView
     
     //Using lazy initialization here is a bit overkill, but conceptually I think this
     //is the correct thing to do given that in this application the geometry of views cannot change
@@ -57,39 +57,39 @@ class BusyStatusManager {
     //do since we're guaranteed this will be called only once
     //Of course it would be much easier if we could do these thing in viewDidLoad, but I'm quite sure
     //working with view geometry there is not the right thing to do...
-    private lazy var managedViewFrame: CGRect = {
+    fileprivate lazy var managedViewFrame: CGRect = {
         self.managedView.addSubview(self.activityIndicatorEnhancer)
-        return CGRectMake(0, 0, CGRectGetWidth(self.managedView.bounds), CGRectGetHeight(self.managedView.bounds))
+        return CGRect(x: 0, y: 0, width: self.managedView.bounds.width, height: self.managedView.bounds.height)
     }()
     
     
     init (forView view: UIView) {
         self.activityIndicatorEnhancer = UIView()
-        self.activityIndicator = UIActivityIndicatorView(activityIndicatorStyle: .WhiteLarge)
+        self.activityIndicator = UIActivityIndicatorView(activityIndicatorStyle: .whiteLarge)
         self.activityIndicatorEnhancer.addSubview(self.activityIndicator)
-        self.activityIndicatorEnhancer.backgroundColor = UIColor.clearColor().colorWithAlphaComponent(0.5)
-        self.activityIndicatorEnhancer.hidden = true
+        self.activityIndicatorEnhancer.backgroundColor = UIColor.clear.withAlphaComponent(0.5)
+        self.activityIndicatorEnhancer.isHidden = true
         managedView = view
     }
     
-    func setBusyStatus(busy: Bool, disableUserInteraction: Bool = false) {
+    func setBusyStatus(_ busy: Bool, disableUserInteraction: Bool = false) {
         
         if busy {
             self.activityIndicatorEnhancer.frame = self.managedViewFrame //Let lazy property do the magic...
             self.activityIndicator.center = self.activityIndicatorEnhancer.center
         
-            self.activityIndicatorEnhancer.hidden = false
+            self.activityIndicatorEnhancer.isHidden = false
             self.activityIndicator.startAnimating()
             if disableUserInteraction {
-                UIApplication.sharedApplication().beginIgnoringInteractionEvents()
+                UIApplication.shared.beginIgnoringInteractionEvents()
                 interactionDisabled = true
             }
         } else {
             self.activityIndicator.stopAnimating()
-            self.activityIndicatorEnhancer.hidden = true
+            self.activityIndicatorEnhancer.isHidden = true
             //Of course when disabling busy status, the passed in disableUseInterface argument is a don't care, and we just revert if/what we have done wrt user interactions when setting busy to true
             if interactionDisabled {
-                UIApplication.sharedApplication().endIgnoringInteractionEvents()
+                UIApplication.shared.endIgnoringInteractionEvents()
                 interactionDisabled = false
             }
         }
@@ -97,20 +97,20 @@ class BusyStatusManager {
 }
 
 extension UIViewController {
-    func alertUserWithTitle(title: String, message: String, retryHandler: (()->Void)?, okHandler: ((UIAlertAction) -> Void)? = nil) {
+    func alertUserWithTitle(_ title: String, message: String, retryHandler: (()->Void)?, okHandler: ((UIAlertAction) -> Void)? = nil) {
         
         let alert = UIAlertController(title: title,
             message: message,
-            preferredStyle: .Alert)
+            preferredStyle: .alert)
         
         let alertOkAction = UIAlertAction(title: "OK",
-            style: .Default,
+            style: .default,
             handler: okHandler)
         
         if let userRetry = retryHandler {
             
             let alertRetryAction = UIAlertAction(title: "Retry",
-                style: UIAlertActionStyle.Destructive,
+                style: UIAlertActionStyle.destructive,
                 handler: {
                     _ in
                     userRetry()
@@ -126,10 +126,10 @@ extension UIViewController {
         
         var presentingVC = self //The normal case
         
-        if let presentedVC = UIApplication.sharedApplication().keyWindow!.rootViewController!.presentedViewController {
+        if let presentedVC = UIApplication.shared.keyWindow!.rootViewController!.presentedViewController {
             presentingVC = presentedVC //If there is a presented VC, then have it presenting the alert
         }
-        presentingVC.presentViewController(alert, animated: true, completion: nil)
+        presentingVC.present(alert, animated: true, completion: nil)
     }
 }
 
@@ -141,7 +141,7 @@ extension Double {
         return Double(arc4random()) / 0xFFFFFFFF
     }
 
-    public static func random(min min: Double, max: Double) -> Double {
+    public static func random(min: Double, max: Double) -> Double {
         return Double.random() * (max - min) + min
     }
 }

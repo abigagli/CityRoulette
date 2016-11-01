@@ -16,15 +16,15 @@ import UIKit
 //simpler button that does the job
 class FavoritedUIButton: UIButton {
     
-    private lazy var starShape: CAShapeLayer = {
+    fileprivate lazy var starShape: CAShapeLayer = {
         var starFrame = self.bounds
-        starFrame.size.width = CGRectGetWidth(starFrame)/2.5
-        starFrame.size.height = CGRectGetHeight(starFrame)/2.5
+        starFrame.size.width = starFrame.width/2.5
+        starFrame.size.height = starFrame.height/2.5
         
         let shape = CAShapeLayer()
         shape.path = rescaleForFrame(path: Paths.star, frame: starFrame)
-        shape.bounds = CGPathGetBoundingBox(shape.path)
-        shape.fillColor = self.notFavoriteColor.CGColor
+        shape.bounds = (shape.path?.boundingBox)!
+        shape.fillColor = self.notFavoriteColor.cgColor
         shape.position = CGPoint(x: self.bounds.width/2, y: self.bounds.height/2)
         shape.opacity = 0.5
         self.layer.addSublayer(shape)
@@ -32,17 +32,17 @@ class FavoritedUIButton: UIButton {
         return shape
     }()
     
-    let notFavoriteColor = UIColor.lightGrayColor()
-    let favoriteColor = UIColor.redColor()
+    let notFavoriteColor = UIColor.lightGray
+    let favoriteColor = UIColor.red
     
     var isFavorite : Bool = false {
         didSet {
             if self.isFavorite {
-                self.starShape.fillColor = self.favoriteColor.CGColor
+                self.starShape.fillColor = self.favoriteColor.cgColor
                 self.starShape.opacity = 1
             }
             else {
-                self.starShape.fillColor = self.notFavoriteColor.CGColor
+                self.starShape.fillColor = self.notFavoriteColor.cgColor
                 self.starShape.opacity = 0.5
             }
         }
@@ -53,10 +53,10 @@ class FavoritedUIButton: UIButton {
         super.layoutSubviews()
         
         if self.isFavorite {
-            self.starShape.fillColor = favoriteColor.CGColor
+            self.starShape.fillColor = favoriteColor.cgColor
         }
         else {
-            self.starShape.fillColor = notFavoriteColor.CGColor
+            self.starShape.fillColor = notFavoriteColor.cgColor
         }
     }
     
@@ -67,26 +67,26 @@ class FavoritedUIButton: UIButton {
 //putting it on the UI, you have to somehow rescale it, trying to preserve as much as
 //possible its aspect ratio.
 //This is what this function tries to achieve
-private func rescaleForFrame(path path: CGPath, frame: CGRect) -> CGPath {
-    let boundingBox = CGPathGetBoundingBox(path)
-    let boundingBoxAspectRatio = CGRectGetWidth(boundingBox)/CGRectGetHeight(boundingBox)
-    let viewAspectRatio = CGRectGetWidth(frame)/CGRectGetHeight(frame)
+private func rescaleForFrame(path: CGPath, frame: CGRect) -> CGPath {
+    let boundingBox = path.boundingBox
+    let boundingBoxAspectRatio = boundingBox.width/boundingBox.height
+    let viewAspectRatio = frame.width/frame.height
     
     var scaleFactor: CGFloat = 1
     if (boundingBoxAspectRatio > viewAspectRatio) {
-        scaleFactor = CGRectGetWidth(frame)/CGRectGetWidth(boundingBox)
+        scaleFactor = frame.width/boundingBox.width
     } else {
-        scaleFactor = CGRectGetHeight(frame)/CGRectGetHeight(boundingBox)
+        scaleFactor = frame.height/boundingBox.height
     }
     
-    var scaleTransform = CGAffineTransformIdentity
-    scaleTransform = CGAffineTransformScale(scaleTransform, scaleFactor, scaleFactor)
-    scaleTransform = CGAffineTransformTranslate(scaleTransform, -CGRectGetMinX(boundingBox), -CGRectGetMinY(boundingBox))
-    let scaledSize = CGSizeApplyAffineTransform(boundingBox.size, CGAffineTransformMakeScale(scaleFactor, scaleFactor))
-    let centerOffset = CGSizeMake((CGRectGetWidth(frame)-scaledSize.width)/(scaleFactor*2.0), (CGRectGetHeight(frame)-scaledSize.height)/(scaleFactor*2.0))
-    scaleTransform = CGAffineTransformTranslate(scaleTransform, centerOffset.width, centerOffset.height)
+    var scaleTransform = CGAffineTransform.identity
+    scaleTransform = scaleTransform.scaledBy(x: scaleFactor, y: scaleFactor)
+    scaleTransform = scaleTransform.translatedBy(x: -boundingBox.minX, y: -boundingBox.minY)
+    let scaledSize = boundingBox.size.applying(CGAffineTransform(scaleX: scaleFactor, y: scaleFactor))
+    let centerOffset = CGSize(width: (frame.width-scaledSize.width)/(scaleFactor*2.0), height: (frame.height-scaledSize.height)/(scaleFactor*2.0))
+    scaleTransform = scaleTransform.translatedBy(x: centerOffset.width, y: centerOffset.height)
     
-    if let scaleTransform = CGPathCreateCopyByTransformingPath(path, &scaleTransform) {
+    if let scaleTransform = path.copy(using: &scaleTransform) {
         return scaleTransform
     } else {
         return path
@@ -97,27 +97,27 @@ private func rescaleForFrame(path path: CGPath, frame: CGRect) -> CGPath {
 struct Paths {
     static var star: CGPath {
         let star = UIBezierPath()
-        star.moveToPoint(CGPointMake(112.79, 119))
-        star.addCurveToPoint(CGPointMake(107.75, 122.6), controlPoint1: CGPointMake(113.41, 122.8), controlPoint2: CGPointMake(111.14, 124.42))
-        star.addLineToPoint(CGPointMake(96.53, 116.58))
-        star.addCurveToPoint(CGPointMake(84.14, 116.47), controlPoint1: CGPointMake(93.14, 114.76), controlPoint2: CGPointMake(87.56, 114.71))
-        star.addLineToPoint(CGPointMake(72.82, 122.3))
-        star.addCurveToPoint(CGPointMake(67.84, 118.62), controlPoint1: CGPointMake(69.4, 124.06), controlPoint2: CGPointMake(67.15, 122.41))
-        star.addLineToPoint(CGPointMake(70.1, 106.09))
-        star.addCurveToPoint(CGPointMake(66.37, 94.27), controlPoint1: CGPointMake(70.78, 102.3), controlPoint2: CGPointMake(69.1, 96.98))
-        star.addLineToPoint(CGPointMake(57.33, 85.31))
-        star.addCurveToPoint(CGPointMake(59.29, 79.43), controlPoint1: CGPointMake(54.6, 82.6), controlPoint2: CGPointMake(55.48, 79.95))
-        star.addLineToPoint(CGPointMake(71.91, 77.71))
-        star.addCurveToPoint(CGPointMake(81.99, 70.51), controlPoint1: CGPointMake(75.72, 77.19), controlPoint2: CGPointMake(80.26, 73.95))
-        star.addLineToPoint(CGPointMake(87.72, 59.14))
-        star.addCurveToPoint(CGPointMake(93.92, 59.2), controlPoint1: CGPointMake(89.46, 55.71), controlPoint2: CGPointMake(92.25, 55.73))
-        star.addLineToPoint(CGPointMake(99.46, 70.66))
-        star.addCurveToPoint(CGPointMake(109.42, 78.03), controlPoint1: CGPointMake(101.13, 74.13), controlPoint2: CGPointMake(105.62, 77.44))
-        star.addLineToPoint(CGPointMake(122, 79.96))
-        star.addCurveToPoint(CGPointMake(123.87, 85.87), controlPoint1: CGPointMake(125.81, 80.55), controlPoint2: CGPointMake(126.64, 83.21))
-        star.addLineToPoint(CGPointMake(114.67, 94.68))
-        star.addCurveToPoint(CGPointMake(110.75, 106.43), controlPoint1: CGPointMake(111.89, 97.34), controlPoint2: CGPointMake(110.13, 102.63))
-        star.addLineToPoint(CGPointMake(112.79, 119))
-        return star.CGPath
+        star.move(to: CGPoint(x: 112.79, y: 119))
+        star.addCurve(to: CGPoint(x: 107.75, y: 122.6), controlPoint1: CGPoint(x: 113.41, y: 122.8), controlPoint2: CGPoint(x: 111.14, y: 124.42))
+        star.addLine(to: CGPoint(x: 96.53, y: 116.58))
+        star.addCurve(to: CGPoint(x: 84.14, y: 116.47), controlPoint1: CGPoint(x: 93.14, y: 114.76), controlPoint2: CGPoint(x: 87.56, y: 114.71))
+        star.addLine(to: CGPoint(x: 72.82, y: 122.3))
+        star.addCurve(to: CGPoint(x: 67.84, y: 118.62), controlPoint1: CGPoint(x: 69.4, y: 124.06), controlPoint2: CGPoint(x: 67.15, y: 122.41))
+        star.addLine(to: CGPoint(x: 70.1, y: 106.09))
+        star.addCurve(to: CGPoint(x: 66.37, y: 94.27), controlPoint1: CGPoint(x: 70.78, y: 102.3), controlPoint2: CGPoint(x: 69.1, y: 96.98))
+        star.addLine(to: CGPoint(x: 57.33, y: 85.31))
+        star.addCurve(to: CGPoint(x: 59.29, y: 79.43), controlPoint1: CGPoint(x: 54.6, y: 82.6), controlPoint2: CGPoint(x: 55.48, y: 79.95))
+        star.addLine(to: CGPoint(x: 71.91, y: 77.71))
+        star.addCurve(to: CGPoint(x: 81.99, y: 70.51), controlPoint1: CGPoint(x: 75.72, y: 77.19), controlPoint2: CGPoint(x: 80.26, y: 73.95))
+        star.addLine(to: CGPoint(x: 87.72, y: 59.14))
+        star.addCurve(to: CGPoint(x: 93.92, y: 59.2), controlPoint1: CGPoint(x: 89.46, y: 55.71), controlPoint2: CGPoint(x: 92.25, y: 55.73))
+        star.addLine(to: CGPoint(x: 99.46, y: 70.66))
+        star.addCurve(to: CGPoint(x: 109.42, y: 78.03), controlPoint1: CGPoint(x: 101.13, y: 74.13), controlPoint2: CGPoint(x: 105.62, y: 77.44))
+        star.addLine(to: CGPoint(x: 122, y: 79.96))
+        star.addCurve(to: CGPoint(x: 123.87, y: 85.87), controlPoint1: CGPoint(x: 125.81, y: 80.55), controlPoint2: CGPoint(x: 126.64, y: 83.21))
+        star.addLine(to: CGPoint(x: 114.67, y: 94.68))
+        star.addCurve(to: CGPoint(x: 110.75, y: 106.43), controlPoint1: CGPoint(x: 111.89, y: 97.34), controlPoint2: CGPoint(x: 110.13, y: 102.63))
+        star.addLine(to: CGPoint(x: 112.79, y: 119))
+        return star.cgPath
     }
 }

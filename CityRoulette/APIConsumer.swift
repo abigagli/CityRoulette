@@ -10,20 +10,20 @@ import Foundation
 
 class APIConsumer {
     
-    let session: NSURLSession
-    init (withSession: NSURLSession) {
+    let session: URLSession
+    init (withSession: URLSession) {
        self.session = withSession
     }
     
     //MARK:- Business Logic
-    func getWithEndpoint (apiEndpoint: String, parameters: [String : AnyObject],
-        completionHandler: (result: AnyObject?, error: NSError?) -> Void) {
+    func getWithEndpoint (_ apiEndpoint: String, parameters: [String : AnyObject],
+        completionHandler: @escaping (_ result: AnyObject?, _ error: NSError?) -> Void) {
             //Build the URL and URL request specific to the website required.
             let urlString = apiEndpoint + APIConsumer.escapedParameters(parameters)
-            let request = NSMutableURLRequest(URL: NSURL(string: urlString)!)
+            let request = NSMutableURLRequest(url: URL(string: urlString)!)
             
             //Make the request.
-            let task = session.dataTaskWithRequest(request) {
+            let task = session.dataTask(with: request, completionHandler: {
                 data, _, downloadError in
                 
                 if let _ = downloadError {
@@ -32,7 +32,7 @@ class APIConsumer {
                 else { //Parse the received data.
                     APIConsumer.parseJSONWithCompletionHandler(data!, completionHandler: completionHandler)
                 }
-            }
+            }) 
             
             //Start the request task.
             task.resume()
@@ -43,27 +43,27 @@ class APIConsumer {
     
     
     //Escape parameters and make them URL-friendly
-    private class func escapedParameters(parameters: [String : AnyObject]) -> String {
+    fileprivate class func escapedParameters(_ parameters: [String : AnyObject]) -> String {
         
         var urlVars = [String]()
         
         for (key, value) in parameters {
             
             let stringValue = "\(value)"
-            let replaceSpaceValue = stringValue.stringByReplacingOccurrencesOfString(" ", withString: "+", options: .LiteralSearch, range: nil)
+            let replaceSpaceValue = stringValue.replacingOccurrences(of: " ", with: "+", options: .literal, range: nil)
             urlVars += [key + "=" + "\(replaceSpaceValue)"]
         }
         
-        return (!urlVars.isEmpty ? "?" : "") + urlVars.joinWithSeparator("&")
+        return (!urlVars.isEmpty ? "?" : "") + urlVars.joined(separator: "&")
     }
     
     //Parse the received JSON data and pass it to the completion handler.
-    private class func parseJSONWithCompletionHandler(data: NSData, completionHandler: (result: AnyObject?, error: NSError?) -> Void) {
+    fileprivate class func parseJSONWithCompletionHandler(_ data: Data, completionHandler: (_ result: AnyObject?, _ error: NSError?) -> Void) {
         
         var parsingError: NSError?
         let parsedResult: AnyObject?
         do {
-            parsedResult = try NSJSONSerialization.JSONObjectWithData(data, options: .AllowFragments)
+            parsedResult = try JSONSerialization.jsonObject(with: data, options: .allowFragments)
         } catch let error as NSError {
             parsingError = error
             parsedResult = nil
@@ -71,10 +71,10 @@ class APIConsumer {
         
         if let error = parsingError {
             
-            completionHandler(result: nil, error: error)
+            completionHandler(nil, error)
         } else {
             
-            completionHandler(result: parsedResult, error: nil)
+            completionHandler(parsedResult, nil)
         }
     }
     

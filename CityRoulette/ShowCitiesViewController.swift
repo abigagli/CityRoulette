@@ -29,15 +29,15 @@ class ShowCitiesViewController: UIViewController {
     @IBOutlet weak var cancelBarButton: UIBarButtonItem!
     
     //MARK:- Actions
-    @IBAction func deleteUnfavoritesTapped(sender: UIBarButtonItem) {
+    @IBAction func deleteUnfavoritesTapped(_ sender: UIBarButtonItem) {
         for city in self.fetchedResultsController.fetchedObjects as! [City] {
             if !city.favorite {
-                self.currentCoreDataContext.deleteObject(city)
+                self.currentCoreDataContext.delete(city)
             }
         }
     }
     
-    @IBAction func cancelTapped(sender: AnyObject) {
+    @IBAction func cancelTapped(_ sender: AnyObject) {
         //If Cancel-ing out might cause some loss of data, then
         //give the user one opportunity to think again
         
@@ -48,25 +48,25 @@ class ShowCitiesViewController: UIViewController {
         if userCanLoseData {
             let alert = UIAlertController(title: "Warning",
                 message: "You have new data or unsaved modifications, are you sure?",
-                preferredStyle: .Alert)
+                preferredStyle: .alert)
             
             let alertOkAction = UIAlertAction(title: "OK",
-                style: .Destructive,
+                style: .destructive,
                 handler: {_ in
-                    self.performSegueWithIdentifier("exitToInitialVC", sender: self)
+                    self.performSegue(withIdentifier: "exitToInitialVC", sender: self)
             })
             
             let alertCancelAction = UIAlertAction(title: "Cancel",
-                style: .Cancel,
+                style: .cancel,
                 handler: {_ in return false})
             
             alert.addAction(alertOkAction)
             alert.addAction(alertCancelAction)
             
-            self.presentViewController(alert, animated: true, completion: nil)
+            self.present(alert, animated: true, completion: nil)
         }
         else {
-            self.performSegueWithIdentifier("exitToInitialVC", sender: self)
+            self.performSegue(withIdentifier: "exitToInitialVC", sender: self)
         }
     }
     
@@ -97,37 +97,37 @@ class ShowCitiesViewController: UIViewController {
 
     
     
-    private var numUnfavorites: Int = 0
-    private let searchController = UISearchController(searchResultsController: nil)
+    fileprivate var numUnfavorites: Int = 0
+    fileprivate let searchController = UISearchController(searchResultsController: nil)
     
     
-    private var isImportingFromCurrentLocation: Bool {
+    fileprivate var isImportingFromCurrentLocation: Bool {
         return self.operatingMode == .importFromCurrentLocation
     }
     
-    private var isImportingFromRandomLocation: Bool {
+    fileprivate var isImportingFromRandomLocation: Bool {
         return self.operatingMode == .importFromRandomLocation
     }
     
-    private var isImporting: Bool {
+    fileprivate var isImporting: Bool {
         return self.isImportingFromCurrentLocation || self.isImportingFromRandomLocation
     }
     
-    private var isBrowsing: Bool {
+    fileprivate var isBrowsing: Bool {
         return self.operatingMode == .browseArchivedCities
     }
     
-    private var embeddedTVC: UITableViewController!
+    fileprivate var embeddedTVC: UITableViewController!
     
     //embeddedTVC is set while preparing for the embed segue, which is guaranteed to
     //be called before viewDidLoad, so accessing it here to "proxy" its tableView
     //is safe as any access to self.tableView won't be done until viewDidLoad
-    private var tableView: UITableView {
+    fileprivate var tableView: UITableView {
         return embeddedTVC.tableView
     }
 
     //MARK:- UI
-    private func showBottomToolbar(show: Bool) {
+    fileprivate func showBottomToolbar(_ show: Bool) {
     
         if show == true {
             self.toolbarBottomConstraint.constant = 0
@@ -136,21 +136,21 @@ class ShowCitiesViewController: UIViewController {
             self.toolbarBottomConstraint.constant = -self.toolbar.frame.height
         }
         
-        UIView.animateWithDuration(0.5) {
+        UIView.animate(withDuration: 0.5, animations: {
             self.view.layoutIfNeeded()
-        }
+        }) 
     }
     
     //Need to factor some parts of edit-mode transitioning logic in a separate
     //function that can be called by different places
-    private func setVCEditingMode (editing: Bool, animated: Bool)
+    fileprivate func setVCEditingMode (_ editing: Bool, animated: Bool)
     {
         super.setEditing(editing, animated: animated)
         self.tableView.setEditing(editing, animated: animated)
-        self.showBottomToolbar(self.editing)
+        self.showBottomToolbar(self.isEditing)
     }
     
-    func updateWeather (sender: UIRefreshControl) {
+    func updateWeather (_ sender: UIRefreshControl) {
         
         //We can't easily alert the user directly upon failure to retrieve weather conditions
         //because we might have many failures due to API requests being made while configuring cells,
@@ -166,7 +166,7 @@ class ShowCitiesViewController: UIViewController {
             
             //Just reload what's visible, the rest will be handled as usual while scrolling
             if let visibleIndexPaths = self.tableView.indexPathsForVisibleRows {
-                self.tableView.reloadRowsAtIndexPaths(visibleIndexPaths, withRowAnimation: .Fade)
+                self.tableView.reloadRows(at: visibleIndexPaths, with: .fade)
             }
         
         }
@@ -178,16 +178,16 @@ class ShowCitiesViewController: UIViewController {
     }
     
     
-    private func updateUI() {
+    fileprivate func updateUI() {
         var recordsToSave = false
         if (self.fetchedResultsController.fetchedObjects?.count ?? 0) > 0 {
             recordsToSave = true
-            self.navigationItem.rightBarButtonItem!.enabled = true
-            self.deleteUnfavoritesButton.enabled = self.numUnfavorites > 0
+            self.navigationItem.rightBarButtonItem!.isEnabled = true
+            self.deleteUnfavoritesButton.isEnabled = self.numUnfavorites > 0
         }
         else {
             self.setVCEditingMode(false, animated: true)
-            self.navigationItem.rightBarButtonItem!.enabled = false
+            self.navigationItem.rightBarButtonItem!.isEnabled = false
             //self.deleteUnfavoritesButton.enabled = false
         }
         
@@ -197,35 +197,35 @@ class ShowCitiesViewController: UIViewController {
         //      2) either we are browsing and we made some changes
         //         OR
         //         we are importing and there are some records to import
-        if (!self.editing && (self.isBrowsing && self.currentCoreDataContext.hasChanges ||
+        if (!self.isEditing && (self.isBrowsing && self.currentCoreDataContext.hasChanges ||
                               self.isImporting && recordsToSave)) {
-            self.saveBarButton.enabled = true
+            self.saveBarButton.isEnabled = true
         }
         else {
-            self.saveBarButton.enabled = false
+            self.saveBarButton.isEnabled = false
         }
         
-        self.cancelBarButton.enabled = !self.editing
+        self.cancelBarButton.isEnabled = !self.isEditing
     }
     
-    override func setEditing(editing: Bool, animated: Bool) {
+    override func setEditing(_ editing: Bool, animated: Bool) {
         self.setVCEditingMode(editing, animated: animated)
         updateUI()
     }
     
     
-    private func configureCell (cell: CityTableViewCell, forCity city: City, atIndexPath indexPath: NSIndexPath) {
+    fileprivate func configureCell (_ cell: CityTableViewCell, forCity city: City, atIndexPath indexPath: IndexPath) {
         cell.nameLabel.text = city.name
         cell.countryCodeLabel.text! = "Country: " + (city.countryCode ?? " na")
         
         cell.delegate = self
         cell.favoriteButton.isFavorite = city.favorite
         
-        if let wikipedia = city.wikipedia where !wikipedia.isEmpty {
-            cell.accessoryType = .DetailButton
+        if let wikipedia = city.wikipedia, !wikipedia.isEmpty {
+            cell.accessoryType = .detailButton
         }
         else {
-            cell.accessoryType = .None
+            cell.accessoryType = .none
         }
         
         cell.weatherIcon.image = nil
@@ -245,9 +245,9 @@ class ShowCitiesViewController: UIViewController {
                 //Use the model as a cache while we're looking at the same set of cities
                 city.weatherImage = weatherImage
                 
-                dispatch_async(dispatch_get_main_queue()) {
+                DispatchQueue.main.async {
                     //As we're asynchronos, ensure the cell hasn't been off-screen and reused
-                    if let cellToUpdate = self.tableView.cellForRowAtIndexPath(indexPath) as? CityTableViewCell {
+                    if let cellToUpdate = self.tableView.cellForRow(at: indexPath) as? CityTableViewCell {
                         cellToUpdate.weatherIcon.image = weatherImage
                         cellToUpdate.setNeedsLayout()
                     }
@@ -258,11 +258,11 @@ class ShowCitiesViewController: UIViewController {
 
 
     //MARK:- Lifetime
-    override func prepareForSegue(segue: UIStoryboardSegue, sender dataForNextVC: AnyObject?) {
+    override func prepare(for segue: UIStoryboardSegue, sender dataForNextVC: Any?) {
         
-        super.prepareForSegue(segue, sender: dataForNextVC)
+        super.prepare(for: segue, sender: dataForNextVC)
         
-        var destination: UIViewController? = segue.destinationViewController
+        var destination: UIViewController? = segue.destination
 
         switch SegueFromHere (rawValue: segue.identifier!) {
         
@@ -294,8 +294,8 @@ class ShowCitiesViewController: UIViewController {
                     if self.isImporting, let currentPredicate = self.fetchedResultsController.fetchRequest.predicate {
                         
                         for obj in self.currentCoreDataContext.registeredObjects {
-                            if !currentPredicate.evaluateWithObject(obj) {
-                                self.currentCoreDataContext.deleteObject(obj)
+                            if !currentPredicate.evaluate(with: obj) {
+                                self.currentCoreDataContext.delete(obj)
                             }
                         }
                     }
@@ -330,7 +330,7 @@ class ShowCitiesViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
 
-        self.navigationItem.rightBarButtonItem = self.editButtonItem()
+        self.navigationItem.rightBarButtonItem = self.editButtonItem
         
         if self.isBrowsing{
             self.saveBarButton.title = "Save"
@@ -384,16 +384,16 @@ class ShowCitiesViewController: UIViewController {
         self.searchController.searchBar.delegate = self
     }
     
-    override func viewWillAppear(animated: Bool) {
+    override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         self.toolbarBottomConstraint.constant = -self.toolbar.frame.height
 
         updateUI()
     }
     
-    override func viewWillDisappear(animated: Bool) {
+    override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
-        UIApplication.sharedApplication().networkActivityIndicatorVisible = false
+        UIApplication.shared.isNetworkActivityIndicatorVisible = false
     }
     
     deinit {
@@ -407,10 +407,10 @@ class ShowCitiesViewController: UIViewController {
     }
     
     //MARK:- Core Data
-    private lazy var fetchedResultsController: NSFetchedResultsController = {
+    fileprivate lazy var fetchedResultsController: NSFetchedResultsController = { () -> <<error type>> in 
         
         //create fetch request with sort descriptor
-        let fetchRequest = NSFetchRequest(entityName: "City")
+        let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "City")
         fetchRequest.sortDescriptors = [NSSortDescriptor(key: "favorite", ascending: false), NSSortDescriptor(key: "population", ascending: false),
             NSSortDescriptor(key: "name", ascending: true)]
         
@@ -426,7 +426,7 @@ class ShowCitiesViewController: UIViewController {
     }()
     
     //MARK:- Searching
-    func filterContentForSearchText(searchText: String, scope: String = "All") {
+    func filterContentForSearchText(_ searchText: String, scope: String = "All") {
         
         var predicateFormatString = ""
         var predicateArgs = [AnyObject]()
@@ -434,13 +434,13 @@ class ShowCitiesViewController: UIViewController {
         //If we're doing an import, prepend acquireID filtering
         if self.isImporting {
             predicateFormatString = "acquireID == %lld"
-            let id = NSNumber(longLong: self.acquireID)
+            let id = NSNumber(value: self.acquireID as Int64)
             predicateArgs.append(id)
         }
         
         if searchText != "" {
             predicateFormatString += (predicateFormatString != "" ? " AND " : "") + "name contains[c] %@"
-            predicateArgs.append(searchText)
+            predicateArgs.append(searchText as AnyObject)
         }
         
         if scope == "Favorites" {
@@ -464,7 +464,7 @@ class ShowCitiesViewController: UIViewController {
             let cities = self.fetchedResultsController.fetchedObjects as! [City]
             
             //Re-evaluate the number of unfavorite entries after every new fetch
-            self.numUnfavorites = cities.reduce(0, combine: { val, city in
+            self.numUnfavorites = cities.reduce(0, { val, city in
                 return val + (city.favorite ? 0 : 1)
             })
             
@@ -484,7 +484,7 @@ class ShowCitiesViewController: UIViewController {
 //MARK: MKMapViewDelegate
 extension ShowCitiesViewController: MKMapViewDelegate {
     
-    func mapView(mapView: MKMapView, viewForAnnotation annotation: MKAnnotation) -> MKAnnotationView? {
+    func mapView(_ mapView: MKMapView, viewFor annotation: MKAnnotation) -> MKAnnotationView? {
         
         if (annotation is MKUserLocation) {
                 return nil
@@ -492,11 +492,11 @@ extension ShowCitiesViewController: MKMapViewDelegate {
         
         let reuseId = "cityPin"
         
-        var pinView = mapView.dequeueReusableAnnotationViewWithIdentifier(reuseId) as? MKPinAnnotationView
+        var pinView = mapView.dequeueReusableAnnotationView(withIdentifier: reuseId) as? MKPinAnnotationView
         if pinView == nil {
             pinView = MKPinAnnotationView(annotation: annotation, reuseIdentifier: reuseId)
             
-            pinView!.pinTintColor = UIColor.redColor()
+            pinView!.pinTintColor = UIColor.red
             pinView!.animatesDrop = false
             pinView!.canShowCallout = true
         }
@@ -507,64 +507,64 @@ extension ShowCitiesViewController: MKMapViewDelegate {
         return pinView
     }
     
-    func mapView(mapView: MKMapView, didSelectAnnotationView view: MKAnnotationView) {
+    func mapView(_ mapView: MKMapView, didSelect view: MKAnnotationView) {
         guard let city = view.annotation as? City else {return}
 
-        let indexPath = self.fetchedResultsController.indexPathForObject(city)
-        self.tableView.selectRowAtIndexPath(indexPath, animated: true, scrollPosition: .Middle)
+        let indexPath = self.fetchedResultsController.indexPath(forObject: city)
+        self.tableView.selectRow(at: indexPath, animated: true, scrollPosition: .middle)
         
         delay(seconds: 2) {
             mapView.deselectAnnotation(view.annotation, animated: true)
-            self.tableView.deselectRowAtIndexPath(indexPath!, animated: true)
+            self.tableView.deselectRow(at: indexPath!, animated: true)
         }
     }
     
-    func mapViewWillStartLoadingMap(mapView: MKMapView) {
-        UIApplication.sharedApplication().networkActivityIndicatorVisible = true
+    func mapViewWillStartLoadingMap(_ mapView: MKMapView) {
+        UIApplication.shared.isNetworkActivityIndicatorVisible = true
     }
     
-    func mapViewDidFinishLoadingMap(mapView: MKMapView) {
-        UIApplication.sharedApplication().networkActivityIndicatorVisible = false
+    func mapViewDidFinishLoadingMap(_ mapView: MKMapView) {
+        UIApplication.shared.isNetworkActivityIndicatorVisible = false
     }
 }
 
 //MARK: UITableViewDataSource, UITableViewDelegate
 extension ShowCitiesViewController: UITableViewDataSource, UITableViewDelegate {
     
-    func numberOfSectionsInTableView(tableView: UITableView) -> Int {
+    func numberOfSections(in tableView: UITableView) -> Int {
         return self.fetchedResultsController.sections!.count
     }
     
-    func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         if self.fetchedResultsController.sections![section].numberOfObjects > 0 {
             self.tableView.backgroundView = nil
-            self.tableView.separatorStyle = .SingleLine
-            self.tableView.scrollEnabled = true
+            self.tableView.separatorStyle = .singleLine
+            self.tableView.isScrollEnabled = true
             
             return self.fetchedResultsController.sections![section].numberOfObjects
         }
         else {
             // Display a message when the table is empty
-            let messageLabel = UILabel(frame: CGRectMake(0, 0, self.view.bounds.size.width, self.view.bounds.size.height))
+            let messageLabel = UILabel(frame: CGRect(x: 0, y: 0, width: self.view.bounds.size.width, height: self.view.bounds.size.height))
             
             messageLabel.text = "No cities to display"
-            messageLabel.textColor = UIColor.blackColor()
+            messageLabel.textColor = UIColor.black
             messageLabel.numberOfLines = 0;
-            messageLabel.textAlignment = .Center
+            messageLabel.textAlignment = .center
             messageLabel.sizeToFit()
             
             self.tableView.backgroundView = messageLabel;
-            self.tableView.separatorStyle = .None
-            self.tableView.scrollEnabled = false
+            self.tableView.separatorStyle = .none
+            self.tableView.isScrollEnabled = false
         }
         return 0
     }
     
-    func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
+    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         
-        let cell = tableView.dequeueReusableCellWithIdentifier("cityInfoCell", forIndexPath: indexPath) as! CityTableViewCell
+        let cell = tableView.dequeueReusableCell(withIdentifier: "cityInfoCell", for: indexPath) as! CityTableViewCell
 
-        let city = fetchedResultsController.objectAtIndexPath(indexPath) as! City
+        let city = fetchedResultsController.object(at: indexPath) as! City
         
         self.configureCell (cell, forCity: city, atIndexPath: indexPath)
         
@@ -572,23 +572,23 @@ extension ShowCitiesViewController: UITableViewDataSource, UITableViewDelegate {
     }
     
     
-    func tableView(tableView: UITableView, accessoryButtonTappedForRowWithIndexPath indexPath: NSIndexPath) {
-        self.performSegueWithIdentifier("showWiki", sender: self.fetchedResultsController.objectAtIndexPath(indexPath))
+    func tableView(_ tableView: UITableView, accessoryButtonTappedForRowWith indexPath: IndexPath) {
+        self.performSegue(withIdentifier: "showWiki", sender: self.fetchedResultsController.object(at: indexPath))
     }
     
-    func tableView(tableView: UITableView, didSelectRowAtIndexPath indexPath: NSIndexPath) {
-        let city = fetchedResultsController.objectAtIndexPath(indexPath) as! City
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        let city = fetchedResultsController.object(at: indexPath) as! City
         self.mapView.selectAnnotation(city, animated: true)
         
         delay(seconds: 2) {
-            tableView.deselectRowAtIndexPath(indexPath, animated: true)
+            tableView.deselectRow(at: indexPath, animated: true)
             self.mapView.deselectAnnotation(city, animated: true)
         }
     }
     
-    func tableView(tableView: UITableView, commitEditingStyle editingStyle: UITableViewCellEditingStyle, forRowAtIndexPath indexPath: NSIndexPath) {
-        if editingStyle == .Delete {
-            self.currentCoreDataContext.deleteObject(self.fetchedResultsController.objectAtIndexPath(indexPath) as! NSManagedObject)
+    func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCellEditingStyle, forRowAt indexPath: IndexPath) {
+        if editingStyle == .delete {
+            self.currentCoreDataContext.delete(self.fetchedResultsController.object(at: indexPath) as! NSManagedObject)
             
         }
     }
@@ -596,51 +596,51 @@ extension ShowCitiesViewController: UITableViewDataSource, UITableViewDelegate {
 
 //MARK: NSFetchedResultsControllerDelegate
 extension ShowCitiesViewController: NSFetchedResultsControllerDelegate {
-    func controllerWillChangeContent(controller: NSFetchedResultsController) {
+    func controllerWillChangeContent(_ controller: NSFetchedResultsController<NSFetchRequestResult>) {
         // This invocation prepares the table to recieve a number of changes. It will store them up
         // until it receives endUpdates(), and then perform them all at once.
         self.tableView.beginUpdates()
     }
     
-    func controller(controller: NSFetchedResultsController, didChangeSection sectionInfo: NSFetchedResultsSectionInfo, atIndex sectionIndex: Int, forChangeType type: NSFetchedResultsChangeType) {
+    func controller(_ controller: NSFetchedResultsController<NSFetchRequestResult>, didChange sectionInfo: NSFetchedResultsSectionInfo, atSectionIndex sectionIndex: Int, for type: NSFetchedResultsChangeType) {
         
     }
     
-    func controller(controller: NSFetchedResultsController, didChangeObject anObject: AnyObject, atIndexPath indexPath: NSIndexPath?, forChangeType type: NSFetchedResultsChangeType, newIndexPath: NSIndexPath?) {
+    func controller(_ controller: NSFetchedResultsController<NSFetchRequestResult>, didChange anObject: Any, at indexPath: IndexPath?, for type: NSFetchedResultsChangeType, newIndexPath: IndexPath?) {
         switch type {
-        case .Insert:
+        case .insert:
             let city = anObject as! City
             
             if !city.favorite {
-                self.numUnfavorites++
+                self.numUnfavorites += 1
             }
             
-            tableView.insertRowsAtIndexPaths([newIndexPath!], withRowAnimation: .Fade)
+            tableView.insertRows(at: [newIndexPath!], with: .fade)
             self.mapView.addAnnotation(anObject as! MKAnnotation)
-        case .Delete:
+        case .delete:
             let city = anObject as! City
 
             if !city.favorite {
-                self.numUnfavorites--
+                self.numUnfavorites -= 1
             }
             
-            tableView.deleteRowsAtIndexPaths([indexPath!], withRowAnimation: .Fade)
+            tableView.deleteRows(at: [indexPath!], with: .fade)
             self.mapView.removeAnnotation(anObject as! MKAnnotation)
-        case .Move:
-            self.tableView.moveRowAtIndexPath(indexPath!, toIndexPath: newIndexPath!)
+        case .move:
+            self.tableView.moveRow(at: indexPath!, to: newIndexPath!)
         default:
             return
         }
     }
     
     // When endUpdates() is invoked, the table makes the changes visible.
-    func controllerDidChangeContent(controller: NSFetchedResultsController) {
+    func controllerDidChangeContent(_ controller: NSFetchedResultsController<NSFetchRequestResult>) {
         self.tableView.endUpdates()
         self.updateUI()
         
         //If the tableview is empty we cannot scroll anymore, so ensure
         //the tableView's header (i.e. the UISearchBar in this case) is visible
-        if !self.tableView.scrollEnabled {
+        if !self.tableView.isScrollEnabled {
             let headerFrame = self.tableView.tableHeaderView!.frame
             self.tableView.scrollRectToVisible(headerFrame, animated: true)
         }
@@ -651,15 +651,15 @@ extension ShowCitiesViewController: NSFetchedResultsControllerDelegate {
 
 //MARK: CityTableViewCellDelegate
 extension ShowCitiesViewController: CityTableViewCellDelegate {
-    func favoriteButtonTapped(sender: FavoritedUIButton, cell: CityTableViewCell) {
-        let indexPath = self.tableView.indexPathForCell (cell)
-        let city = self.fetchedResultsController.objectAtIndexPath(indexPath!) as! City
+    func favoriteButtonTapped(_ sender: FavoritedUIButton, cell: CityTableViewCell) {
+        let indexPath = self.tableView.indexPath (for: cell)
+        let city = self.fetchedResultsController.object(at: indexPath!) as! City
         
         if sender.isFavorite {
-            self.numUnfavorites--
+            self.numUnfavorites -= 1
         }
         else {
-            self.numUnfavorites++
+            self.numUnfavorites += 1
         }
         
         city.favorite = sender.isFavorite
@@ -668,7 +668,7 @@ extension ShowCitiesViewController: CityTableViewCellDelegate {
 
 //MARK: UISearchResultsUpdating
 extension ShowCitiesViewController: UISearchResultsUpdating {
-    func updateSearchResultsForSearchController(searchController: UISearchController) {
+    func updateSearchResults(for searchController: UISearchController) {
         let searchBar = self.searchController.searchBar
         let scope = searchBar.scopeButtonTitles![searchBar.selectedScopeButtonIndex]
         self.filterContentForSearchText(self.searchController.searchBar.text!, scope: scope)
@@ -677,16 +677,16 @@ extension ShowCitiesViewController: UISearchResultsUpdating {
 
 //MARK: UISearchBarDelegate
 extension ShowCitiesViewController: UISearchBarDelegate {
-    func searchBar(searchBar: UISearchBar, selectedScopeButtonIndexDidChange selectedScope: Int) {
+    func searchBar(_ searchBar: UISearchBar, selectedScopeButtonIndexDidChange selectedScope: Int) {
         filterContentForSearchText(searchBar.text!, scope: searchBar.scopeButtonTitles![selectedScope])
     }
     
-    func searchBarShouldBeginEditing(searchBar: UISearchBar) -> Bool {
+    func searchBarShouldBeginEditing(_ searchBar: UISearchBar) -> Bool {
         self.embeddedTVC.refreshControl = nil
         return true
     }
     
-    func searchBarCancelButtonClicked(searchBar: UISearchBar) {
+    func searchBarCancelButtonClicked(_ searchBar: UISearchBar) {
         self.embeddedTVC.refreshControl = (self.embeddedTVC as! CitiesTableViewController).updateWeatherRefreshControl
     }
 }

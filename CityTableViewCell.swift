@@ -13,7 +13,7 @@ import UIKit
 //will conform to, we'll notify it about the tap and pass ourselves
 //and it will find our indexpath at every tap
 protocol CityTableViewCellDelegate: class {
-    func favoriteButtonTapped (sender: FavoritedUIButton, cell: CityTableViewCell)
+    func favoriteButtonTapped (_ sender: FavoritedUIButton, cell: CityTableViewCell)
 }
 
 class CityTableViewCell: UITableViewCell {
@@ -24,7 +24,7 @@ class CityTableViewCell: UITableViewCell {
     @IBOutlet weak var nameLabel: UILabel!
     @IBOutlet weak var countryCodeLabel: UILabel!
     
-    @IBAction func favoriteButtonTapped(sender: FavoritedUIButton) {
+    @IBAction func favoriteButtonTapped(_ sender: FavoritedUIButton) {
         
         sender.isFavorite = !sender.isFavorite
         

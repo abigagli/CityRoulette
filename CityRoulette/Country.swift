@@ -14,9 +14,9 @@ class Country: NSManagedObject {
 
     convenience init (json: NSDictionary, context: NSManagedObjectContext) {
         
-        let entity = NSEntityDescription.entityForName("Country", inManagedObjectContext: context)
+        let entity = NSEntityDescription.entity(forEntityName: "Country", in: context)
         
-        self.init(entity: entity!, insertIntoManagedObjectContext: context)
+        self.init(entity: entity!, insertInto: context)
         
         //@NSManaged properties acts as inherited properties and must be initialized in phase2
         
@@ -25,8 +25,8 @@ class Country: NSManagedObject {
         self.countryName = json["countryName"] as! String
         self.continent = json["continent"] as! String
         self.continentName = json["continentName"] as! String
-        self.population = Int32((json["population"]?.integerValue) ?? 0)
-        self.geonameID = Int64(json["geonameId"]!.integerValue)
+        self.population = Int32(((json["population"] as AnyObject).intValue) ?? 0)
+        self.geonameID = Int64((json["geonameId"]! as AnyObject).intValue)
         self.north = json["north"] as! Double
         self.east = json["east"] as! Double
         self.south = json["south"] as! Double

@@ -16,14 +16,14 @@ class GeoNamesClient {
     static let sharedInstance = GeoNamesClient()
     
     //private init enforces singleton usage
-    private init() {
-        self.consumer = APIConsumer (withSession: NSURLSession.sharedSession())
+    fileprivate init() {
+        self.consumer = APIConsumer (withSession: URLSession.shared)
     }
     
     //MARK:- State
     let consumer: APIConsumer
     
-    func getCitiesAroundLocation (location: CLLocationCoordinate2D, withRadius radiusInMeters: Double, maxResults: Int = 10, andStoreIn context: NSManagedObjectContext, completionHandler: (acquireID: Int64, error: NSError?) -> Void) {
+    func getCitiesAroundLocation (_ location: CLLocationCoordinate2D, withRadius radiusInMeters: Double, maxResults: Int = 10, andStoreIn context: NSManagedObjectContext, completionHandler: @escaping (_ acquireID: Int64, _ error: NSError?) -> Void) {
         
         let region = MKCoordinateRegionMakeWithDistance(location, radiusInMeters, radiusInMeters)
         
@@ -33,18 +33,18 @@ class GeoNamesClient {
         //Parameters for API invocation
         let parameters: [String : AnyObject] = [
             
-            URLKeys.North       : "\(location.latitude + boxV)",
-            URLKeys.South       : "\(location.latitude - boxV)",
-            URLKeys.East        : "\(location.longitude + boxH)",
-            URLKeys.West        : "\(location.longitude - boxV)",
+            URLKeys.North       : "\(location.latitude + boxV)" as AnyObject,
+            URLKeys.South       : "\(location.latitude - boxV)" as AnyObject,
+            URLKeys.East        : "\(location.longitude + boxH)" as AnyObject,
+            URLKeys.West        : "\(location.longitude - boxV)" as AnyObject,
             /*
             URLKeys.Lat         : location.latitude,
             URLKeys.Lon         : location.longitude,
             URLKeys.Radius      : "10",
             */
-            URLKeys.Language    : Constants.Language,
-            URLKeys.MaxRows     : "\(maxResults)",
-            URLKeys.Username    : Constants.Username
+            URLKeys.Language    : Constants.Language as AnyObject,
+            URLKeys.MaxRows     : "\(maxResults)" as AnyObject,
+            URLKeys.Username    : Constants.Username as AnyObject
         ]
         
         consumer.getWithEndpoint(Constants.CitiesEndpoint, parameters: parameters) /* And then, on another thread... */ {
@@ -63,16 +63,16 @@ class GeoNamesClient {
                     completionHandler(acquireID: 0, error: NSError (domain: "GeoNames \"cities\" endpoint", code: value, userInfo: userInfo))
                 }
                 else {
-                    guard let cities = resultDictionary[JSONResponseKeys.Geonames] as? [[String: AnyObject]] where cities.count >= 1 else {
+                    guard let cities = resultDictionary[JSONResponseKeys.Geonames] as? [[String: AnyObject]], cities.count >= 1 else {
                         completionHandler (acquireID: 0, error: NSError(domain: "GeoNames \"cities\" endpoint", code: 1, userInfo: [NSLocalizedDescriptionKey: "City information not found"]))
                         
                         return
                     }
                     
-                    let id = Int64(NSDate().timeIntervalSince1970)
+                    let id = Int64(Date().timeIntervalSince1970)
                     
                     //Ensure CoreData context is accessed on whatever queue it's working on
-                    context.performBlock() {
+                    context.perform() {
 
                         for cityJSON in cities {
                             let _ = City(json: cityJSON, acquireID: id, context: context)
@@ -85,13 +85,13 @@ class GeoNamesClient {
         }
     }
     
-    func getCountryInfo (countryCode: String?, andStoreIn context: NSManagedObjectContext, completionHandler: (success: Bool, error: NSError?) -> Void) {
+    func getCountryInfo (_ countryCode: String?, andStoreIn context: NSManagedObjectContext, completionHandler: @escaping (_ success: Bool, _ error: NSError?) -> Void) {
         
         //Parameters for API invocation
         let parameters: [String : AnyObject] = [
-            URLKeys.Country     : countryCode ?? "",
-            URLKeys.Language    : Constants.Language,
-            URLKeys.Username    : Constants.Username
+            URLKeys.Country     : countryCode as AnyObject? ?? "" as AnyObject,
+            URLKeys.Language    : Constants.Language as AnyObject,
+            URLKeys.Username    : Constants.Username as AnyObject
         ]
         
         consumer.getWithEndpoint(Constants.CountryInfoEndpoint, parameters: parameters) /* And then, on another thread... */ {
@@ -110,14 +110,14 @@ class GeoNamesClient {
                     completionHandler(success: false, error: NSError (domain: "GeoNames \"countryInfo\" endpoint", code: value, userInfo: userInfo))
                 }
                 else {
-                    guard let countries = resultDictionary[JSONResponseKeys.Geonames] as? [[String: AnyObject]] where countries.count >= 1 else {
+                    guard let countries = resultDictionary[JSONResponseKeys.Geonames] as? [[String: AnyObject]], countries.count >= 1 else {
                         completionHandler (success: false, error: NSError(domain: "GeoNames \"countryInfo\" endpoint", code: 2, userInfo: [NSLocalizedDescriptionKey: "Country information not found"]))
                         
                         return
                     }
                     
                     //Ensure CoreData context is accessed on whatever queue it's working on
-                    context.performBlock() {
+                    context.perform() {
                         
                         for countryJSON in countries {
                             let _ = Country(json: countryJSON, context: context)

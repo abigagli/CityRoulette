@@ -15,21 +15,21 @@ class WikiViewController: UIViewController {
     @IBOutlet weak var refreshButton: UIBarButtonItem!
     
     //MARK:- Actions
-    @IBAction func goForward(sender: UIBarButtonItem) {
+    @IBAction func goForward(_ sender: UIBarButtonItem) {
         self.webView.goForward()
     }
-    @IBAction func goBackward(sender: UIBarButtonItem) {
+    @IBAction func goBackward(_ sender: UIBarButtonItem) {
         self.webView.goBack()
     }
     
-    @IBAction func refresh(sender: UIBarButtonItem) {
+    @IBAction func refresh(_ sender: UIBarButtonItem) {
         self.reloadCurrentOrInitialRequest()
     }
     
     //MARK:- State
     var city: City!
     
-    private var initialRequest: NSURLRequest!
+    fileprivate var initialRequest: URLRequest!
     
     //MARK:- Lifetime
     override func viewDidLoad() {
@@ -38,28 +38,28 @@ class WikiViewController: UIViewController {
         
         self.webView.delegate = self
         
-        let url: NSURL
+        let url: URL
         
         if let wikipediaInfo = self.city.wikipedia {
-            url = NSURL(string: "http://\(wikipediaInfo)")!
+            url = URL(string: "http://\(wikipediaInfo)")!
         }
         else {
-            let noSpaceName = self.city.name.stringByReplacingOccurrencesOfString(" ", withString: "+", options: .LiteralSearch, range:nil)
-            url = NSURL(string:"http://en.wikipedia.org/w/index.php?search=\(noSpaceName)")!
+            let noSpaceName = self.city.name.replacingOccurrences(of: " ", with: "+", options: .literal, range:nil)
+            url = URL(string:"http://en.wikipedia.org/w/index.php?search=\(noSpaceName)")!
         }
         
-        self.initialRequest = NSURLRequest(URL: url)
+        self.initialRequest = URLRequest(url: url)
         self.webView.loadRequest(self.initialRequest)
     }
     
-    override func viewWillDisappear(animated: Bool) {
+    override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
-        UIApplication.sharedApplication().networkActivityIndicatorVisible = false
+        UIApplication.shared.isNetworkActivityIndicatorVisible = false
     }
     
     //MARK:- Business Logic
     func reloadCurrentOrInitialRequest() {
-        if let currentURLString = self.webView.request?.URL?.absoluteString where currentURLString != "" {
+        if let currentURLString = self.webView.request?.url?.absoluteString, currentURLString != "" {
             self.webView.reload()
         }
         else {
@@ -72,36 +72,36 @@ class WikiViewController: UIViewController {
 
 extension WikiViewController: UIWebViewDelegate {
     
-    func webView(webView: UIWebView, didFailLoadWithError error: NSError?) {
+    func webView(_ webView: UIWebView, didFailLoadWithError error: Error) {
         self.alertUserWithTitle("Error loading webpage"
             , message: error?.localizedDescription ?? "unspecified error"
             , retryHandler: {_ in
                 self.reloadCurrentOrInitialRequest()})
 
-        UIApplication.sharedApplication().networkActivityIndicatorVisible = false
-        self.refreshButton.enabled = true
+        UIApplication.shared.isNetworkActivityIndicatorVisible = false
+        self.refreshButton.isEnabled = true
     }
     
-    func webViewDidFinishLoad(webView: UIWebView) {
+    func webViewDidFinishLoad(_ webView: UIWebView) {
         if (webView.canGoBack) {
-            self.goBackwardButton.enabled = true
+            self.goBackwardButton.isEnabled = true
         }
         else {
-            self.goBackwardButton.enabled = false
+            self.goBackwardButton.isEnabled = false
         }
         
         if (webView.canGoForward) {
-            self.goForwardButton.enabled = true
+            self.goForwardButton.isEnabled = true
         }
         else {
-            self.goForwardButton.enabled = false
+            self.goForwardButton.isEnabled = false
         }
-        UIApplication.sharedApplication().networkActivityIndicatorVisible = false
-        self.refreshButton.enabled = true
+        UIApplication.shared.isNetworkActivityIndicatorVisible = false
+        self.refreshButton.isEnabled = true
     }
     
-    func webViewDidStartLoad(webView: UIWebView) {
-        self.refreshButton.enabled = false
-        UIApplication.sharedApplication().networkActivityIndicatorVisible = true
+    func webViewDidStartLoad(_ webView: UIWebView) {
+        self.refreshButton.isEnabled = false
+        UIApplication.shared.isNetworkActivityIndicatorVisible = true
     }
 }

@@ -49,22 +49,22 @@ class InitialViewController: UIViewController {
     @IBOutlet weak var browseBottomSpace: NSLayoutConstraint!
     
     //MARK:- Actions
-    @IBAction func unwindFromSave (segue: UIStoryboardSegue) {
+    @IBAction func unwindFromSave (_ segue: UIStoryboardSegue) {
         CoreDataStackManager.sharedInstance.saveContext()
         self.acquireID = 0
     }
     
-    @IBAction func unwindFromCancel (segue: UIStoryboardSegue) {
+    @IBAction func unwindFromCancel (_ segue: UIStoryboardSegue) {
         self.acquireID = 0
     }
     
-    @IBAction func browseTapped(sender: UIButton) {
+    @IBAction func browseTapped(_ sender: UIButton) {
         self.hideButtons()
         
-        self.performSegueWithIdentifier(ShowCitiesMode.browseArchivedCities.rawValue, sender: CoreDataStackManager.sharedInstance.managedObjectContext)
+        self.performSegue(withIdentifier: ShowCitiesMode.browseArchivedCities.rawValue, sender: CoreDataStackManager.sharedInstance.managedObjectContext)
     }
     
-    @IBAction func surpriseMeTapped(sender: UIButton) {
+    @IBAction func surpriseMeTapped(_ sender: UIButton) {
         
         //self.springAnimate(sender, repeating: true)
         
@@ -84,7 +84,7 @@ class InitialViewController: UIViewController {
             GeoNamesClient.sharedInstance.getCountryInfo (nil, andStoreIn: CoreDataStackManager.sharedInstance.managedObjectContext) /* And then, on another thread...*/ {
                 success, error in
                 
-                dispatch_async(dispatch_get_main_queue()) { //Touch the UI on the main thread only
+                DispatchQueue.main.async { //Touch the UI on the main thread only
                     
                     if success {
                         
@@ -110,18 +110,18 @@ class InitialViewController: UIViewController {
     }
     
     
-    @IBAction func aroundMeTapped(sender: UIButton) {
+    @IBAction func aroundMeTapped(_ sender: UIButton) {
         self.locationManager.delegate = self
         self.locationManager.desiredAccuracy = kCLLocationAccuracyThreeKilometers
         self.locationManager.distanceFilter = 3000
         
         switch CLLocationManager.authorizationStatus()
         {
-        case .NotDetermined:
+        case .notDetermined:
             self.locationManager.requestWhenInUseAuthorization()
-        case .AuthorizedAlways:
+        case .authorizedAlways:
             fallthrough
-        case .AuthorizedWhenInUse:
+        case .authorizedWhenInUse:
             self.locationManager.startUpdatingLocation()
         default:
             //Don't want to receive a notification in case the user change settings 
@@ -132,21 +132,21 @@ class InitialViewController: UIViewController {
     }
     
     //MARK:- State
-    private var verticalConstraintConstant: CGFloat = 0
-    private var colorImage: UIImageView?
-    private lazy var locationManager = CLLocationManager()
-    private var busyStatusManager: BusyStatusManager!
-    private var acquireID: Int64 = 0
-    private var countries = [Country]()
+    fileprivate var verticalConstraintConstant: CGFloat = 0
+    fileprivate var colorImage: UIImageView?
+    fileprivate lazy var locationManager = CLLocationManager()
+    fileprivate var busyStatusManager: BusyStatusManager!
+    fileprivate var acquireID: Int64 = 0
+    fileprivate var countries = [Country]()
     
-    private lazy var countryHistoryFilePath: String = {
+    fileprivate lazy var countryHistoryFilePath: String = {
         let url = CoreDataStackManager.sharedInstance.applicationDocumentsDirectory
-        return url.URLByAppendingPathComponent("countryHistory").path!
+        return url.appendingPathComponent("countryHistory")!.path
     }()
 
-    private var randomCountriesHistory = [String]()
+    fileprivate var randomCountriesHistory = [String]()
     
-    private var randomLocation: CLLocation? {
+    fileprivate var randomLocation: CLLocation? {
         if self.countries.count == 0 {
             self.countries = self.fetchAllCountries()
         }
@@ -167,7 +167,7 @@ class InitialViewController: UIViewController {
         self.randomCountriesHistory.append(randomCountry.countryCode)
         
         if self.randomCountriesHistory.count > self.k_randomCountryNoRepeatHistory {
-            self.randomCountriesHistory.removeAtIndex(0)
+            self.randomCountriesHistory.remove(at: 0)
         }
         
         self.saveCountryHistory()
@@ -186,7 +186,7 @@ class InitialViewController: UIViewController {
     
 
     //MARK:- UI
-    private func hideButtons()
+    fileprivate func hideButtons()
     {
         self.aroundMeTopSpace.constant = 0
         self.surpriseMeButton.alpha = 0
@@ -195,18 +195,18 @@ class InitialViewController: UIViewController {
         self.view.layoutIfNeeded()
     }
     
-    private func springAnimate (button: UIButton, repeating: Bool = false)
+    fileprivate func springAnimate (_ button: UIButton, repeating: Bool = false)
     {
-        UIView.animateWithDuration(0.25, delay: 0, options: [.CurveEaseOut], animations: {
-                button.transform = CGAffineTransformConcat(CGAffineTransformMakeScale(0.50, 0.50), CGAffineTransformMakeRotation(CGFloat(M_PI_2)))
+        UIView.animate(withDuration: 0.25, delay: 0, options: [.curveEaseOut], animations: {
+                button.transform = CGAffineTransform(scaleX: 0.50, y: 0.50).concatenating(CGAffineTransform(rotationAngle: CGFloat(M_PI_2)))
                 //button.layer.cornerRadius = 0
                 //button.layer.borderWidth = 2
 
             }, completion: {_ in
-                let springBackOptions: UIViewAnimationOptions = repeating ? [.Repeat] : []
-                UIView.animateWithDuration(1.0, delay: 0.1, usingSpringWithDamping: 0.20, initialSpringVelocity: 0, options: springBackOptions, animations: {
+                let springBackOptions: UIViewAnimationOptions = repeating ? [.repeat] : []
+                UIView.animate(withDuration: 1.0, delay: 0.1, usingSpringWithDamping: 0.20, initialSpringVelocity: 0, options: springBackOptions, animations: {
                     
-                    button.transform = CGAffineTransformConcat(CGAffineTransformMakeScale(1, 1), CGAffineTransformMakeRotation(0))
+                    button.transform = CGAffineTransform(scaleX: 1, y: 1).concatenating(CGAffineTransform(rotationAngle: 0))
                     //button.layer.cornerRadius = 30
                     //button.layer.borderWidth = 0
                     
@@ -221,22 +221,22 @@ class InitialViewController: UIViewController {
         
     }
     
-    private func showButtons()
+    fileprivate func showButtons()
     {
         self.aroundMeTopSpace.constant = self.verticalConstraintConstant
         self.browseBottomSpace.constant = self.verticalConstraintConstant
         self.surpriseMeButton.alpha = 1
 
-        UIView.animateWithDuration(1.0) {
+        UIView.animate(withDuration: 1.0, animations: {
             self.view.layoutIfNeeded()
-        }
+        }) 
         
         self.springAnimate(self.surpriseMeButton)
     }
     
-    private func fadeColorImage(andThen andThen: ((Bool) -> Void)?) {
+    fileprivate func fadeColorImage(andThen: ((Bool) -> Void)?) {
         
-        UIView.animateWithDuration(4, delay: 0.5, options: .CurveEaseOut, animations: {
+        UIView.animate(withDuration: 4, delay: 0.5, options: .curveEaseOut, animations: {
             self.colorImage!.alpha = 0.0
             }
             , completion: andThen)
@@ -244,14 +244,14 @@ class InitialViewController: UIViewController {
     
     
     //MARK:- Lifetime
-    override func prepareForSegue(segue: UIStoryboardSegue, sender dataForNextVC: AnyObject?) {
+    override func prepare(for segue: UIStoryboardSegue, sender dataForNextVC: Any?) {
 
-        super.prepareForSegue (segue, sender: dataForNextVC)
+        super.prepare (for: segue, sender: dataForNextVC)
 
         
         //Make sure we can reach into ShowCitiesViewController regardless
         //of it being contained in a navigation controller or not
-        var destination: UIViewController? = segue.destinationViewController
+        var destination: UIViewController? = segue.destination
         
         if let navCon = destination as? UINavigationController {
             destination = navCon.visibleViewController
@@ -293,29 +293,29 @@ class InitialViewController: UIViewController {
         // Dispose of any resources that can be recreated.
     }
 
-    override func viewWillAppear(animated: Bool) {
+    override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         
-        let fetchRequest = NSFetchRequest (entityName: "City")
+        let fetchRequest = NSFetchRequest<NSFetchRequestResult> (entityName: "City")
         
         var error: NSError?
-        let n = CoreDataStackManager.sharedInstance.managedObjectContext.countForFetchRequest(fetchRequest, error: &error)
+        let n = CoreDataStackManager.sharedInstance.managedObjectContext.count(for: fetchRequest, error: &error)
         
-        self.browseButton.setTitle("Browse \(n) archived cities", forState: .Normal)
-        self.browseButton.hidden = (error != nil) || (n == 0)
+        self.browseButton.setTitle("Browse \(n) archived cities", for: UIControlState())
+        self.browseButton.isHidden = (error != nil) || (n == 0)
         
         self.hideButtons()
         self.busyStatusManager.setBusyStatus(false)
     }
     
-    override func viewDidAppear(animated: Bool) {
+    override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
         
         if let _ = self.colorImage{
             self.fadeColorImage(andThen: {_ in
                 self.colorImage!.removeFromSuperview()
                 self.colorImage = nil
-                self.authorView.hidden = true
+                self.authorView.isHidden = true
                 self.showButtons()
             })
         }
@@ -324,7 +324,7 @@ class InitialViewController: UIViewController {
         }
     }
     
-    override func viewDidDisappear(animated: Bool) {
+    override func viewDidDisappear(_ animated: Bool) {
         super.viewDidDisappear(animated)
         self.locationManager.delegate = nil
         self.locationManager.stopUpdatingLocation()
@@ -332,7 +332,7 @@ class InitialViewController: UIViewController {
     override func viewDidLayoutSubviews() {
         super.viewDidLayoutSubviews()
         
-        if let colorImage = self.colorImage where colorImage.superview == nil {
+        if let colorImage = self.colorImage, colorImage.superview == nil {
             
             colorImage.contentMode = self.backgroundImage.contentMode
             colorImage.frame = self.backgroundImage.frame
@@ -344,12 +344,12 @@ class InitialViewController: UIViewController {
     
     //MARK:- Business Logic
     
-    private func importCitiesAroundLocation (location: CLLocation, intoContext importingContext: NSManagedObjectContext, randomAttempts: Int?) {
+    fileprivate func importCitiesAroundLocation (_ location: CLLocation, intoContext importingContext: NSManagedObjectContext, randomAttempts: Int?) {
         
         GeoNamesClient.sharedInstance.getCitiesAroundLocation(location.coordinate, withRadius: self.k_radius, maxResults:self.k_maxImportAtOnce, andStoreIn: importingContext) /* And then, on another thread...*/ {
             acquireID, error in
             
-            dispatch_async(dispatch_get_main_queue()) { //Touch the UI on the main thread only
+            DispatchQueue.main.async { //Touch the UI on the main thread only
                 if acquireID > 0 {
                     self.acquireID = acquireID
                     
@@ -362,12 +362,12 @@ class InitialViewController: UIViewController {
                         segueIdentifier = ShowCitiesMode.importFromCurrentLocation.rawValue
                     }
                     
-                    self.performSegueWithIdentifier(segueIdentifier, sender: importingContext)
+                    self.performSegue(withIdentifier: segueIdentifier, sender: importingContext)
                 }
                 else {
                     //Couldn't find cities around this location.
                     //If this is a random search, let's do some additional attempts
-                    if let randomAttempts = randomAttempts where randomAttempts > 0 {
+                    if let randomAttempts = randomAttempts, randomAttempts > 0 {
                         self.importCitiesAroundLocation(self.randomLocation!, intoContext: importingContext, randomAttempts: randomAttempts - 1)
                     }
                     else {
@@ -381,12 +381,12 @@ class InitialViewController: UIViewController {
         }
     }
 
-    private func saveCountryHistory() {
+    fileprivate func saveCountryHistory() {
         NSKeyedArchiver.archiveRootObject(self.randomCountriesHistory, toFile: self.countryHistoryFilePath)
     }
 
-    private func loadCountryHistory() {
-        if let savedCountries = NSKeyedUnarchiver.unarchiveObjectWithFile(self.countryHistoryFilePath) as? [String] {
+    fileprivate func loadCountryHistory() {
+        if let savedCountries = NSKeyedUnarchiver.unarchiveObject(withFile: self.countryHistoryFilePath) as? [String] {
             self.randomCountriesHistory = savedCountries
         }
     }
@@ -400,20 +400,20 @@ class InitialViewController: UIViewController {
     //the import phase.
     //Only if the user decides to import, then the contents of this child scratch context are pushed
     //up into the main one
-    private func scratchContext() -> NSManagedObjectContext {
+    fileprivate func scratchContext() -> NSManagedObjectContext {
         //let context = NSManagedObjectContext(concurrencyType: .PrivateQueueConcurrencyType)
-        let context = NSManagedObjectContext(concurrencyType: .MainQueueConcurrencyType)
+        let context = NSManagedObjectContext(concurrencyType: .mainQueueConcurrencyType)
         //context.persistentStoreCoordinator = CoreDataStackManager.sharedInstance.persistentStoreCoordinator
-        context.parentContext = CoreDataStackManager.sharedInstance.managedObjectContext
+        context.parent = CoreDataStackManager.sharedInstance.managedObjectContext
         context.mergePolicy = NSMergeByPropertyObjectTrumpMergePolicy
         //context.undoManager = nil
         return context
     }
     
-    private func fetchAllCountries() -> [Country] {
-        let fetchRequest = NSFetchRequest(entityName: "Country")
+    fileprivate func fetchAllCountries() -> [Country] {
+        let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "Country")
         do {
-            return try CoreDataStackManager.sharedInstance.managedObjectContext.executeFetchRequest(fetchRequest) as! [Country]
+            return try CoreDataStackManager.sharedInstance.managedObjectContext.fetch(fetchRequest) as! [Country]
         }
         catch let error as NSError {
             self.alertUserWithTitle("Error"
@@ -430,7 +430,7 @@ class InitialViewController: UIViewController {
 //MARK: CLLocationManagerDelegate
 
 extension InitialViewController: CLLocationManagerDelegate {
-    func locationManager(manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
+    func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
         manager.delegate = nil
         manager.stopUpdatingLocation()
         let lastLocation = locations.last!
@@ -444,13 +444,13 @@ extension InitialViewController: CLLocationManagerDelegate {
         self.importCitiesAroundLocation(lastLocation, intoContext: importingContext, randomAttempts: nil)
     }
     
-    func locationManager(manager: CLLocationManager,
-        didChangeAuthorizationStatus status: CLAuthorizationStatus)
+    func locationManager(_ manager: CLLocationManager,
+        didChangeAuthorization status: CLAuthorizationStatus)
     {
-        if status == .AuthorizedAlways || status == .AuthorizedWhenInUse {
+        if status == .authorizedAlways || status == .authorizedWhenInUse {
             manager.startUpdatingLocation()
         }
-        else if status != .NotDetermined {
+        else if status != .notDetermined {
             //Don't want to receive a notification in case the user change settings 
             //while we're in another part of the application...
             manager.delegate = nil

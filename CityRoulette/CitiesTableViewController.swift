@@ -11,7 +11,7 @@ import UIKit
 class CitiesTableViewController: UITableViewController {
 
     @IBOutlet var updateWeatherRefreshControl: UIRefreshControl!
-    @IBAction func updateWeather(sender: UIRefreshControl) {
-        (self.parentViewController as! ShowCitiesViewController).updateWeather (sender)
+    @IBAction func updateWeather(_ sender: UIRefreshControl) {
+        (self.parent as! ShowCitiesViewController).updateWeather (sender)
     }
 }

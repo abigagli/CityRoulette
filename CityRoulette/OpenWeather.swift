@@ -16,28 +16,28 @@ class OpenWeatherClient {
     static let sharedInstance = OpenWeatherClient()
     
     //private init enforces singleton usage
-    private init() {
-        self.consumer = APIConsumer (withSession: NSURLSession.sharedSession())
+    fileprivate init() {
+        self.consumer = APIConsumer (withSession: URLSession.shared)
     }
     
     //MARK:- State
     let consumer: APIConsumer
     
-    private func getIconNamed(fileName: String,
-        completionHandler: (icon: UIImage?, error: NSError?) -> Void) {
+    fileprivate func getIconNamed(_ fileName: String,
+        completionHandler: @escaping (_ icon: UIImage?, _ error: NSError?) -> Void) {
             
             let URLString = Constants.IconImageBaseURL + "/" + fileName
             //Create request with urlString.
-            let request = NSMutableURLRequest(URL: NSURL(string: URLString)!)
+            let request = NSMutableURLRequest(url: URL(string: URLString)!)
             
             //Make the request.
-            let task = consumer.session.dataTaskWithRequest(request) {
+            let task = consumer.session.dataTask(with: request, completionHandler: {
                 data, response, downloadError in
                 
                 if let imageData = data {
-                    let filePath = CoreDataStackManager.sharedInstance.applicationDocumentsDirectory.URLByAppendingPathComponent(fileName).path!
+                    let filePath = CoreDataStackManager.sharedInstance.applicationDocumentsDirectory.appendingPathComponent(fileName).path!
                     
-                    NSFileManager.defaultManager().createFileAtPath(filePath, contents: imageData, attributes: nil)
+                    FileManager.default.createFile(atPath: filePath, contents: imageData, attributes: nil)
                     
                     let image = UIImage(data: imageData)
                     
@@ -46,17 +46,17 @@ class OpenWeatherClient {
                     completionHandler(icon: image, error: nil)
                     
                 }
-            }
+            }) 
             
             //Start the request task.
             task.resume()
     }
     
-    private func storedImageForIconFile (fileName: String) -> UIImage? {
+    fileprivate func storedImageForIconFile (_ fileName: String) -> UIImage? {
         
-        let filePath = CoreDataStackManager.sharedInstance.applicationDocumentsDirectory.URLByAppendingPathComponent(fileName).path!
+        let filePath = CoreDataStackManager.sharedInstance.applicationDocumentsDirectory.appendingPathComponent(fileName)?.path
         
-        if let imageData = NSData(contentsOfFile: filePath) {
+        if let imageData = try? Data(contentsOf: URL(fileURLWithPath: filePath!)) {
             return UIImage (data: imageData)
         }
         else {
@@ -64,12 +64,12 @@ class OpenWeatherClient {
         }
     }
  
-    func getWeatherIconForLocation (location: CLLocationCoordinate2D, completionHandler: (icon: UIImage?, error: NSError?) -> Void) {
+    func getWeatherIconForLocation (_ location: CLLocationCoordinate2D, completionHandler: @escaping (_ icon: UIImage?, _ error: NSError?) -> Void) {
         
         let parameters: [String: AnyObject] = [
-            URLKeys.Lat     : "\(location.latitude)",
-            URLKeys.Lon     : "\(location.longitude)",
-            URLKeys.AppID   : Constants.APIKey
+            URLKeys.Lat     : "\(location.latitude)" as AnyObject,
+            URLKeys.Lon     : "\(location.longitude)" as AnyObject,
+            URLKeys.AppID   : Constants.APIKey as AnyObject
         ]
         
         consumer.getWithEndpoint(Constants.ForecastEndpoint, parameters: parameters) /* And then, on another thread... */ {
